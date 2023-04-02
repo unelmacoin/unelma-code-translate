@@ -7,7 +7,7 @@ Use Unelma-Code Translator to translate code from one language to another.
 **1. Clone Repo**
 
 ```bash
-git clone https://github.com/unelmacoin/unelma-code-translator
+git clone https://github.com/unelmacoin/unelma-code-translate
 ```
 
 **2. Install Dependencies**
