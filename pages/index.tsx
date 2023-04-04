@@ -24,11 +24,6 @@ export default function Home() {
       return;
     }
 
-    if (!inputCode) {
-      alert('Please enter some code.');
-      return;
-    }
-
     if (inputCode.length > maxCodeLength) {
       alert(
         `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
