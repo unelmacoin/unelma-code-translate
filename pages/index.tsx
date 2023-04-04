@@ -1,4 +1,3 @@
-import { APIKeyInput } from '@/components/APIKeyInput';
 import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
@@ -19,11 +18,6 @@ export default function Home() {
 
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
-
-    if (!apiKey) {
-      alert('Please enter an API key.');
-      return;
-    }
 
     if (inputLanguage === outputLanguage) {
       alert('Please select different languages.');
@@ -107,12 +101,6 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-  const handleApiKeyChange = (value: string) => {
-    setApiKey(value);
-
-    localStorage.setItem('apiKey', value);
-  };
-
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -123,8 +111,7 @@ export default function Home() {
   }, [outputLanguage, inputCode]);
 
   useEffect(() => {
-    const apiKey = localStorage.getItem('apiKey');
-
+    const apiKey = process.env.OPENAI_API_KEY;
     if (apiKey) {
       setApiKey(apiKey);
     }
@@ -144,10 +131,6 @@ export default function Home() {
       <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
           <div className="text-4xl font-bold">Unelma-Code Translator</div>
-        </div>
-
-        <div className="mt-6 text-center text-sm">
-          <APIKeyInput apiKey={apiKey} onChange={handleApiKeyChange} />
         </div>
 
         <div className="mt-2 flex items-center space-x-2">
