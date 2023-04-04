@@ -24,6 +24,11 @@ export default function Home() {
       return;
     }
 
+    if (!inputCode) {
+      alert('Please enter some code.');
+      return;
+    }
+
     if (inputCode.length > maxCodeLength) {
       alert(
         `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
@@ -137,7 +142,7 @@ export default function Home() {
             ? 'Translating...'
             : hasTranslated
               ? 'Output copied to clipboard!'
-              : 'Enter some code and click "Translate"'}
+              : 'Enter some code in Input'}
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
