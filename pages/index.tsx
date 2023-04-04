@@ -113,11 +113,14 @@ export default function Home() {
     localStorage.setItem('apiKey', value);
   };
 
+
   useEffect(() => {
-    if (hasTranslated) {
+    const delayDebounceFn = setTimeout(() => {
       handleTranslate();
-    }
-  }, [outputLanguage]);
+    }, 2000)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [outputLanguage, inputCode]);
 
   useEffect(() => {
     const apiKey = localStorage.getItem('apiKey');
@@ -149,22 +152,14 @@ export default function Home() {
 
         <div className="mt-2 flex items-center space-x-2">
           <ModelSelect model={model} onChange={(value) => setModel(value)} />
-
-          <button
-            className="w-[140px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700"
-            onClick={() => handleTranslate()}
-            disabled={loading}
-          >
-            {loading ? 'Translating...' : 'Translate'}
-          </button>
         </div>
 
         <div className="mt-2 text-center text-xs">
           {loading
             ? 'Translating...'
             : hasTranslated
-            ? 'Output copied to clipboard!'
-            : 'Enter some code and click "Translate"'}
+              ? 'Output copied to clipboard!'
+              : 'Enter some code and click "Translate"'}
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
