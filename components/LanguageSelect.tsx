@@ -38,6 +38,7 @@ const languages = [
   { value: 'Go', label: 'Go' },
   { value: 'C', label: 'C' },
   { value: 'C++', label: 'C++' },
+  { value: 'CoffeeScript', label: 'CoffeeScript' },
   { value: 'Java', label: 'Java' },
   { value: 'C#', label: 'C#' },
   { value: 'Visual Basic .NET', label: 'Visual Basic .NET' },
