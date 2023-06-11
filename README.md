@@ -28,6 +28,13 @@ npm run dev
 
 If you want to contribute, feel free to open pull request and push changes. All changes is going through review process.
 
+    Fork the repository.
+    Create a new branch: git checkout -b new-feature
+    Make your changes and commit them: git commit -am 'Add new feature'
+    Push to the branch: git push origin new-feature
+    Create a pull request.
+
+
 # Contact
 
 Please send private message if you would need help or want to ask for feature requests
