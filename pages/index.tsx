@@ -97,13 +97,12 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
-    }, 2000)
+    }, 2000);
 
-    return () => clearTimeout(delayDebounceFn)
+    return () => clearTimeout(delayDebounceFn);
   }, [outputLanguage, inputCode]);
 
   useEffect(() => {
@@ -113,13 +112,12 @@ export default function Home() {
     }
   }, []);
 
-  const handleSwap=()=>{
-    setInputLanguage(outputLanguage)
-    setOutputLanguage(inputLanguage)
-  }
+  const handleSwap = () => {
+    setInputLanguage(outputLanguage);
+    setOutputLanguage(inputLanguage);
+  };
 
   console.log(apiKey);
-  
 
   return (
     <>
@@ -131,6 +129,10 @@ export default function Home() {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        />
       </Head>
       <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
@@ -145,8 +147,8 @@ export default function Home() {
           {loading
             ? 'Translating...'
             : hasTranslated
-              ? 'Output copied to clipboard!'
-              : 'Enter some code in Input'}
+            ? 'Output copied to clipboard!'
+            : 'Enter some code in Input'}
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
@@ -160,7 +162,7 @@ export default function Home() {
                 setHasTranslated(false);
                 setInputCode('');
                 setOutputCode('');
-                console.log(value)
+                console.log(value);
               }}
             />
 
@@ -184,9 +186,9 @@ export default function Home() {
               />
             )}
           </div>
-          <div onClick={handleSwap}><span className="material-symbols-outlined">
-          ↔️
-</span></div>
+          <div onClick={handleSwap}>
+            <span className="mt-10 material-symbols-outlined">swap_horiz</span>
+          </div>
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
             <div className="text-center text-xl font-bold">Output</div>
 
