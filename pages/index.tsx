@@ -3,6 +3,7 @@ import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
 import { OpenAIModel, TranslateBody } from '@/types/types';
+import { log } from 'console';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
@@ -112,6 +113,14 @@ export default function Home() {
     }
   }, []);
 
+  const handleSwap=()=>{
+    setInputLanguage(outputLanguage)
+    setOutputLanguage(inputLanguage)
+  }
+
+  console.log(apiKey);
+  
+
   return (
     <>
       <Head>
@@ -175,6 +184,9 @@ export default function Home() {
               />
             )}
           </div>
+          <div onClick={handleSwap}><span className="material-symbols-outlined">
+          ↔️
+</span></div>
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
             <div className="text-center text-xl font-bold">Output</div>
 
