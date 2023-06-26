@@ -7,8 +7,8 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [inputLanguage, setInputLanguage] = useState<string>('JavaScript');
-  const [outputLanguage, setOutputLanguage] = useState<string>('Python');
+  const [inputLanguage, setInputLanguage] = useState<number>(1);
+  const [outputLanguage, setOutputLanguage] = useState<number>(5);
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
   const [model, setModel] = useState<OpenAIModel>('gpt-3.5-turbo');
@@ -151,10 +151,11 @@ export default function Home() {
                 setHasTranslated(false);
                 setInputCode('');
                 setOutputCode('');
+                console.log(value)
               }}
             />
 
-            {inputLanguage === 'Natural Language' ? (
+            {inputLanguage === 1 ? (
               <TextBlock
                 text={inputCode}
                 editable={!loading}
@@ -185,7 +186,7 @@ export default function Home() {
               }}
             />
 
-            {outputLanguage === 'Natural Language' ? (
+            {outputLanguage === 1 ? (
               <TextBlock text={outputCode} />
             ) : (
               <CodeBlock code={outputCode} />
