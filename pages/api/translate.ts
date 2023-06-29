@@ -11,8 +11,8 @@ const handler = async (req: Request): Promise<Response> => {
       (await req.json()) as TranslateBody;
 
     const stream = await OpenAIStream(
-      inputLanguage,
-      outputLanguage,
+      inputLanguage.toString(),
+      outputLanguage.toString(),
       inputCode,
       model,
       apiKey,
