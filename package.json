@@ -1,5 +1,5 @@
 {
-  "name": "unelma-code-translate",
+  "name": "@unelmaplatforms/unelma-code-translate",
   "version": "0.1.0",
   "private": true,
   "scripts": {
