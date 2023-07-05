@@ -7,7 +7,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [inputLanguage, setInputLanguage] = useState<string>('JavaScript');
+  const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('Python');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
