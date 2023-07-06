@@ -5,6 +5,7 @@ import { TextBlock } from '@/components/TextBlock';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import { IoMdSwap } from 'react-icons/io';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
@@ -112,6 +113,14 @@ export default function Home() {
     }
   }, []);
 
+  const handleSwap = () => {
+    setInputLanguage(outputLanguage);
+    setOutputLanguage(inputLanguage);
+    setInputCode(outputCode);
+    setOutputCode(inputCode)
+  };
+
+
   return (
     <>
       <Head>
@@ -174,6 +183,7 @@ export default function Home() {
               />
             )}
           </div>
+          <IoMdSwap onClick={handleSwap} className='mt-10  text-neutral-200 text-3xl cursor-pointer hover:opacity-80'/>
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
             <div className="text-center text-xl font-bold">Output</div>
 
