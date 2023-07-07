@@ -71,5 +71,6 @@ const languages = [
   { id: 41, value: 'CSS', label: 'CSS' },
   { id: 42, value: 'Racket', label: 'Racket' },
   { id: 43, value: 'HTML', label: 'HTML' },
-  { id: 44, value: 'NoSQL', label: 'NoSQL' }
+  { id: 44, value: 'NoSQL', label: 'NoSQL' },
+  { id: 45, value: 'YAML', label: 'YAML' }
 ];
