@@ -50,17 +50,18 @@ emailjs.init("Y8Uhbou9I9l2yDoUh");
 
   return (
     <div className=" z-20 feedback-form min-h-screen min-w-full flex items-center justify-center bg-[#0E1117] bg-opacity-50 absolute p-4">
-    <div className="  transform  flex flex-col gap-6 p-8 rounded-lg bg-white shadow-lg">
-      <button
-        onClick={closeModal}
-        className="self-end text-red-600 text-xl leading-none focus:outline-none"
-      >
-        X
-      </button>
-      <h1 className="text-2xl font-semibold">Feedback Form</h1>
+    <div className="fixed top-0 right-0 transform h-screen w-auto flex flex-col gap-6 p-8 rounded-lg bg-white text-neutral-200 shadow-lg">
+    <button
+  onClick={closeModal}
+  className="self-end text-black text-xl font-bold leading-none focus:outline-none shadow-lg hover:bg-gray-200 hover:text-gray-800 active:bg-gray-300 active:shadow-inner"
+>
+  X
+</button>
+
+      <h1 className="text-2xl text-[#0E1117] font-bold">Send feedback to Unelma Platforms</h1>
       <div>
-        <label htmlFor="name" className="block font-medium text-lg">
-          Name:
+        <label htmlFor="name" className="block text-[#0E1117] text-lg">
+          Name
         </label>
         <input
           type="text"
@@ -68,25 +69,25 @@ emailjs.init("Y8Uhbou9I9l2yDoUh");
           value={name}
           onChange={handleNameChange}
           placeholder="Enter your name"
-          className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+          className="w-full px-4 py-2 mt-2 border text-black border-gray-300 rounded-md"
         />
       </div>
       <div>
-        <label htmlFor="message" className="block font-medium text-lg">
-          Message:
+        <label htmlFor="message" className="block text-[#0E1117] text-lg">
+          Message
         </label>
         <textarea
           id="message"
-          rows={8}
+          rows={12}
           value={message}
           onChange={handleMessageChange}
           placeholder="Enter your message here"
-          className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:border-blue-500"
+          className="w-full px-4 py-2 mt-2 border text-black border-gray-300 rounded-md "
         />
       </div>
       <button
         onClick={handleSubmit}
-        className="w-full px-4 py-2 mt-4 text-lg font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
+        className="w-full px-4 py-2 mt-4 text-lg font-semibold text-white bg-[#0E1117] rounded-md hover:bg-gray-600 focus:outline-none"
       >
         Submit
       </button>
