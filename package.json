@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@codemirror/legacy-modes": "^6.3.2",
+    "@emailjs/browser": "^3.11.0",
     "@uiw/codemirror-theme-tokyo-night": "^4.19.11",
     "@uiw/react-codemirror": "^4.19.11",
+    "emailjs": "^4.0.2",
     "endent": "^2.1.0",
     "eventsource-parser": "^1.0.0",
     "next": "13.2.4",

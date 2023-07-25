@@ -2,10 +2,11 @@ import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
-import { OpenAIModel, TranslateBody } from '@/types/types';
+import { OpenAIModel, TranslateBody, modalControl } from '@/types/types';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { IoMdSwap } from 'react-icons/io';
+import FeedbackForm from '@/components/FeedbackForm';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
@@ -16,6 +17,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
+  const [modal, setModal]= useState<boolean>(false);
 
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
@@ -42,7 +44,7 @@ export default function Home() {
       outputLanguage,
       inputCode,
       model,
-      apiKey,
+      apiKey
     };
 
     const response = await fetch('/api/translate', {
@@ -120,7 +122,14 @@ export default function Home() {
     setOutputCode(inputCode)
   };
 
+  const openModal = () => {
+    setModal(true);
+  };
+  const closeModal = () => {
+    setModal(false);
+  };
 
+  console.log(modal)
   return (
     <>
       <Head>
@@ -132,7 +141,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
+      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10 relative">
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
           <div className="text-4xl font-bold">Unelma-Code Translator</div>
         </div>
@@ -200,9 +209,21 @@ export default function Home() {
             ) : (
               <CodeBlock code={outputCode} />
             )}
+
+<div className='flex justify-end'>
+       <button  onClick={openModal}>Share Feedback</button>
+       </div>
           </div>
+          
+          
         </div>
-      </div>
-    </>
-  );
-}
+        
+      
+      {modal===true? <FeedbackForm modal={modal} setModal={setModal}/>:""}
+      
+      
+     </div>
+     </>
+  )}
+      
+ 

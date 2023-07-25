@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4';
 
 export interface TranslateBody {
@@ -10,4 +12,11 @@ export interface TranslateBody {
 
 export interface TranslateResponse {
   code: string;
+}
+
+export interface modalControl
+{
+modal: boolean,
+setModal:Dispatch<SetStateAction<boolean>>,
+
 }
