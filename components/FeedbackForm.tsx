@@ -4,12 +4,7 @@ import { modalControl } from '@/types/types';
 
 const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
   emailjs.init('Y8Uhbou9I9l2yDoUh');
-  const [name, setName] = useState('');
   const [message, setMessage] = useState('');
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
 
   const handleMessageChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
@@ -24,7 +19,7 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
   };
 
   const handleSubmit = () => {
-    if (name.trim() === '' || message.trim() === '') {
+    if (message.trim() === '') {
       alert('Please fill out both the name and message fields.');
     } else {
       emailjs.send('service_poz1s4s', 'template_ogcro9v', templateParams).then(
@@ -36,11 +31,8 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
           console.log('FAILED...', err);
         },
       );
-
-      console.log(`Name: ${name}`);
       console.log(`Message: ${message}`);
       alert('Thank you for your feedback!');
-      setName('');
       setMessage('');
     }
   };
@@ -60,21 +52,8 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
         </button>
 
         <h1 className="text-2xl font-bold text-[#0E1117]">
-          Send feedback to Unelma Platforms
+          Send feedback to <a className=' text-blue-500' target="_blank" href="https://u16p.com/">U16P</a>
         </h1>
-        <div>
-          <label htmlFor="name" className="block text-lg text-[#0E1117]">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={handleNameChange}
-            placeholder="Enter your name"
-            className="mt-2 w-full rounded-md border border-gray-300 px-4 py-2 text-black"
-          />
-        </div>
         <div>
           <label htmlFor="message" className="block text-lg text-[#0E1117]">
           Tell us what prompted this feedback
@@ -85,15 +64,19 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
             value={message}
             onChange={handleMessageChange}
             placeholder="Enter your message here"
-            className="mt-2 w-full rounded-md border border-gray-300 px-4 py-2 text-black "
+            className="mt-2 w-full rounded-md border text-s border-gray-300 px-4 py-2 text-black "
           />
         </div>
+        <div className=' w-96 text-black'>We will use it to fix problems and improve our services, subject to our Privacy Policy and Terms of Service. We may email you for more information or updates.</div>
         <button
           onClick={handleSubmit}
           className="mt-4 w-full rounded-md bg-[#0E1117] px-4 py-2 text-lg font-semibold text-white hover:bg-gray-600 focus:outline-none"
         >
           Submit
         </button>
+
+        <button> <a href="mailto:dahal.dibya7@gmail.com">Send Email</a>
+</button>
       </div>
     </div>
   );

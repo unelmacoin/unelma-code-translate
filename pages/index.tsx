@@ -9,7 +9,8 @@ import { IoMdSwap } from 'react-icons/io';
 import FeedbackForm from '@/components/FeedbackForm';
 
 export default function Home() {
-  const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
+  const [inputLanguage, setInputLanguage] =
+    useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('Python');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
@@ -17,7 +18,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
-  const [modal, setModal]= useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
 
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
@@ -44,7 +45,7 @@ export default function Home() {
       outputLanguage,
       inputCode,
       model,
-      apiKey
+      apiKey,
     };
 
     const response = await fetch('/api/translate', {
@@ -99,13 +100,12 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
-    }, 2000)
+    }, 2000);
 
-    return () => clearTimeout(delayDebounceFn)
+    return () => clearTimeout(delayDebounceFn);
   }, [outputLanguage, inputCode]);
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function Home() {
     setInputLanguage(outputLanguage);
     setOutputLanguage(inputLanguage);
     setInputCode(outputCode);
-    setOutputCode(inputCode)
+    setOutputCode(inputCode);
   };
 
   const openModal = () => {
@@ -129,7 +129,7 @@ export default function Home() {
     setModal(false);
   };
 
-  console.log(modal)
+  console.log(modal);
   return (
     <>
       <Head>
@@ -141,7 +141,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10 relative">
+      <div className="relative flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
           <div className="text-4xl font-bold">Unelma-Code Translator</div>
         </div>
@@ -154,8 +154,8 @@ export default function Home() {
           {loading
             ? 'Translating...'
             : hasTranslated
-              ? 'Output copied to clipboard!'
-              : 'Enter some code in Input'}
+            ? 'Output copied to clipboard!'
+            : 'Enter some code in Input'}
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
@@ -192,7 +192,10 @@ export default function Home() {
               />
             )}
           </div>
-          <IoMdSwap onClick={handleSwap} className='mt-10  text-neutral-200 text-3xl cursor-pointer hover:opacity-80'/>
+          <IoMdSwap
+            onClick={handleSwap}
+            className="mt-10  cursor-pointer text-3xl text-neutral-200 hover:opacity-80"
+          />
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
             <div className="text-center text-xl font-bold">Output</div>
 
@@ -210,20 +213,18 @@ export default function Home() {
               <CodeBlock code={outputCode} />
             )}
 
-<div className='flex justify-end'>
-       <button  onClick={openModal}>Share Feedback</button>
-       </div>
+            <div className="flex justify-end">
+              <button className=' italic' onClick={openModal}>Share Feedback</button>
+            </div>
           </div>
-          
-          
         </div>
-        
-      
-      {modal===true? <FeedbackForm modal={modal} setModal={setModal}/>:""}
-      
-      
-     </div>
-     </>
-  )}
-      
- 
+
+        {modal === true ? (
+          <FeedbackForm modal={modal} setModal={setModal} />
+        ) : (
+          ''
+        )}
+      </div>
+    </>
+  );
+}
