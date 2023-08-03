@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { modalControl } from '@/types/types';
+import { Resend } from 'resend';
 
 const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
   emailjs.init('Y8Uhbou9I9l2yDoUh');
@@ -18,13 +19,20 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
     reply_to: 'dahal.dibya7@gmail.com',
   };
 
+  const resend = new Resend('re_fW8PMU8C_LVzhiEmBDYEXGeJ2o7DBdztM');
+
   const handleSubmit = () => {
     if (message.trim() === '') {
       alert('Please fill out both the name and message fields.');
     } else {
-      emailjs.send('service_poz1s4s', 'template_ogcro9v', templateParams).then(
+      resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: 'dahal.dibya7@gmail.com',
+        subject: 'Hello World',
+        html: '<p>Congrats on sending  2nd your <strong>first email</strong>!</p>'
+      }).then(
         (response) => {
-          console.log('SUCCESS!', response.status, response.text);
+          console.log('SUCCESS!');
           setModal(false);
         },
         (err) => {
