@@ -26,10 +26,10 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
       alert('Please fill out both the name and message fields.');
     } else {
       resend.emails.send({
-        from: 'onboarding@resend.dev',
+        from: 'dahal.dibya@gmail.com',
         to: 'dahal.dibya7@gmail.com',
-        subject: 'Hello World',
-        html: '<p>Congrats on sending  2nd your <strong>first email</strong>!</p>'
+        subject: "Feedback for UnelmaCodeTranslate",
+        html: `<p>${message}</p>`
       }).then(
         (response) => {
           console.log('SUCCESS!');
