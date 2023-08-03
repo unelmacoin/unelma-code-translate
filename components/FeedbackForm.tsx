@@ -51,7 +51,7 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
 
   return (
     <div className=" feedback-form absolute z-20 flex min-h-screen min-w-full items-center justify-center bg-[#0E1117] bg-opacity-50 p-4">
-      <div className="fixed right-0 top-0 flex h-screen w-auto transform flex-col gap-6 rounded-lg bg-white p-8 text-neutral-200 shadow-lg">
+      <div className="fixed right-0 top-0 flex h-screen w-auto transform flex-col gap-6 bg-white p-8 text-neutral-200 shadow-lg">
         <button
           onClick={closeModal}
           className="self-end text-xl font-bold leading-none text-black shadow-lg hover:bg-gray-200 hover:text-gray-800 focus:outline-none active:bg-gray-300 active:shadow-inner"
@@ -75,7 +75,7 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
             className="mt-2 w-full rounded-md border text-s border-gray-300 px-4 py-2 text-black "
           />
         </div>
-        <div className=' w-96 text-black'>We will use it to fix problems and improve our services, subject to our Privacy Policy and Terms of Service. We may email you for more information or updates.</div>
+        <div className=' w-96 text-black'>We will use it to fix problems and improve our services, subject to our <a className=' text-blue-500' target="_blank" href="https://unelma.io/pages/privacy-policy">privacy policy</a> and <a className=' text-blue-500' target="_blank" href="https://unelma.io/pages/terms-of-service">Terms and Services</a>. We may email you for more information or updates.</div>
         <button
           onClick={handleSubmit}
           className="mt-4 w-full rounded-md bg-[#0E1117] px-4 py-2 text-lg font-semibold text-white hover:bg-gray-600 focus:outline-none"
