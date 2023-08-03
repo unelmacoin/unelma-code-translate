@@ -19,7 +19,7 @@ const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
     reply_to: 'dahal.dibya7@gmail.com',
   };
 
-  const resend = new Resend('re_fW8PMU8C_LVzhiEmBDYEXGeJ2o7DBdztM');
+  const resend = new Resend(process.env.REACT_APP_RESEND);
 
   const handleSubmit = () => {
     if (message.trim() === '') {
