@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { modalControl } from '@/types/types';
 import { Resend } from 'resend';
 import axios  from "axios";
+import 'dotenv/config'
 
 
 const FeedbackForm: React.FC<modalControl> = ({ modal, setModal }) => {
   const [message, setMessage] = useState('');
-const url ='https://api.resend.io/v1/emails/send'
+const url ='https://api.resend.com/emails'
   const handleMessageChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
@@ -15,7 +16,7 @@ const url ='https://api.resend.io/v1/emails/send'
 
   const api= process.env.REACT_APP_RESEND;
   console.log(api);
-  const resend = new Resend(api);
+  const resend = new Resend('re_GVVybwTW_6wVBL1GzVSu97kjh76KwQuid');
 
   console.log(resend)
  
