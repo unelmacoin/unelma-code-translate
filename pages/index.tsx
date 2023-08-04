@@ -7,6 +7,8 @@ import Head from 'next/head';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { IoMdSwap } from 'react-icons/io';
 import FeedbackForm from '@/components/FeedbackForm';
+import { env } from 'process';
+
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -19,7 +21,13 @@ export default function Home() {
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
   const [modal, setModal] = useState<boolean>(false);
+//test
 
+
+  const API:string = env.REACT_APP_RESEND || 'not found'
+  const API2:string = env.OPENAI_API_KEY || 'not found for 2'
+
+  console.log(API, 'api2',API2)
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
 
