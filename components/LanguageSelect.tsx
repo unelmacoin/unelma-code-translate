@@ -3,16 +3,20 @@ import type { FC } from 'react';
 interface Props {
   language: string;
   onChange: (language: string) => void;
+  isDark:boolean;
 }
 
-export const LanguageSelect: FC<Props> = ({ language, onChange }) => {
+export const LanguageSelect: FC<Props> = ({ language, onChange ,isDark}) => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value);
+    
   };
+  const bg = isDark ? 'bg-[#1F2937]': 'bg-[#d7d4d7]';
+  const text = isDark ? 'text-neutral-200': 'text-black';
 
   return (
     <select
-      className="w-full rounded-md bg-[#1F2937] px-4 py-2 text-neutral-200"
+      className = {`w-full rounded-md px-4 py-2 ${bg} ${text} transition-all duration-300`}
       value={language}
       onChange={handleChange}
     >

@@ -2,6 +2,7 @@ import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
+import ThemeButton from '@/components/ThemeButton';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
+  const [isDark,setIsDark] = useState<boolean>(true);
 
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
@@ -119,10 +121,15 @@ export default function Home() {
     setInputCode(outputCode);
     setOutputCode(inputCode)
   };
-
-
+const toggleDarkMode = () => {
+setIsDark(!isDark)
+localStorage.setItem('unelTheme', JSON.stringify(isDark));
+}
+  // const bg = isDark ? 'bg-[#1F2937] ': 'bg-[#FFFFFF]';
+  // const text = isDark ? 'text-neutral-200 ': 'text-black';
+  
   return (
-    <>
+    <div className = {isDark ? 'text-neutral-200 bg-[#0E1117] transition-all duration-300': 'bg-[#FFFFFF] text-black transition-all duration-300'}>
       <Head>
         <title>Unelma-Code Translator</title>
         <meta
@@ -132,7 +139,14 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
+     
+      <div className="flex h-full min-h-screen flex-col items-center px-4 pb-20 sm:px-10">
+        <div className='flex flex-row-reverse w-11/12'>
+      <ThemeButton 
+          isDark = {isDark}
+          toggleDarkMode = {toggleDarkMode}
+      />
+        </div>
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
           <div className="text-4xl font-bold">Unelma-Code Translator</div>
         </div>
@@ -152,6 +166,7 @@ export default function Home() {
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
           <div className="max-h-200 flex flex-col  space-y-2 sm:w-2/4">
             <div className="text-center text-xl font-bold">Input</div>
+ 
 
             <LanguageSelect
               language={inputLanguage}
@@ -161,10 +176,12 @@ export default function Home() {
                 setInputCode('');
                 setOutputCode('');
               }}
+              isDark = {isDark}
             />
 
             {inputLanguage === 'Natural Language' ? (
               <TextBlock
+              isDark={isDark}
                 text={inputCode}
                 editable={!loading}
                 onChange={(value) => {
@@ -176,9 +193,11 @@ export default function Home() {
               <CodeBlock
                 code={inputCode}
                 editable={!loading}
+                isDark = {isDark}
                 onChange={(value) => {
                   setInputCode(value);
                   setHasTranslated(false);
+
                 }}
               />
             )}
@@ -193,16 +212,17 @@ export default function Home() {
                 setOutputLanguage(value);
                 setOutputCode('');
               }}
+              isDark = {isDark}
             />
 
             {outputLanguage === 'Natural Language' ? (
-              <TextBlock text={outputCode} />
+              <TextBlock text={outputCode}   isDark = {isDark}/>
             ) : (
-              <CodeBlock code={outputCode} />
+              <CodeBlock code={outputCode}   isDark = {isDark} />
             )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
