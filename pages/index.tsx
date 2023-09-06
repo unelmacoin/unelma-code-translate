@@ -6,10 +6,11 @@ import ThemeButton from '@/components/ThemeButton';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import { IoMdSwap } from 'react-icons/io';
+import { IoMdSwap, IoIosMoon } from 'react-icons/io';
 
 export default function Home() {
-  const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
+  const [inputLanguage, setInputLanguage] =
+    useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('Python');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
@@ -17,7 +18,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
-  const [isDark,setIsDark] = useState<boolean>(true);
+  const [isDark, setIsDark] = useState<boolean>(true);
 
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
@@ -99,13 +100,12 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
-    }, 2000)
+    }, 2000);
 
-    return () => clearTimeout(delayDebounceFn)
+    return () => clearTimeout(delayDebounceFn);
   }, [outputLanguage, inputCode]);
 
   useEffect(() => {
@@ -119,17 +119,22 @@ export default function Home() {
     setInputLanguage(outputLanguage);
     setOutputLanguage(inputLanguage);
     setInputCode(outputCode);
-    setOutputCode(inputCode)
+    setOutputCode(inputCode);
   };
-const toggleDarkMode = () => {
-setIsDark(!isDark)
-localStorage.setItem('unelTheme', JSON.stringify(isDark));
-}
-  // const bg = isDark ? 'bg-[#1F2937] ': 'bg-[#FFFFFF]';
-  // const text = isDark ? 'text-neutral-200 ': 'text-black';
-  
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+    localStorage.setItem('unelTheme', JSON.stringify(isDark));
+  };
+ 
+
   return (
-    <div className = {isDark ? 'text-neutral-200 bg-[#0E1117] transition-all duration-300': 'bg-[#FFFFFF] text-black transition-all duration-300'}>
+    <div
+      className={
+        isDark
+          ? 'bg-[#0E1117] text-neutral-200 transition-all duration-300'
+          : 'bg-[#FFFFFF] text-black transition-all duration-300'
+      }
+    >
       <Head>
         <title>Unelma-Code Translator</title>
         <meta
@@ -139,34 +144,34 @@ localStorage.setItem('unelTheme', JSON.stringify(isDark));
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-     
+
       <div className="flex h-full min-h-screen flex-col items-center px-4 pb-20 sm:px-10">
-        <div className='flex flex-row-reverse w-11/12'>
-      <ThemeButton 
-          isDark = {isDark}
-          toggleDarkMode = {toggleDarkMode}
-      />
+        <div className="flex w-11/12 flex-row-reverse">
+          <ThemeButton isDark={isDark} toggleDarkMode={toggleDarkMode} />
         </div>
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
           <div className="text-4xl font-bold">Unelma-Code Translator</div>
         </div>
 
         <div className="mt-2 flex items-center space-x-2">
-          <ModelSelect model={model} onChange={(value) => setModel(value)} />
+          <ModelSelect
+            model={model}
+            isDark={isDark}
+            onChange={(value) => setModel(value)}
+          />
         </div>
 
         <div className="mt-2 text-center text-xs">
           {loading
             ? 'Translating...'
             : hasTranslated
-              ? 'Output copied to clipboard!'
-              : 'Enter some code in Input'}
+            ? 'Output copied to clipboard!'
+            : 'Enter some code in Input'}
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
           <div className="max-h-200 flex flex-col  space-y-2 sm:w-2/4">
             <div className="text-center text-xl font-bold">Input</div>
- 
 
             <LanguageSelect
               language={inputLanguage}
@@ -176,12 +181,12 @@ localStorage.setItem('unelTheme', JSON.stringify(isDark));
                 setInputCode('');
                 setOutputCode('');
               }}
-              isDark = {isDark}
+              isDark={isDark}
             />
 
             {inputLanguage === 'Natural Language' ? (
               <TextBlock
-              isDark={isDark}
+                isDark={isDark}
                 text={inputCode}
                 editable={!loading}
                 onChange={(value) => {
@@ -193,16 +198,20 @@ localStorage.setItem('unelTheme', JSON.stringify(isDark));
               <CodeBlock
                 code={inputCode}
                 editable={!loading}
-                isDark = {isDark}
+                isDark={isDark}
                 onChange={(value) => {
                   setInputCode(value);
                   setHasTranslated(false);
-
                 }}
               />
             )}
           </div>
-          <IoMdSwap onClick={handleSwap} className='mt-10  text-neutral-200 text-3xl cursor-pointer hover:opacity-80'/>
+          <IoMdSwap
+            onClick={handleSwap}
+            className={`mt-10 cursor-pointer text-3xl hover:opacity-80 ${
+              isDark ? 'text-white-700' : 'text-black'
+            }`}
+          />
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
             <div className="text-center text-xl font-bold">Output</div>
 
@@ -212,13 +221,13 @@ localStorage.setItem('unelTheme', JSON.stringify(isDark));
                 setOutputLanguage(value);
                 setOutputCode('');
               }}
-              isDark = {isDark}
+              isDark={isDark}
             />
 
             {outputLanguage === 'Natural Language' ? (
-              <TextBlock text={outputCode}   isDark = {isDark}/>
+              <TextBlock text={outputCode} isDark={isDark} />
             ) : (
-              <CodeBlock code={outputCode}   isDark = {isDark} />
+              <CodeBlock code={outputCode} isDark={isDark} />
             )}
           </div>
         </div>
