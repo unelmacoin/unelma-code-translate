@@ -6,7 +6,7 @@ import ThemeButton from '@/components/ThemeButton';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import { IoMdSwap, IoIosMoon } from 'react-icons/io';
+import { IoMdSwap } from 'react-icons/io';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -20,6 +20,13 @@ export default function Home() {
   const [apiKey, setApiKey] = useState<string>('');
   const [isDark, setIsDark] = useState<boolean>(true);
 
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('unelTheme');
+    if (storedTheme !== null) {
+      setIsDark(JSON.parse(storedTheme));
+    }
+  }, [])
+  
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
 
@@ -122,10 +129,10 @@ export default function Home() {
     setOutputCode(inputCode);
   };
   const toggleDarkMode = () => {
-    setIsDark(!isDark);
-    localStorage.setItem('unelTheme', JSON.stringify(isDark));
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
   };
- 
 
   return (
     <div
@@ -235,3 +242,5 @@ export default function Home() {
     </div>
   );
 }
+
+
