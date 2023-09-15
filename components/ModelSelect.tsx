@@ -12,7 +12,6 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
   const textColor = isDark ? 'text-neutral-200 ': 'text-black';
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value as OpenAIModel);
-    console.log(isDark)
   };
 
   return (
