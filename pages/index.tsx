@@ -6,6 +6,7 @@ import ThemeButton from '@/components/ThemeButton';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import Nav from '@/components/Nav'
 import { IoMdSwap } from 'react-icons/io';
 
 export default function Home() {
@@ -135,6 +136,15 @@ export default function Home() {
   };
 
   return (
+    <div>
+      <div
+       className={
+        isDark
+          ? 'bg-[#0E1117] text-neutral-200 transition-all duration-300'
+          : 'bg-[#FFFFFF] text-black transition-all duration-300'
+      }
+      >  <Nav/></div>
+  
     <div
       className={
         isDark
@@ -152,7 +162,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex h-full min-h-screen flex-col items-center px-4 pb-20 sm:px-10">
+      <div className="flex h-full min-h-85 flex-col items-center px-4 pb-20 sm:px-10">
         <div className="flex w-11/12 flex-row-reverse">
           <ThemeButton isDark={isDark} toggleDarkMode={toggleDarkMode} />
         </div>
@@ -240,7 +250,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </div>
   );
 }
-
-
