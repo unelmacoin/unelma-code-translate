@@ -140,8 +140,8 @@ export default function Home() {
       <div
        className={
         isDark
-          ? 'bg-[#0E1117] text-neutral-200 transition-all duration-300'
-          : 'bg-[#FFFFFF] text-black transition-all duration-300'
+          ? 'bg-gradient-to-r from-[#007bff] ... text-black  transition-all duration-300'
+          : 'bg-gradient-to-r from-[#e83e8c] ... text-black transition-all duration-300'
       }
       >  <Nav/></div>
   
@@ -162,7 +162,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex h-full min-h-85 flex-col items-center px-4 pb-20 sm:px-10">
+      <div className="flex h-full min-h-85
+ flex-col items-center px-4 pb-20 sm:px-10">
         <div className="flex w-11/12 flex-row-reverse">
           <ThemeButton isDark={isDark} toggleDarkMode={toggleDarkMode} />
         </div>
