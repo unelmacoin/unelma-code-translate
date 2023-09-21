@@ -141,7 +141,7 @@ export default function Home() {
        className={
         isDark
           ? 'bg-gradient-to-r from-[#007bff] ... text-black  transition-all duration-300'
-          : 'bg-gradient-to-r from-[#e83e8c] ... text-black transition-all duration-300'
+          : 'bg-gradient-to-l from-[#e83e8c] ... text-black transition-all duration-300'
       }
       >  <Nav/></div>
   
