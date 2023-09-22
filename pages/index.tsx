@@ -140,8 +140,8 @@ export default function Home() {
       <div
        className={
         isDark
-          ? 'bg-gradient-to-r from-[#007bff] ... text-black  transition-all duration-300'
-          : 'bg-gradient-to-l from-[#e83e8c] ... text-black transition-all duration-300'
+          ? 'bg-gray-900 text-white py-4   transition-all duration-300'
+          : 'bg-gray-100 shadow-md py-4 text-black transition-all duration-300'
       }
       >  <Nav/></div>
   
@@ -153,7 +153,7 @@ export default function Home() {
       }
     >
       <Head>
-        <title>Unelma-Code Translator</title>
+        <title className='pt-2'>Unelma-Code Translator</title>
         <meta
           name="description"
           content="Use AI to translate code from one language to another."
