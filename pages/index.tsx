@@ -6,7 +6,9 @@ import ThemeButton from '@/components/ThemeButton';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import Nav from '@/components/Nav'
 import { IoMdSwap } from 'react-icons/io';
+
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -133,17 +135,36 @@ export default function Home() {
     setIsDark(newIsDark);
     localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
   };
-
+  const bodyBg = isDark === true ? 'linear-gradient(130deg, #ad90c1 0%, rgb(3, 0, 84) 100%), linear-gradient(130deg, #09007b 0%, rgba(15, 0, 66, 0) 30%), linear-gradient(129.96deg, rgb(255, 47, 47) 10.43%, rgb(0, 4, 96) 92.78%), radial-gradient(100% 246.94% at 100% 0%, rgb(255, 255, 255) 0%, rgba(37, 0, 66, 0.8) 100%), linear-gradient(121.18deg, rgb(20, 0, 255) 0.45%, rgb(27, 0, 62) 100%), linear-gradient(154.03deg, rgb(206, 0, 0) 0%, rgb(255, 0, 61) 74.04%), linear-gradient(341.1deg, rgb(178, 91, 186) 7.52%, rgb(16, 0, 119) 77.98%), linear-gradient(222.34deg, rgb(169, 0, 0) 12.99%, rgb(0, 255, 224) 87.21%), linear-gradient(150.76deg, rgb(183, 213, 0) 15.35%, rgb(34, 0, 170) 89.57%)' 
+  : 
+  'linear-gradient(125.95deg, #C700BF 10.95%, #7DA900 100%), linear-gradient(341.1deg, #00C2FF 7.52%, #4E00B1 77.98%), linear-gradient(222.34deg, #A90000 12.99%, #00FFE0 87.21%), linear-gradient(130.22deg, #8FA600 18.02%, #5A31FF 100%)'
+  const navBg =  "#00000021"
+  
   return (
+    <div style={{background:bodyBg
+        
+    }}>
+      <div 
+   style={{background:navBg,
+        
+   }}
+       className={` ${isDark
+       ? ' text-white py-4 transition-all duration-300'
+       : 'py-4  transition-all duration-300'}`
+       
+      }
+      >  <Nav isDark={isDark}/></div>
+  
     <div
+    
       className={
         isDark
-          ? 'bg-[#0E1117] text-neutral-200 transition-all duration-300'
-          : 'bg-[#FFFFFF] text-black transition-all duration-300'
+          ? ' text-neutral-200 transition-all duration-300'
+          : ' text-black transition-all duration-300'
       }
     >
       <Head>
-        <title>Unelma-Code Translator</title>
+        <title className='pt-2'>Unelma-Code Translator</title>
         <meta
           name="description"
           content="Use AI to translate code from one language to another."
@@ -240,7 +261,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </div>
   );
 }
-
-
