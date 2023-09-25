@@ -7,6 +7,7 @@ import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Nav from '@/components/Nav'
+import Footer from '@/components/Footer';
 import { IoMdSwap } from 'react-icons/io';
 
 
@@ -261,6 +262,7 @@ export default function Home() {
         </div>
       </div>
     </div>
+    <Footer/>
     </div>
   );
 }
