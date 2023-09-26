@@ -22,10 +22,10 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
     >
       <div className="mb-3 flex  justify-between">
         <div>
-          <a className="h5" href="https://u16p.com/">
+          <a className=" text-xl" href="https://u16p.com/">
             <span className="mb-2">U16P</span>
           </a>
-          <div>Copyright © 2023 U16P.</div>
+          <div className=''>Copyright © 2023 U16P.</div>
         </div>
 
         <div className="mb-2 ">
@@ -39,7 +39,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
       <div className="row flex justify-between">
         <div className=" ">
           <ul className="m-0 flex flex-wrap">
-            <li className="mb-2 ">
+            <li className="mb-2 mr-4">
               <a href="https://u16p.com/affiliate">Affiliate</a>
             </li>
             <li className="mb-2">
