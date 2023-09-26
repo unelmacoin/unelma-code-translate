@@ -25,7 +25,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           <a className=" text-xl" href="https://u16p.com/">
             <span className="mb-2">U16P</span>
           </a>
-          <div className=''>Copyright © 2023 U16P.</div>
+          <div className='text-base'>Copyright © 2023 U16P.</div>
         </div>
 
         <div className="mb-2 ">
@@ -36,7 +36,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
         </div>
       </div>
 
-      <div className="row flex justify-between">
+      <div className="row text-base flex justify-between">
         <div className=" ">
           <ul className="m-0 flex flex-wrap">
             <li className="mb-2 mr-4">
@@ -50,7 +50,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           </ul>
         </div>
 
-        <div className="flex flex-wrap gap-1 ">
+        <div className="flex flex-wrap gap-2 mb-2">
           <a
             href="https://facebook.com/unelmaplatforms"
             target="_blank"
@@ -58,8 +58,8 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             title=""
           >
             <svg
-              width="32"
-              height="32"
+              width="26"
+              height="22"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -81,8 +81,8 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             title=""
           >
             <svg
-              width="32"
-              height="32"
+              width="26"
+              height="22"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -104,8 +104,8 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             title=""
           >
             <svg
-              width="32"
-              height="32"
+              width="26"
+              height="22"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -127,8 +127,8 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             title=""
           >
             <svg
-              width="32"
-              height="32"
+             width="26"
+             height="22"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -150,8 +150,8 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             title=""
           >
             <svg
-              width="32"
-              height="32"
+              width="26"
+              height="22"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -168,11 +168,11 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           </a>
         </div>
       </div>
-      <div className="d-inline play-store-badge">
+      <div className="d-inline play-store-badge ">
         <a href="https://play.google.com/store/apps/details?id=com.unelma.u16p">
           <img
             src="https://unelmapay.com.np/assets/sample/google-store.png"
-            className=" ml-auto mr-auto block h-10"
+            className=" ml-auto mr-auto block w-36 h-14"
           />
         </a>
       </div>
