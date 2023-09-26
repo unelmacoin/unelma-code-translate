@@ -175,9 +175,9 @@ export default function Home() {
       </Head>
 
       <div className="flex h-full min-h-screen flex-col items-center px-4 pb-20 sm:px-10">
-        <div className="flex w-11/12 flex-row-reverse">
+        {/* <div className="flex w-11/12 flex-row-reverse">
           <ThemeButton isDark={isDark} toggleDarkMode={toggleDarkMode} />
-        </div>
+        </div> */}
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
           <div className="text-4xl font-bold">Unelma-Code Translator</div>
         </div>
@@ -262,7 +262,7 @@ export default function Home() {
         </div>
       </div>
     </div>
-    <Footer/>
+    <Footer isDark={isDark} toggleDarkMode={toggleDarkMode}/>
     </div>
   );
 }
