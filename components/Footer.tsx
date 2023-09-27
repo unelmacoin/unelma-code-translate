@@ -29,7 +29,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             width:"auto",
             backgroundColor: isDark ? 'white' : 'black',
             color: isDark ? 'black' : 'white',
-            fontSize: '12px',
+            fontSize: '14px',
             display: 'flex',
     justifyContent: 'center',
     alignItems: 'center' 
@@ -43,7 +43,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             width:'auto',
             backgroundColor: isDark ? 'white' : 'black',
             color: isDark ? 'black' : 'white',
-            fontSize: '12px',
+            fontSize: '14px',
             display: 'flex',
     justifyContent: 'center',
     alignItems: 'center' 
