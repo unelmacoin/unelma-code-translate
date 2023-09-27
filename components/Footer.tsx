@@ -1,5 +1,6 @@
 import React, { MouseEventHandler } from 'react';
 
+import { Tooltip } from 'react-tooltip';
 import ThemeButton from '@/components/ThemeButton';
 
 interface themeBtn {
@@ -10,10 +11,10 @@ interface themeBtn {
 const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
   return (
     <div
-      className={`border-[#2f343c]
-             px-10
+      className={`border-t-2
+             border-[#2f343c]
+            px-10
             py-10
-            border-t-2
 
              ${
                isDark
@@ -21,23 +22,56 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
                  : 'bg-[#fff] text-[#6c7789] transition-all duration-300'
              }`}
     >
-      <div className="mb-3 sm:flex block sm:justify-between ">
+      <Tooltip
+        id="my-tooltip"
+        style={{
+            height:"26px",
+            width:"auto",
+            backgroundColor: isDark ? 'white' : 'black',
+            color: isDark ? 'black' : 'white',
+            fontSize: '12px',
+            display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center' 
+          }}
+      />
+
+<Tooltip
+        id="theme"
+        style={{
+            height:"30px",
+            width:'auto',
+            backgroundColor: isDark ? 'white' : 'black',
+            color: isDark ? 'black' : 'white',
+            fontSize: '12px',
+            display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center' 
+          }}
+          />
+      <div className="mb-3 block sm:flex sm:justify-between ">
         <div>
-          <a className=" text-xl  font-medium cursor-pointer hover:underline" href="https://u16p.com/">
+          <a
+            className=" cursor-pointer  text-xl font-medium hover:underline"
+            href="https://u16p.com/"
+          >
             <span className="mb-2">U16P</span>
           </a>
-          <div className='text-base'>Copyright © 2023 U16P.</div>
+          <div className="text-base">Copyright © 2023 U16P.</div>
         </div>
 
-        <div className="mb-2">
+        <div className="mb-2" data-tooltip-id="theme"
+            data-tooltip-content={isDark ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
+            
           <ThemeButton
             isDark={isDark}
             toggleDarkMode={toggleDarkMode}
+            
           />
         </div>
       </div>
 
-      <div className="sm:flex row-auto text-base block  justify-between">
+      <div className="row-auto block justify-between text-base sm:mt-4 sm:flex">
         <div className=" ">
           <ul className="m-0 flex flex-wrap">
             <li className="mb-2 mr-4 cursor-pointer hover:underline">
@@ -51,17 +85,17 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           </ul>
         </div>
 
-
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="mb-2 flex flex-wrap gap-2">
           <a
             href="https://facebook.com/unelmaplatforms"
             target="_blank"
-            data-toggle="tooltip"
+            data-tooltip-content="Facebook"
+            data-tooltip-id="my-tooltip"
             title=""
           >
             <svg
-              width="26"
-              height="22"
+              width="24"
+              height="20"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -79,12 +113,12 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           <a
             href="https://twitter.com/unelmaplatforms"
             target="_blank"
-            data-toggle="tooltip"
-            title=""
+            data-tooltip-content="Twitter"
+            data-tooltip-id="my-tooltip"
           >
             <svg
-              width="26"
-              height="22"
+              width="24"
+              height="20"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -102,12 +136,12 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           <a
             href="https://linkedin.com/company/unelma-platforms"
             target="_blank"
-            data-toggle="tooltip"
-            title=""
+            data-tooltip-content="Linkedin"
+            data-tooltip-id="my-tooltip"
           >
             <svg
-              width="26"
-              height="22"
+              width="24"
+              height="20"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -125,12 +159,12 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           <a
             href="https://wa.me/+9779849529607"
             target="_blank"
-            data-toggle="tooltip"
-            title=""
+            data-tooltip-content="Whatsapp"
+            data-tooltip-id="my-tooltip"
           >
             <svg
-             width="26"
-             height="22"
+              width="24"
+              height="20"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
@@ -148,12 +182,12 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           <a
             href="mailto:info@unelmaplatforms.com"
             target="_blank"
-            data-toggle="tooltip"
-            title=""
+            data-tooltip-content="Email"
+            data-tooltip-id="my-tooltip"
           >
             <svg
-              width="26"
-              height="22"
+              width="24"
+              height="20"
               viewBox="0 0 512 512"
               aria-hidden="true"
               focusable="false"
