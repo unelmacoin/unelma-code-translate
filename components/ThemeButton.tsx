@@ -10,8 +10,8 @@ interface themeBtn {
 const ThemeButton: React.FC<themeBtn>  = ({isDark,toggleDarkMode}) => {
 
   return (
-    <div className={`bg-${isDark ? 'black' : 'white'} text-${isDark ? 'white' : 'black'} transition-all duration-300 mt-6`}>
-      <div className="flex items-center justify-center">
+    <div className={`bg-${isDark ? 'black' : 'white'} text-${isDark ? 'white' : 'black'} transition-all duration-300 sm:mt-6 mt-2`}>
+      <div className="flex items-center sm:justify-center">
         <button
           onClick={toggleDarkMode}
           className={`rounded-full p- ${isDark ? '' : ''} hover:bg-${isDark ? 'yellow-400' : 'gray-600'}`}

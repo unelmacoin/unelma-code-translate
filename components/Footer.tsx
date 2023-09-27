@@ -10,25 +10,26 @@ interface themeBtn {
 const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
   return (
     <div
-      className={`border-gray-200
+      className={`border-[#2f343c]
              px-10
             py-10
-            text-[#a1abb5]
+            border-t-2
+
              ${
                isDark
-                 ? 'bg-[#131416]  transition-all duration-300'
-                 : 'bg-[#fff] transition-all duration-300'
+                 ? 'bg-[#131416] text-[#a1abb5] transition-all duration-300'
+                 : 'bg-[#fff] text-[#6c7789] transition-all duration-300'
              }`}
     >
-      <div className="mb-3 flex  justify-between">
+      <div className="mb-3 sm:flex block sm:justify-between ">
         <div>
-          <a className=" text-xl" href="https://u16p.com/">
+          <a className=" text-xl  font-medium cursor-pointer hover:underline" href="https://u16p.com/">
             <span className="mb-2">U16P</span>
           </a>
           <div className='text-base'>Copyright © 2023 U16P.</div>
         </div>
 
-        <div className="mb-2 ">
+        <div className="mb-2">
           <ThemeButton
             isDark={isDark}
             toggleDarkMode={toggleDarkMode}
@@ -36,19 +37,20 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
         </div>
       </div>
 
-      <div className="row text-base flex justify-between">
+      <div className="sm:flex row-auto text-base block  justify-between">
         <div className=" ">
           <ul className="m-0 flex flex-wrap">
-            <li className="mb-2 mr-4">
+            <li className="mb-2 mr-4 cursor-pointer hover:underline">
               <a href="https://u16p.com/affiliate">Affiliate</a>
             </li>
-            <li className="mb-2">
+            <li className="mb-2 cursor-pointer hover:underline">
               <a href="https://unelmaplatforms.com" target="_blank">
                 Powered by Unelma Platforms
               </a>
             </li>
           </ul>
         </div>
+
 
         <div className="flex flex-wrap gap-2 mb-2">
           <a
@@ -168,11 +170,11 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           </a>
         </div>
       </div>
-      <div className="d-inline play-store-badge ">
+      <div className="d-inline play-store-badge mt-4 ">
         <a href="https://play.google.com/store/apps/details?id=com.unelma.u16p">
           <img
             src="https://unelmapay.com.np/assets/sample/google-store.png"
-            className=" ml-auto mr-auto block w-36 h-14"
+            className=" ml-auto mr-auto block  h-12"
           />
         </a>
       </div>
