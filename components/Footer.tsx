@@ -12,9 +12,10 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
   return (
     <div
       className={`border-t-2
-             border-[#2f343c]
+             border-[#495058]
             px-10
             py-10
+            h-auto
 
              ${
                isDark
@@ -49,7 +50,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
     alignItems: 'center' 
           }}
           />
-      <div className="mb-3 block sm:flex sm:justify-between ">
+      <div className="mb-2 block sm:flex sm:justify-between ">
         <div>
           <a
             className=" cursor-pointer  text-xl font-medium hover:underline"
@@ -61,7 +62,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
         </div>
 
         <div className="mb-2" data-tooltip-id="theme"
-            data-tooltip-content={isDark ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
+            data-tooltip-content={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
             
           <ThemeButton
             isDark={isDark}

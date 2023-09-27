@@ -142,7 +142,8 @@ export default function Home() {
   const navBg = '#00000021';
 
   return (
-    <div style={{ background: bodyBg }}>
+    <div
+     style={{ background: bodyBg}}>
       <div
         style={{ background: navBg }}
         className={` ${
@@ -172,7 +173,7 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="flex h-full flex-col items-center px-4 pb-20 sm:px-10">
+        <div className="flex h-full min-h-min flex-col items-center px-4 pb-20 sm:px-10">
           <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
             <div className="text-4xl font-bold">Unelma-Code Translator</div>
           </div>
