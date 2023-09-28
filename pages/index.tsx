@@ -2,13 +2,13 @@ import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
-import ThemeButton from '@/components/ThemeButton';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { IoMdSwap } from 'react-icons/io';
+import ReactDOM from 'react-dom';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -28,6 +28,8 @@ export default function Home() {
       setIsDark(JSON.parse(storedTheme));
     }
   }, []);
+
+ 
 
   const handleTranslate = async () => {
     const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
@@ -141,7 +143,17 @@ export default function Home() {
       : 'linear-gradient(125.95deg, #C700BF 10.95%, #7DA900 100%), linear-gradient(341.1deg, #00C2FF 7.52%, #4E00B1 77.98%), linear-gradient(222.34deg, #A90000 12.99%, #00FFE0 87.21%), linear-gradient(130.22deg, #8FA600 18.02%, #5A31FF 100%)';
   const navBg = '#00000021';
 
+  const changeBodyBackgroundColor = (color:any) => {
+    document.body.style.backgroundColor = color;
+  };
+
+  useEffect(() => {
+    const backgroundColor = isDark ? '#131416' : '#fff';
+    changeBodyBackgroundColor(backgroundColor);
+  }, [isDark]);
+
   return (
+
     <div
      style={{ background: bodyBg}}>
       <div
@@ -163,7 +175,7 @@ export default function Home() {
             : ' text-black transition-all duration-300'
         }
       >
-        <Head>
+        <Head >
           <title className="pt-2">Unelma-Code Translator</title>
           <meta
             name="description"
@@ -173,7 +185,7 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="flex h-full min-h-min flex-col items-center px-4 pb-20 sm:px-10">
+        <div className="flex h-full min-h-fit flex-col items-center px-4 pb-20 sm:px-10">
           <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
             <div className="text-4xl font-bold">Unelma-Code Translator</div>
           </div>
@@ -260,5 +272,6 @@ export default function Home() {
       </div>
       <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
     </div>
+   
   );
 }
