@@ -16,13 +16,13 @@ const ThemeButton: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
         >
           {isDark ? (
             <div className='flex items-center'>
-              <IoIosMoon  color='#a1abb5' fontSize={22} />
-              <span className=" ml-2 text-[#a1abb5]">Dark</span>
+              <IoIosMoon  color='#a1abb5' fontSize={20} />
+              <span className=" text-sm ml-2 text-[#a1abb5]">Dark</span>
             </div>
           ) : (
             <div className='flex items-center'>
               <IoIosPartlySunny color='#6C7789' fontSize={22} />
-              <span className="ml-2">Light</span>
+              <span className="ml-2 text-sm ">Light</span>
             </div>
           )}
         </button>
