@@ -15,7 +15,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
              border-[#495058]
             px-10
             py-8
-            sm:h-12
+            sm:h-14
             h-28
             ${
                isDark
