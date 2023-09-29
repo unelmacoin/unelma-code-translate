@@ -14,9 +14,9 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
       className={`border-t-2
              border-[#495058]
             px-10
-            py-8
-            sm:h-14
-            h-28
+            py-11
+            
+            
             ${
                isDark
                  ? 'bg-[#131416] text-[#a1abb5] transition-all duration-300'
@@ -58,7 +58,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           >
             <span className="mb-2">U16P</span>
           </a>
-          <div className=" text-sm">Copyright © 2023 U16P.</div>
+          <div className=" text-base">Copyright © 2023 U16P.</div>
         </div>
 
         <div className="mb-2 h sm:mt-0 mt-2" data-tooltip-id="theme"
@@ -72,7 +72,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
         </div>
       </div>
 
-      <div className="row-auto block justify-between text-sm sm:mt-4 sm:flex ">
+      <div className="row-auto block justify-between text-base mt-4 sm:flex ">
         <div className=" ">
           <ul className="m-0 flex flex-wrap flex-col sm:flex-row">
             <li className="mb-2 mr-4 cursor-pointer  hover:underline">
@@ -86,7 +86,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           </ul>
         </div>
 
-        <div className="mb-2 sm:mt-0 mt-3 flex flex-wrap gap-2">
+        <div className="mb-2 sm:mt-0 mt-6 flex flex-wrap gap-2">
           <a
             href="https://facebook.com/unelmaplatforms"
             target="_blank"
@@ -205,11 +205,11 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           </a>
         </div>
       </div>
-      <div className=" pb-8 sm:mt-0 mt-4 ">
+      <div className=" sm:pb-0 pb-3 mt-3 ">
         <a href="https://play.google.com/store/apps/details?id=com.unelma.u16p">
           <img
             src="https://unelmapay.com.np/assets/sample/google-store.png"
-            className=" ml-auto mr-auto block  h-10"
+            className=" ml-auto mr-auto block  h-12"
           />
         </a>
       </div>
