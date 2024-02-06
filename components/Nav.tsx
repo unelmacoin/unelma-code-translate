@@ -14,8 +14,8 @@ const Nav: React.FC<themeBtn> = ({isDark}
         </a>
         <a className={
            isDark
-          ? 'text-[#FFFFFF80] '
-          : 'text-[#00000080] '} href="https://u16p.com/">
+          ? 'text-[#FFFFFF] '
+          : 'text-[#000000] '} href="https://u16p.com/">
           Back to U16P
         </a>
         </div>
