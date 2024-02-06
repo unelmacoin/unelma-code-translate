@@ -255,7 +255,7 @@ export default function Home() {
               />
 
               {outputLanguage === 'Natural Language' ? (
-                <TextBlock text={outputCode} isDark={isDark} />
+                <TextBlock text={outputCode} isDark={isDark} maxCharacterCount={5000} />
               ) : (
                 <CodeBlock code={outputCode} isDark={isDark} />
               )}
