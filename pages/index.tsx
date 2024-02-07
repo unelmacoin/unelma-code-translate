@@ -163,7 +163,6 @@ export default function Home() {
   }, [isDark]);
 
   return (
-
     <div
      style={{ background: bodyBg}}>
       <div
@@ -215,13 +214,14 @@ export default function Home() {
               ? 'Output copied to clipboard!'
               : 'Enter some code in Input'}
           </div>
+          <div className='flex my-4'>
+          
+          </div>
           
           <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
-          <div className='flex'>
-          <UploadImagesAndFiles onUpload={handleUpload}/>
-          </div>
-            <div className="max-h-200 flex flex-col  space-y-2 sm:w-2/4">
             
+            <div className="max-h-200 flex flex-col  space-y-2 sm:w-2/4">
+            <UploadImagesAndFiles onUpload={handleUpload}/>
               <div className="text-center text-xl font-bold">Input</div>
            
               <LanguageSelect
@@ -259,12 +259,12 @@ export default function Home() {
             </div>
             <IoMdSwap
               onClick={handleSwap}
-              className={`mt-10 cursor-pointer text-3xl hover:opacity-80 ${
+              className={`mt-20 cursor-pointer text-3xl hover:opacity-80 ${
                 isDark ? 'text-white-700' : 'text-black'
               }`}
             />
             <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
-              <div className="text-center text-xl font-bold">Output</div>
+              <div className="text-center mt-10 text-xl font-bold">Output</div>
 
               <LanguageSelect
                 language={outputLanguage}
