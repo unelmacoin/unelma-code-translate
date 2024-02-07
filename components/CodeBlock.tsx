@@ -15,16 +15,16 @@ interface Props {
 let myTheme = EditorView.theme({
   "&": {
     color:"#034" ,
-    backgroundColor: "#d7d4d7",
+    backgroundColor: "#fff",
   },
   ".cm-content": {
     caretColor: "#0e9"
   },
   "&.cm-focused .cm-cursor": {
-    borderLeftColor: "#0e9"
+    borderLeftColor: "#000"
   },
   ".cm-gutters": {
-    backgroundColor: "#d7d4d7",
+    backgroundColor: "#fff",
     color: "black",
     border: "none"
   }

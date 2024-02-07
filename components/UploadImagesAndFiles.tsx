@@ -22,7 +22,7 @@ const UploadImagesAndFiles: React.FC<UploadImagesAndFilesProps> = ({ onUpload })
   };
 
   return (
-    <div className='flex flex-row justify-center space-x-4'>
+    <div className='flex flex-row space-x-4'>
       <button className='flex items-center text-md cursor-pointer' onClick={() => document.getElementById('image-upload')?.click()}>
         <IoIosImage size={32} />
         Image
