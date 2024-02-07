@@ -13,7 +13,7 @@ export const TextBlock: React.FC<Props> = ({
   isDark,
   maxCharacterCount = 5000,
 }) => {
-  const bg = isDark ? 'bg-[#1A1B26]': 'bg-[#d7d4d7]';
+  const bg = isDark ? 'bg-[#1A1B26]': 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ': 'text-black';
   return (
     <div style={{ position: 'relative' }}>
