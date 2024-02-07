@@ -9,6 +9,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { IoMdSwap } from 'react-icons/io';
 import ReactDOM from 'react-dom';
+import HistoryButton from '@/components/HistoryButton';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -21,6 +22,7 @@ export default function Home() {
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
   const [isDark, setIsDark] = useState<boolean>(true);
+  const [history, setHistory] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('unelTheme');
@@ -129,6 +131,18 @@ export default function Home() {
     setIsDark(newIsDark);
     localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
   };
+
+  const handleSave = () =>{
+    setHistory((prevHistory) => {
+      const newHistory = new Set(prevHistory);
+      newHistory.add(inputCode);
+      return newHistory;
+    });
+  }
+  const handleHistorySelect = (value:string) =>{
+  setInputCode(value)
+  }
+
   const bodyBg =
     isDark === true
       ? 'linear-gradient(130deg, #ad90c1 0%, rgb(3, 0, 84) 100%), linear-gradient(130deg, #09007b 0%, rgba(15, 0, 66, 0) 30%), linear-gradient(129.96deg, rgb(255, 47, 47) 10.43%, rgb(0, 4, 96) 92.78%), radial-gradient(100% 246.94% at 100% 0%, rgb(255, 255, 255) 0%, rgba(37, 0, 66, 0.8) 100%), linear-gradient(121.18deg, rgb(20, 0, 255) 0.45%, rgb(27, 0, 62) 100%), linear-gradient(154.03deg, rgb(206, 0, 0) 0%, rgb(255, 0, 61) 74.04%), linear-gradient(341.1deg, rgb(178, 91, 186) 7.52%, rgb(16, 0, 119) 77.98%), linear-gradient(222.34deg, rgb(169, 0, 0) 12.99%, rgb(0, 255, 224) 87.21%), linear-gradient(150.76deg, rgb(183, 213, 0) 15.35%, rgb(34, 0, 170) 89.57%)'
@@ -261,7 +275,11 @@ export default function Home() {
               )}
             </div>
           </div>
+          <div className='flex justify-center mt-4'>
+        <HistoryButton onSave={handleSave} history={[...history]} onSelect={handleHistorySelect}/>
+      </div>
         </div>
+        
       </div>
       <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
     </div>
