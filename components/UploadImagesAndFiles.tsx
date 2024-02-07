@@ -23,13 +23,13 @@ const UploadImagesAndFiles: React.FC<UploadImagesAndFilesProps> = ({ onUpload })
 
   return (
     <div className='flex flex-row space-x-4'>
-      <button className='flex items-center text-md cursor-pointer' onClick={() => document.getElementById('image-upload')?.click()}>
+      <button className='flex items-center text-md cursor-pointer' onClick={() => document.getElementById('image-upload')?.click()} title="Upload an image to translate your code">
         <IoIosImage size={32} />
         Image
       </button>
       <input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
       
-      <button className='flex items-center text-md cursor-pointer' onClick={() => document.getElementById('file-upload')?.click()}>
+      <button className='flex items-center text-md cursor-pointer' onClick={() => document.getElementById('file-upload')?.click()} title="Upload a file to translate your code">
         <FaFile size={32} />
         File
       </button>
