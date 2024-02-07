@@ -22,7 +22,7 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSave, history, onSelect
         {isExpanded ? "" : ""}
       </button>
       {isExpanded && (
-        <ul className="absolute top-24 right-12 w-72 h-4/5 overflow-y-auto" style={{ maxHeight: "80vh" }}>
+        <ul className="absolute top-24 right-12 w-72 h-4/5 overflow-y-auto cursor-pointer" style={{ maxHeight: "80vh" }}>
           {history.map((item, index) => (
             <li key={index} onClick={() => onSelect(item)}>
               {item}
