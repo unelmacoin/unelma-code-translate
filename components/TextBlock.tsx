@@ -23,7 +23,8 @@ export const TextBlock: React.FC<Props> = ({
         value={text}
         onChange={(e) => onChange(e.target.value)}
         disabled={!editable}
-        maxLength={5000}
+        maxLength={maxCharacterCount}
+        autoFocus
       />
       <div
         className="flex justify-end absolute bottom-2 right-3"
