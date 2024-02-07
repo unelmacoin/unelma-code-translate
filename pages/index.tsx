@@ -32,19 +32,11 @@ export default function Home() {
  
 
   const handleTranslate = async () => {
-    const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
 
-    if (inputLanguage === outputLanguage) {
-      alert('Please select different languages.');
+     if (inputLanguage === outputLanguage) {
+       alert('Please select different languages.');
       return;
-    }
-
-    if (inputCode.length > maxCodeLength) {
-      alert(
-        `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
-      );
-      return;
-    }
+     }
 
     setLoading(true);
     setOutputCode('');
@@ -226,6 +218,7 @@ export default function Home() {
                   isDark={isDark}
                   text={inputCode}
                   editable={!loading}
+                  maxCharacterCount={5000}
                   onChange={(value) => {
                     setInputCode(value);
                     setHasTranslated(false);
@@ -262,7 +255,7 @@ export default function Home() {
               />
 
               {outputLanguage === 'Natural Language' ? (
-                <TextBlock text={outputCode} isDark={isDark} />
+                <TextBlock text={outputCode} isDark={isDark} maxCharacterCount={5000} />
               ) : (
                 <CodeBlock code={outputCode} isDark={isDark} />
               )}
