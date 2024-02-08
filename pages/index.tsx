@@ -9,6 +9,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { IoMdSwap } from 'react-icons/io';
 import ReactDOM from 'react-dom';
+import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
 
 export default function Home() {
@@ -121,11 +122,25 @@ export default function Home() {
 
   const handleUpload = (file: File) => {
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      setInputCode(content);
-    };
+  reader.onload = async (event) => {
+    if (file.type.startsWith('image/')) {
+      const imageData = event.target?.result as ArrayBuffer;
+      const blob = new Blob([imageData], { type: 'image/*' });
+      const imageUrl = URL.createObjectURL(blob);
+
+      const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
+      setInputCode(text);
+      URL.revokeObjectURL(imageUrl);
+    } else {
+      setInputCode(event.target?.result as string);
+    }
+  };
+
+  if (file.type.startsWith('image/')) {
+    reader.readAsArrayBuffer(file);
+  } else {
     reader.readAsText(file);
+  }
   };
 
   const handleSwap = () => {
