@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaHistory } from "react-icons/fa";
 
 interface HistoryButtonProps {
@@ -10,10 +10,23 @@ interface HistoryButtonProps {
 
 const HistoryButton: React.FC<HistoryButtonProps> = ({ onSave, history, onSelect, isDark }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [historyList, setHistoryList] = useState<string[]>(history);
+  const [historyCleared, setHistoryCleared] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!historyCleared) {
+      setHistoryList(history);
+    }
+  }, [history, historyCleared]);
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
-    onSave()
+    onSave();
+  };
+
+  const handleClearHistory = () => {
+    setHistoryList([]);
+    setHistoryCleared(true);
   };
 
   return (
@@ -24,9 +37,13 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSave, history, onSelect
         {isExpanded ? "" : ""}
       </button>
       {isExpanded && (
-        <ul className={`absolute top-24 right-0 w-72 p-1 h-fit max-h-4/5 overflow-y-auto cursor-pointer ${isDark ? 'bg-slate-700' : 'bg-white'}`}>
-          {history.slice().reverse().map((item, index) => (
-            <li key={index} onClick={() => onSelect(item)} className="my-1">
+        <ul className={`absolute top-24 right-0 w-72 p-1 h-fit max-h-4/5 overflow-y-auto ${isDark ? 'bg-slate-700' : 'bg-white'}`}>
+          <h3 className="text-3xl bold">History</h3>
+          <hr/>
+          <button type="reset" onClick={handleClearHistory}>Clear history</button>
+          <hr className="mb-5"/>
+          {historyList.slice().reverse().map((item, index) => (
+            <li key={index} onClick={() => onSelect(item)} className="my-2 cursor-pointer">
               {item}
             </li>
           ))}
