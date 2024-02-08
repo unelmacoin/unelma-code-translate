@@ -11,7 +11,7 @@ export const LanguageSelect: FC<Props> = ({ language, onChange ,isDark}) => {
     onChange(e.target.value);
     
   };
-  const bg = isDark ? 'bg-[#1F2937]': 'bg-[#d7d4d7]';
+  const bg = isDark ? 'bg-[#1F2937]': 'bg-[#fff]';
   const text = isDark ? 'text-neutral-200': 'text-black';
 
   return (
