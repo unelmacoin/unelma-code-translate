@@ -35,7 +35,7 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark }) => {
 
   return (
     <div>
-      <button className="flex items-center text-md cursor-pointer" onClick={handleToggleExpand}>
+      <button className="flex items-center text-md cursor-pointer" onClick={handleToggleExpand} title="See your code translated history">
         <FaHistory size={32}/>
         History
         {isExpanded ? "" : ""}
