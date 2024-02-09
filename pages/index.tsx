@@ -240,7 +240,10 @@ export default function Home() {
           <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
             
             <div className="max-h-200 flex flex-col  space-y-2 sm:w-2/4">
+              <div className='flex space-x-4'>
             <UploadImagesAndFiles onUpload={handleUpload}/>
+            <HistoryButton onSelect={handleHistorySelect} isDark={isDark}/>
+            </div>
               <div className="text-center text-xl font-bold">Input</div>
            
               <LanguageSelect
@@ -302,9 +305,6 @@ export default function Home() {
               )}
             </div>
           </div>
-          <div className='flex justify-center mt-4'>
-        <HistoryButton onSelect={handleHistorySelect} isDark={isDark}/>
-      </div>
         </div>
         
       </div>
