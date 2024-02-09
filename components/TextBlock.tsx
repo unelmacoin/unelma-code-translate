@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 interface Props {
   text: string;
   editable?: boolean;
@@ -15,6 +17,14 @@ export const TextBlock: React.FC<Props> = ({
 }) => {
   const bg = isDark ? 'bg-[#1A1B26]': 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ': 'text-black';
+
+  // useEffect(() => {
+  //   const storedText = localStorage.getItem("textInput");
+  //   const updatedText = storedText ? JSON.parse(storedText) : [];
+  //   updatedText.push(text);
+  //   localStorage.setItem("textInput", JSON.stringify(updatedText));
+  // }, [text]);
+
   return (
     <div style={{ position: 'relative' }}>
       <textarea

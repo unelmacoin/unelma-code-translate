@@ -2,51 +2,61 @@ import React, { useState, useEffect } from "react";
 import { FaHistory } from "react-icons/fa";
 
 interface HistoryButtonProps {
-  onSave: () => void;
-  history: string[];
   onSelect: (value: string) => void;
   isDark: boolean;
 }
 
-const HistoryButton: React.FC<HistoryButtonProps> = ({ onSave, history, onSelect, isDark }) => {
+const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [historyList, setHistoryList] = useState<string[]>(history);
-  const [historyCleared, setHistoryCleared] = useState<boolean>(false);
+  const [historyList, setHistoryList] = useState<string[]>([]);
+  const [itemsToShow, setItemsToShow] = useState(10);
 
   useEffect(() => {
-    if (!historyCleared) {
-      setHistoryList(history);
+    const storedHistory = localStorage.getItem("userHistory");
+    if (storedHistory) {
+      setHistoryList(JSON.parse(storedHistory).reverse());
+    } else {
+      setHistoryList([]); 
     }
-  }, [history, historyCleared]);
+  }, []);
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
-    onSave();
   };
 
   const handleClearHistory = () => {
     setHistoryList([]);
-    setHistoryCleared(true);
+    localStorage.removeItem("textInput");
   };
+
+  const handleMore = () =>{
+  setItemsToShow((prevItems) => prevItems +10)
+  }
 
   return (
     <div>
       <button className="flex items-center text-md cursor-pointer" onClick={handleToggleExpand}>
-        <FaHistory size={32} />
+        <FaHistory size={32}/>
         History
         {isExpanded ? "" : ""}
       </button>
       {isExpanded && (
-        <ul className={`absolute top-24 right-0 w-72 p-1 h-fit max-h-4/5 overflow-y-auto ${isDark ? 'bg-slate-700' : 'bg-white'}`}>
+        <ul className={`absolute top-24 right-0 w-72 p-1 overflow-y-auto ${isDark ? 'bg-slate-700' : 'bg-white'}`} style={{maxHeight:'80vh'}}>
           <h3 className="text-3xl bold">History</h3>
           <hr/>
           <button type="reset" onClick={handleClearHistory}>Clear history</button>
           <hr className="mb-5"/>
-          {historyList.slice().reverse().map((item, index) => (
+          {historyList && historyList.slice(0, itemsToShow).map((item, index) => (
             <li key={index} onClick={() => onSelect(item)} className="my-2 cursor-pointer">
               {item}
             </li>
           ))}
+          {historyList.length > itemsToShow && (
+          <>
+          <hr className="mt-6"/>
+          <button type="submit" onClick={handleMore} className="mb-3" >See more history</button>
+          </>
+          )}
         </ul>
       )}
     </div>

@@ -94,6 +94,11 @@ export default function Home() {
     setLoading(false);
     setHasTranslated(true);
     copyToClipboard(code);
+
+    const updatedHistory = new Set([...history, inputCode]);
+  const mergedHistory = new Set([...updatedHistory, ...JSON.parse(localStorage.getItem("userHistory") || "[]")]);
+  setHistory(mergedHistory);
+  localStorage.setItem("userHistory", JSON.stringify([...mergedHistory]));
   };
 
   const copyToClipboard = (text: string) => {
@@ -132,9 +137,6 @@ export default function Home() {
     localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
   };
 
-  const handleSave = () =>{
-    setHistory(prevHistory => new Set([...prevHistory, inputCode]));
-  }
   const handleHistorySelect = (value:string) =>{
   setInputCode(value)
   }
@@ -272,7 +274,7 @@ export default function Home() {
             </div>
           </div>
           <div className='flex justify-center mt-4'>
-        <HistoryButton onSave={handleSave} history={[...history]} onSelect={handleHistorySelect} isDark={isDark}/>
+        <HistoryButton onSelect={handleHistorySelect} isDark={isDark}/>
       </div>
         </div>
         
