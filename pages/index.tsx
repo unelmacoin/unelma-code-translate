@@ -11,6 +11,7 @@ import { IoMdSwap } from 'react-icons/io';
 import ReactDOM from 'react-dom';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
+import { languages } from '@/components/LanguageSelect';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -122,26 +123,36 @@ export default function Home() {
 
   const handleUpload = (file: File) => {
     const reader = new FileReader();
-  reader.onload = async (event) => {
+    reader.onload = async (event) => {
+        if (file.type.startsWith('image/')) {
+            const imageData = event.target?.result as ArrayBuffer;
+            const blob = new Blob([imageData], { type: 'image/*' });
+            const imageUrl = URL.createObjectURL(blob);
+
+            const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
+            setInputCode(text);
+            setInputLanguage('Natural Language');
+            URL.revokeObjectURL(imageUrl);
+        } else {
+            setInputCode(event.target?.result as string);
+            const fileExtension = file.name.split('.').pop()?.toLowerCase();
+            if (fileExtension) {
+                const detectedLanguage = languages.find(lang => lang.value.toLowerCase() === fileExtension);
+                if (detectedLanguage) {
+                    setInputLanguage(detectedLanguage.value);
+                } else {
+                    setInputLanguage("Natural Language");
+                }
+            }
+        }
+    };
+
     if (file.type.startsWith('image/')) {
-      const imageData = event.target?.result as ArrayBuffer;
-      const blob = new Blob([imageData], { type: 'image/*' });
-      const imageUrl = URL.createObjectURL(blob);
-
-      const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
-      setInputCode(text);
-      URL.revokeObjectURL(imageUrl);
+        reader.readAsArrayBuffer(file);
     } else {
-      setInputCode(event.target?.result as string);
+        reader.readAsText(file);
     }
-  };
-
-  if (file.type.startsWith('image/')) {
-    reader.readAsArrayBuffer(file);
-  } else {
-    reader.readAsText(file);
-  }
-  };
+};
 
   const handleSwap = () => {
     setInputLanguage(outputLanguage);
