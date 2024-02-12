@@ -16,7 +16,7 @@ import { languages } from '@/components/LanguageSelect';
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
     useState<string>('Natural Language');
-  const [outputLanguage, setOutputLanguage] = useState<string>('Python');
+  const [outputLanguage, setOutputLanguage] = useState<string>('Py');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
   const [model, setModel] = useState<OpenAIModel>('gpt-3.5-turbo');
