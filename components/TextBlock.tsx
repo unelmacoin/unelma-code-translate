@@ -18,15 +18,8 @@ export const TextBlock: React.FC<Props> = ({
   const bg = isDark ? 'bg-[#1A1B26]': 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ': 'text-black';
 
-  // useEffect(() => {
-  //   const storedText = localStorage.getItem("textInput");
-  //   const updatedText = storedText ? JSON.parse(storedText) : [];
-  //   updatedText.push(text);
-  //   localStorage.setItem("textInput", JSON.stringify(updatedText));
-  // }, [text]);
-
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="relative">
       <textarea
         className={`min-h-[500px] ${bg} w-full p-4 text-[15px] focus:outline-none ${textColor} transition-all duration-300`}
         style={{ resize: 'none' }}

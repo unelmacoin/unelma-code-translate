@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FaHistory } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
 interface HistoryButtonProps {
   onSelect: (value: string) => void;
   isDark: boolean;
+  onExpand: () => void;
 }
 
-const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark }) => {
+const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpand }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [historyList, setHistoryList] = useState<string[]>([]);
   const [itemsToShow, setItemsToShow] = useState(10);
@@ -20,8 +22,14 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark }) => {
     }
   }, []);
 
+  const handleCloseWindow = () => {
+    setIsExpanded(!isExpanded)
+    onExpand();
+  }
+
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
+    onExpand();
   };
 
   const handleClearHistory = () => {
@@ -41,19 +49,25 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark }) => {
         {isExpanded ? "" : ""}
       </button>
       {isExpanded && (
-        <ul className={`absolute top-24 right-0 w-72 p-1 overflow-y-auto ${isDark ? 'bg-slate-700' : 'bg-white'}`} style={{maxHeight:'80vh'}}>
+        <ul className={`absolute top-24 z-50 lg:mx-4 md:mx-2 right-0 w-full md:w-80 lg:w-96 p-2 overflow-y-auto overflow-x-hidden ${isDark ? 'bg-slate-700' : 'bg-white'}`} style={{maxHeight:'55rem'}}>
+          <div className="flex justify-between items-center">
           <h3 className="text-3xl bold">History</h3>
+          <button onClick={handleCloseWindow}>
+            <IoClose size={28} />
+          </button>
+          </div>
           <hr/>
           <button type="reset" onClick={handleClearHistory}>Clear history</button>
           <hr className="mb-5"/>
           {historyList && historyList.slice(0, itemsToShow).map((item, index) => (
             <li key={index} onClick={() => onSelect(item)} className="my-2 cursor-pointer">
               {item}
+              <hr />
             </li>
           ))}
+          
           {historyList.length > itemsToShow && (
           <>
-          <hr className="mt-6"/>
           <button type="submit" onClick={handleMore} className="mb-3" >See more history</button>
           </>
           )}
