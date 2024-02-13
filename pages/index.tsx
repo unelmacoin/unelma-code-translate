@@ -11,6 +11,8 @@ import { IoMdSwap } from 'react-icons/io';
 import ReactDOM from 'react-dom';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -25,13 +27,15 @@ export default function Home() {
   const [isDark, setIsDark] = useState<boolean>(true);
 
   useEffect(() => {
+    toast.info("Enter or upload some code in Input");
+  }, []);
+
+  useEffect(() => {
     const storedTheme = localStorage.getItem('unelTheme');
     if (storedTheme !== null) {
       setIsDark(JSON.parse(storedTheme));
     }
   }, []);
-
- 
 
   const handleTranslate = async () => {
 
@@ -85,15 +89,14 @@ export default function Home() {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
-
       code += chunkValue;
-
-      setOutputCode((prevCode) => prevCode + chunkValue);
+      setOutputCode((prevCode) => prevCode + chunkValue); 
     }
 
     setLoading(false);
     setHasTranslated(true);
     copyToClipboard(code);
+    
   };
 
   const copyToClipboard = (text: string) => {
@@ -104,7 +107,6 @@ export default function Home() {
     document.execCommand('copy');
     document.body.removeChild(el);
   };
-
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
@@ -113,6 +115,7 @@ export default function Home() {
     return () => clearTimeout(delayDebounceFn);
   }, [outputLanguage, inputCode]);
 
+
   useEffect(() => {
     const apiKey = process.env.OPENAI_API_KEY;
     if (apiKey) {
@@ -120,6 +123,12 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(()=>{
+    if(loading){
+      toast.info("Translating...")
+    }
+  }, [loading])
+ 
   const handleUpload = (file: File) => {
     const reader = new FileReader();
   reader.onload = async (event) => {
@@ -134,6 +143,7 @@ export default function Home() {
     } else {
       setInputCode(event.target?.result as string);
     }
+    setHasTranslated(!hasTranslated)
   };
 
   if (file.type.startsWith('image/')) {
@@ -163,12 +173,16 @@ export default function Home() {
   const changeBodyBackgroundColor = (color:any) => {
     document.body.style.backgroundColor = color;
   };
-
   useEffect(() => {
     const backgroundColor = isDark ? '#131416' : '#fff';
     changeBodyBackgroundColor(backgroundColor);
   }, [isDark]);
 
+  useEffect(()=>{
+    if(hasTranslated){
+    toast.success("Your code is translated")
+    }
+  },[hasTranslated])
   return (
     <div
      style={{ background: bodyBg}}>
@@ -214,13 +228,13 @@ export default function Home() {
             />
           </div>
 
-          <div className="mt-2 text-center text-xs">
+          {/* <div className="mt-2 text-center text-xs">
             {loading
               ? 'Translating...'
               : hasTranslated
               ? 'Output copied to clipboard!'
               : 'Enter some code in Input'}
-          </div>
+          </div> */}
           <div className='flex my-4'>
           
           </div>
@@ -293,6 +307,7 @@ export default function Home() {
         </div>
       </div>
       <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
+      <ToastContainer autoClose={1000} style={{top:"5rem"}}/>
     </div>
    
   );
