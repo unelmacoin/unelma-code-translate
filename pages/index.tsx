@@ -9,6 +9,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { IoMdSwap } from 'react-icons/io';
 import ReactDOM from 'react-dom';
+import HistoryButton from '@/components/HistoryButton';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
 
@@ -23,6 +24,8 @@ export default function Home() {
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
   const [isDark, setIsDark] = useState<boolean>(true);
+  const [history, setHistory] = useState<Set<string>>(new Set());
+  const [historyExpand, setHistoryExpand] = useState<boolean>(false);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('unelTheme');
@@ -31,7 +34,9 @@ export default function Home() {
     }
   }, []);
 
- 
+ const handleHistoryExpand = ()=>{
+  setHistoryExpand(!historyExpand)
+ }
 
   const handleTranslate = async () => {
 
@@ -94,6 +99,11 @@ export default function Home() {
     setLoading(false);
     setHasTranslated(true);
     copyToClipboard(code);
+
+    const updatedHistory = new Set([...history, inputCode]);
+  const mergedHistory = new Set([...updatedHistory, ...JSON.parse(localStorage.getItem("userHistory") || "[]")]);
+  setHistory(mergedHistory);
+  localStorage.setItem("userHistory", JSON.stringify([...mergedHistory]));
   };
 
   const copyToClipboard = (text: string) => {
@@ -154,6 +164,11 @@ export default function Home() {
     setIsDark(newIsDark);
     localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
   };
+
+  const handleHistorySelect = (value:string) =>{
+  setInputCode(value)
+  }
+
   const bodyBg =
     isDark === true
       ? '#000'
@@ -201,12 +216,12 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="flex h-full min-h-fit flex-col items-center px-4 pb-20 sm:px-10">
-          <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
+        <div className={`flex h-full min-h-fit flex-col px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
+          <div className={`flex flex-col ${historyExpand?"md:items-start":""}justify-center mt-20 lg:mt-10 md:mt-10`}>
             <div className="text-4xl font-bold">Unelma-Code Translator</div>
           </div>
 
-          <div className="mt-2 flex items-center space-x-2">
+          <div className={`mt-2 flex ${historyExpand?"itmes-start lg:items-center":"items-center"}justify-center  space-x-2`}>
             <ModelSelect
               model={model}
               isDark={isDark}
@@ -214,7 +229,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="mt-2 text-center text-xs">
+          <div className={`mt-2 ${historyExpand?"":"text-center"} text-xs`}>
             {loading
               ? 'Translating...'
               : hasTranslated
@@ -225,10 +240,12 @@ export default function Home() {
           
           </div>
           
-          <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
-            
-            <div className="max-h-200 flex flex-col  space-y-2 sm:w-2/4">
+          <div className={`mt-6 flex w-full max-w-[1200px] flex-col lg:flex-row justify-center sm:space-x-4 ${historyExpand? "lg:w-2/3 md:flex-col items-center md:items-start": "md:flex-row"}`}>
+            <div className="max-h-200 w-full flex flex-col space-y-2 sm:w-2/4">
+              <div className='flex space-x-4'>
             <UploadImagesAndFiles onUpload={handleUpload}/>
+            <HistoryButton onSelect={handleHistorySelect} onExpand={handleHistoryExpand} isDark={isDark}/>
+            </div>
               <div className="text-center text-xl font-bold">Input</div>
            
               <LanguageSelect
@@ -267,12 +284,12 @@ export default function Home() {
             </div>
             <IoMdSwap
               onClick={handleSwap}
-              className={`mt-20 cursor-pointer text-3xl hover:opacity-80 ${
+              className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center text-3xl hover:opacity-80 ${
                 isDark ? 'text-white-700' : 'text-black'
               }`}
             />
-            <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
-              <div className="text-center mt-10 text-xl font-bold">Output</div>
+            <div className="flex h-full w-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
+              <div className={`text-center ${historyExpand?"lg:mt-10":"mt-0 md:mt-10 lg:mt-10"} text-xl font-bold`}>Output</div>
 
               <LanguageSelect
                 language={outputLanguage}
@@ -291,6 +308,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+        
       </div>
       <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
     </div>
