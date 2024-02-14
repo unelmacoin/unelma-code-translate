@@ -65,9 +65,6 @@ it("Items clicked in the history list should render in input section", ()=>{
   if(historyItem){
     fireEvent.click(historyItem);
     expect(selectedItem).toBe("Value of the clicked history item");
-  }
-  
+  } 
 })
-
-
 })
