@@ -133,6 +133,9 @@ export default function Home() {
 
   const handleUpload = (file: File) => {
     const reader = new FileReader();
+    if(reader){
+      setOutputLanguage("")
+    }
     reader.onload = async (event) => {
         if (file.type.startsWith('image/')) {
             const imageData = event.target?.result as ArrayBuffer;
@@ -150,10 +153,13 @@ export default function Home() {
                 const detectedLanguage = languages.find(lang => lang.value.toLowerCase() === fileExtension);
                 if (detectedLanguage) {
                     setInputLanguage(detectedLanguage.value);
+                    // setOutputLanguage("Natural Language")
+            
                 } else {
                     setInputLanguage("Natural Language");
                 }
             }
+           
         }
     };
 
