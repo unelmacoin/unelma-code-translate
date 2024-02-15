@@ -21,8 +21,8 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             
             ${
                isDark
-                 ? 'bg-[#131416] text-[#a1abb5] transition-all duration-300'
-                 : 'bg-[#fff] text-[#6c7789] transition-all duration-300'
+                 ? 'bg-[#343232] text-[#fff] transition-all duration-300'
+                 : 'bg-[#e0e0e8] text-[#000] transition-all duration-300'
              }`}
     >
       <Tooltip
