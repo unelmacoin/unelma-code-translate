@@ -9,6 +9,8 @@ interface themeBtn {
 }
 
 const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
+  const date = new Date();
+  const year = date.getFullYear()
   return (
     <div
       className={`border-t-2
@@ -58,7 +60,7 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
           >
             <span className="mb-2">U16P</span>
           </a>
-          <div className=" text-base">Copyright © 2023 U16P.</div>
+          <div className=" text-base">Copyright © {year} U16P.</div>
         </div>
 
         <div className="mb-2 h sm:mt-0 mt-2" data-tooltip-id="theme"
