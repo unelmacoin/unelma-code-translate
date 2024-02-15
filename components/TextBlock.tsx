@@ -28,11 +28,13 @@ export const TextBlock: React.FC<Props> = ({
         disabled={!editable}
         maxLength={5000}
       />
+      {editable && (
       <div
         className="flex justify-end absolute bottom-2 right-3"
       >
         {`${text.length}/${maxCharacterCount}`}
       </div>
+      )}
     </div>
   );
 };
