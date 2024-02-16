@@ -12,11 +12,12 @@ import ReactDOM from 'react-dom';
 import HistoryButton from '@/components/HistoryButton';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
+import { languages } from '@/components/LanguageSelect';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
     useState<string>('Natural Language');
-  const [outputLanguage, setOutputLanguage] = useState<string>('Python');
+  const [outputLanguage, setOutputLanguage] = useState<string>('Py');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
   const [model, setModel] = useState<OpenAIModel>('gpt-3.5-turbo');
@@ -132,30 +133,42 @@ export default function Home() {
 
   const handleUpload = (file: File) => {
     const reader = new FileReader();
-  reader.onload = async (event) => {
+    reader.onload = async (event) => {
+        if (file.type.startsWith('image/')) {
+            const imageData = event.target?.result as ArrayBuffer;
+            const blob = new Blob([imageData], { type: 'image/*' });
+            const imageUrl = URL.createObjectURL(blob);
+
+            const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
+            setInputCode(text);
+            setInputLanguage('Natural Language');
+            URL.revokeObjectURL(imageUrl);
+        } else {
+             setInputCode(event.target?.result as string);
+            const fileExtension = file.name.split('.').pop()?.toLowerCase();
+            if (fileExtension) {
+                const detectedLanguage = languages.find(lang => lang.value.toLowerCase() === fileExtension);
+                if (detectedLanguage) {
+                    setInputLanguage(detectedLanguage.value);
+                    setOutputLanguage("Natural Language")
+                } else {
+                    setInputLanguage("Natural Language");
+                }
+            }
+           
+        }
+    };
+
     if (file.type.startsWith('image/')) {
-      const imageData = event.target?.result as ArrayBuffer;
-      const blob = new Blob([imageData], { type: 'image/*' });
-      const imageUrl = URL.createObjectURL(blob);
-
-      const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
-      setInputCode(text);
-      URL.revokeObjectURL(imageUrl);
+        reader.readAsArrayBuffer(file);
     } else {
-      setInputCode(event.target?.result as string);
+        reader.readAsText(file);
     }
-  };
-
-  if (file.type.startsWith('image/')) {
-    reader.readAsArrayBuffer(file);
-  } else {
-    reader.readAsText(file);
-  }
-  };
+};
 
   const handleSwap = () => {
     setInputLanguage(outputLanguage);
-    setOutputLanguage(inputLanguage);
+     setOutputLanguage(inputLanguage);
     setInputCode(outputCode);
     setOutputCode(inputCode);
   };
@@ -268,6 +281,7 @@ export default function Home() {
                   onChange={(value) => {
                     setInputCode(value);
                     setHasTranslated(false);
+                    `${inputCode.length}/5000`
                   }}
                 />
               ) : (
@@ -282,12 +296,14 @@ export default function Home() {
                 />
               )}
             </div>
+            <div>
             <IoMdSwap
               onClick={handleSwap}
-              className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center text-3xl hover:opacity-80 ${
+              className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center w-12 text-3xl hover:opacity-80 ${
                 isDark ? 'text-white-700' : 'text-black'
               }`}
             />
+            </div>
             <div className="flex h-full w-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
               <div className={`text-center ${historyExpand?"lg:mt-10":"mt-0 md:mt-10 lg:mt-10"} text-xl font-bold`}>Output</div>
 
