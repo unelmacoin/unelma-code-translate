@@ -13,6 +13,7 @@ import HistoryButton from '@/components/HistoryButton';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
 import { languages } from '@/components/LanguageSelect';
+import Swal from "sweetalert2";
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -132,6 +133,21 @@ export default function Home() {
   }, []);
 
   const handleUpload = (file: File) => {
+    if (
+      file.type === "application/zip" ||
+      file.type === "application/x-rar-compressed" ||
+      file.type === "application/x-tar" ||
+      file.name.endsWith(".zip") ||
+      file.name.endsWith(".rar") ||
+      file.name.endsWith(".tar")
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "You cannot upload zip folders at the moment!",
+      });
+      return;
+    }
     const reader = new FileReader();
     reader.onload = async (event) => {
         if (file.type.startsWith('image/')) {
