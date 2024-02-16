@@ -65,7 +65,8 @@ export const CodeBlock: FC<Props> = ({
         height="500px"
         extensions={[StreamLanguage.define(go)]}
         theme={isDark ? tokyoNight : myTheme}
-        onChange={(value) => onChange(value)}      
+        onChange={(value) => onChange(value)}
+        data-testid="code"      
       />
       
     </div>
