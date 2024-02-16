@@ -5,31 +5,46 @@ import { TextBlock } from '@/components/TextBlock';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
+import { IoMdSwap } from 'react-icons/io';
+import ReactDOM from 'react-dom';
+import HistoryButton from '@/components/HistoryButton';
+import Tesseract from 'tesseract.js';
+import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
+import { languages } from '@/components/LanguageSelect';
 
 export default function Home() {
-  const [inputLanguage, setInputLanguage] = useState<string>('JavaScript');
-  const [outputLanguage, setOutputLanguage] = useState<string>('Python');
+  const [inputLanguage, setInputLanguage] =
+    useState<string>('Natural Language');
+  const [outputLanguage, setOutputLanguage] = useState<string>('Py');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
   const [model, setModel] = useState<OpenAIModel>('gpt-3.5-turbo');
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
+  const [isDark, setIsDark] = useState<boolean>(true);
+  const [history, setHistory] = useState<Set<string>>(new Set());
+  const [historyExpand, setHistoryExpand] = useState<boolean>(false);
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('unelTheme');
+    if (storedTheme !== null) {
+      setIsDark(JSON.parse(storedTheme));
+    }
+  }, []);
+
+ const handleHistoryExpand = ()=>{
+  setHistoryExpand(!historyExpand)
+ }
 
   const handleTranslate = async () => {
-    const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
 
-    if (inputLanguage === outputLanguage) {
-      alert('Please select different languages.');
+     if (inputLanguage === outputLanguage) {
+       alert('Please select different languages.');
       return;
-    }
-
-    if (inputCode.length > maxCodeLength) {
-      alert(
-        `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
-      );
-      return;
-    }
+     }
 
     setLoading(true);
     setOutputCode('');
@@ -85,6 +100,11 @@ export default function Home() {
     setLoading(false);
     setHasTranslated(true);
     copyToClipboard(code);
+
+    const updatedHistory = new Set([...history, inputCode]);
+  const mergedHistory = new Set([...updatedHistory, ...JSON.parse(localStorage.getItem("userHistory") || "[]")]);
+  setHistory(mergedHistory);
+  localStorage.setItem("userHistory", JSON.stringify([...mergedHistory]));
   };
 
   const copyToClipboard = (text: string) => {
@@ -96,13 +116,12 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
-    }, 2000)
+    }, 2000);
 
-    return () => clearTimeout(delayDebounceFn)
+    return () => clearTimeout(delayDebounceFn);
   }, [outputLanguage, inputCode]);
 
   useEffect(() => {
@@ -112,87 +131,203 @@ export default function Home() {
     }
   }, []);
 
+  const handleUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        if (file.type.startsWith('image/')) {
+            const imageData = event.target?.result as ArrayBuffer;
+            const blob = new Blob([imageData], { type: 'image/*' });
+            const imageUrl = URL.createObjectURL(blob);
+
+            const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
+            setInputCode(text);
+            setInputLanguage('Natural Language');
+            URL.revokeObjectURL(imageUrl);
+        } else {
+             setInputCode(event.target?.result as string);
+            const fileExtension = file.name.split('.').pop()?.toLowerCase();
+            if (fileExtension) {
+                const detectedLanguage = languages.find(lang => lang.value.toLowerCase() === fileExtension);
+                if (detectedLanguage) {
+                    setInputLanguage(detectedLanguage.value);
+                    setOutputLanguage("Natural Language")
+                } else {
+                    setInputLanguage("Natural Language");
+                }
+            }
+           
+        }
+    };
+
+    if (file.type.startsWith('image/')) {
+        reader.readAsArrayBuffer(file);
+    } else {
+        reader.readAsText(file);
+    }
+};
+
+  const handleSwap = () => {
+    setInputLanguage(outputLanguage);
+     setOutputLanguage(inputLanguage);
+    setInputCode(outputCode);
+    setOutputCode(inputCode);
+  };
+  const toggleDarkMode = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
+  };
+
+  const handleHistorySelect = (value:string) =>{
+  setInputCode(value)
+  }
+
+  const bodyBg =
+    isDark === true
+      ? '#000'
+      : '#E6E6FA';
+  const navBg = isDark === true ?'#333333':'#E8EBF5';
+
+  const changeBodyBackgroundColor = (color:any) => {
+    document.body.style.backgroundColor = color;
+  };
+
+  useEffect(() => {
+    const backgroundColor = isDark ? '#131416' : '#fff';
+    changeBodyBackgroundColor(backgroundColor);
+  }, [isDark]);
+
   return (
-    <>
-      <Head>
-        <title>Unelma-Code Translator</title>
-        <meta
-          name="description"
-          content="Use AI to translate code from one language to another."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
-        <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
-          <div className="text-4xl font-bold">Unelma-Code Translator</div>
-        </div>
+    <div
+     style={{ background: bodyBg}}>
+      <div
+        style={{ background: navBg }}
+        className={` ${
+          isDark
+            ? ' py-4 text-white transition-all duration-300'
+            : 'py-4  transition-all duration-300'
+        }`}
+      >
+        {' '}
+        <Nav isDark={isDark} />
+      </div>
 
-        <div className="mt-2 flex items-center space-x-2">
-          <ModelSelect model={model} onChange={(value) => setModel(value)} />
-        </div>
+      <div
+        className={
+          isDark
+            ? ' text-neutral-200 transition-all duration-300'
+            : ' text-black transition-all duration-300'
+        }
+      >
+        <Head >
+          <title className="pt-2">Unelma-Code Translator</title>
+          <meta
+            name="description"
+            content="Use AI to translate code from one language to another."
+          />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-        <div className="mt-2 text-center text-xs">
-          {loading
-            ? 'Translating...'
-            : hasTranslated
+        <div className={`flex h-full min-h-fit flex-col px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
+          <div className={`flex flex-col ${historyExpand?"md:items-start":""}justify-center mt-20 lg:mt-10 md:mt-10`}>
+            <div className="text-4xl font-bold">Unelma-Code Translator</div>
+          </div>
+
+          <div className={`mt-2 flex ${historyExpand?"itmes-start lg:items-center":"items-center"}justify-center  space-x-2`}>
+            <ModelSelect
+              model={model}
+              isDark={isDark}
+              onChange={(value) => setModel(value)}
+            />
+          </div>
+
+          <div className={`mt-2 ${historyExpand?"":"text-center"} text-xs`}>
+            {loading
+              ? 'Translating...'
+              : hasTranslated
               ? 'Output copied to clipboard!'
               : 'Enter some code in Input'}
-        </div>
-
-        <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
-          <div className="h-100 flex flex-col justify-center space-y-2 sm:w-2/4">
-            <div className="text-center text-xl font-bold">Input</div>
-
-            <LanguageSelect
-              language={inputLanguage}
-              onChange={(value) => {
-                setInputLanguage(value);
-                setHasTranslated(false);
-                setInputCode('');
-                setOutputCode('');
-              }}
-            />
-
-            {inputLanguage === 'Natural Language' ? (
-              <TextBlock
-                text={inputCode}
-                editable={!loading}
-                onChange={(value) => {
-                  setInputCode(value);
-                  setHasTranslated(false);
-                }}
-              />
-            ) : (
-              <CodeBlock
-                code={inputCode}
-                editable={!loading}
-                onChange={(value) => {
-                  setInputCode(value);
-                  setHasTranslated(false);
-                }}
-              />
-            )}
           </div>
-          <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
-            <div className="text-center text-xl font-bold">Output</div>
+          <div className='flex my-4'>
+          
+          </div>
+          
+          <div className={`mt-6 flex w-full max-w-[1200px] flex-col lg:flex-row justify-center sm:space-x-4 ${historyExpand? "lg:w-2/3 md:flex-col items-center md:items-start": "md:flex-row"}`}>
+            <div className="max-h-200 w-full flex flex-col space-y-2 sm:w-2/4">
+              <div className='flex space-x-4'>
+            <UploadImagesAndFiles onUpload={handleUpload}/>
+            <HistoryButton onSelect={handleHistorySelect} onExpand={handleHistoryExpand} isDark={isDark}/>
+            </div>
+              <div className="text-center text-xl font-bold">Input</div>
+           
+              <LanguageSelect
+                language={inputLanguage}
+                onChange={(value) => {
+                  setInputLanguage(value);
+                  setHasTranslated(false);
+                  setInputCode('');
+                  setOutputCode('');
+                }}
+                isDark={isDark}
+              />
 
-            <LanguageSelect
-              language={outputLanguage}
-              onChange={(value) => {
-                setOutputLanguage(value);
-                setOutputCode('');
-              }}
+              {inputLanguage === 'Natural Language' ? (
+                <TextBlock
+                  isDark={isDark}
+                  text={inputCode}
+                  editable={!loading}
+                  maxCharacterCount={5000}
+                  onChange={(value) => {
+                    setInputCode(value);
+                    setHasTranslated(false);
+                    `${inputCode.length}/5000`
+                  }}
+                />
+              ) : (
+                <CodeBlock
+                  code={inputCode}
+                  editable={!loading}
+                  isDark={isDark}
+                  onChange={(value) => {
+                    setInputCode(value);
+                    setHasTranslated(false);
+                  }}
+                />
+              )}
+            </div>
+            <div>
+            <IoMdSwap
+              onClick={handleSwap}
+              className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center w-12 text-3xl hover:opacity-80 ${
+                isDark ? 'text-white-700' : 'text-black'
+              }`}
             />
+            </div>
+            <div className="flex h-full w-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
+              <div className={`text-center ${historyExpand?"lg:mt-10":"mt-0 md:mt-10 lg:mt-10"} text-xl font-bold`}>Output</div>
 
-            {outputLanguage === 'Natural Language' ? (
-              <TextBlock text={outputCode} />
-            ) : (
-              <CodeBlock code={outputCode} />
-            )}
+              <LanguageSelect
+                language={outputLanguage}
+                onChange={(value) => {
+                  setOutputLanguage(value);
+                  setOutputCode('');
+                }}
+                isDark={isDark}
+              />
+
+              {outputLanguage === 'Natural Language' ? (
+                <TextBlock text={outputCode} isDark={isDark} maxCharacterCount={5000} />
+              ) : (
+                <CodeBlock code={outputCode} isDark={isDark} />
+              )}
+            </div>
           </div>
         </div>
+        
       </div>
-    </>
+      <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
+    </div>
+   
   );
 }
