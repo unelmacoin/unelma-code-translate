@@ -15,16 +15,16 @@ interface Props {
 let myTheme = EditorView.theme({
   "&": {
     color:"#034" ,
-    backgroundColor: "#d7d4d7",
+    backgroundColor: "#fff",
   },
   ".cm-content": {
     caretColor: "#0e9"
   },
   "&.cm-focused .cm-cursor": {
-    borderLeftColor: "#0e9"
+    borderLeftColor: "#000"
   },
   ".cm-gutters": {
-    backgroundColor: "#d7d4d7",
+    backgroundColor: "#fff",
     color: "black",
     border: "none"
   }
@@ -62,10 +62,11 @@ export const CodeBlock: FC<Props> = ({
       <CodeMirror
         editable={editable}
         value={code}
-        minHeight="500px"
+        height="500px"
         extensions={[StreamLanguage.define(go)]}
         theme={isDark ? tokyoNight : myTheme}
-        onChange={(value) => onChange(value)}      
+        onChange={(value) => onChange(value)}
+        data-testid="code"      
       />
       
     </div>
