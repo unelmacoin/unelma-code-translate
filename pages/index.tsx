@@ -318,7 +318,7 @@ export default function Home() {
             </div>
             <div>
             <IoMdSwap
-            title='Swap languages'
+            title='Swap languages (Cmd + Shift + S)'
               onClick={handleSwap}
               className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center w-12 text-3xl hover:opacity-80 ${
                 isDark ? 'text-white-700' : 'text-black'
