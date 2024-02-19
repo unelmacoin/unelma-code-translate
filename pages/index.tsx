@@ -122,7 +122,7 @@ export default function Home() {
     }, 2000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [outputLanguage, inputCode]);
+  }, [outputLanguage, inputCode, model]);
 
   useEffect(() => {
     const apiKey = process.env.OPENAI_API_KEY;
