@@ -143,7 +143,6 @@ export default function Home() {
     ) {
       Swal.fire({
         icon: "error",
-        title: "Oops...",
         text: "You cannot upload zip folders at the moment!",
       });
       return;
