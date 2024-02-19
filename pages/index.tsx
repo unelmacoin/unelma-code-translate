@@ -13,6 +13,7 @@ import HistoryButton from '@/components/HistoryButton';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
 import { languages } from '@/components/LanguageSelect';
+import Swal from "sweetalert2";
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -122,7 +123,7 @@ export default function Home() {
     }, 5000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [outputLanguage, inputCode]);
+  }, [outputLanguage, inputCode, model]);
 
   useEffect(() => {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -132,6 +133,20 @@ export default function Home() {
   }, []);
 
   const handleUpload = (file: File) => {
+    if (
+      file.type === "application/zip" ||
+      file.type === "application/x-rar-compressed" ||
+      file.type === "application/x-tar" ||
+      file.name.endsWith(".zip") ||
+      file.name.endsWith(".rar") ||
+      file.name.endsWith(".tar")
+    ) {
+      Swal.fire({
+        icon: "error",
+        text: "You cannot upload zip folders at the moment!",
+      });
+      return;
+    }
     const reader = new FileReader();
     reader.onload = async (event) => {
         if (file.type.startsWith('image/')) {
@@ -196,6 +211,26 @@ export default function Home() {
     const backgroundColor = isDark ? '#131416' : '#fff';
     changeBodyBackgroundColor(backgroundColor);
   }, [isDark]);
+
+  
+
+  useEffect(()=>{
+    const handleSwap = () => {
+      setInputLanguage(outputLanguage);
+       setOutputLanguage(inputLanguage);
+      setInputCode(outputCode);
+      setOutputCode(inputCode);
+    };
+    const handleKeyboardShortcut = (event: any) =>{
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toUpperCase() === 'S') {
+        handleSwap()
+      }
+    }
+    document.addEventListener('keydown', handleKeyboardShortcut);
+    return () => {
+      document.removeEventListener('keydown', handleKeyboardShortcut);
+    };
+  }, [inputCode, inputLanguage, outputCode, outputLanguage])
 
   return (
     <div
@@ -298,6 +333,7 @@ export default function Home() {
             </div>
             <div>
             <IoMdSwap
+            title='Swap languages (Cmd + Shift + S)'
               onClick={handleSwap}
               className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center w-12 text-3xl hover:opacity-80 ${
                 isDark ? 'text-white-700' : 'text-black'
