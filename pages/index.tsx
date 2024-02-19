@@ -207,7 +207,7 @@ export default function Home() {
       setOutputCode(inputCode);
     };
     const handleKeyboardShortcut = (event: any) =>{
-      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === 's') {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toUpperCase() === 'S') {
         handleSwap()
       }
     }
