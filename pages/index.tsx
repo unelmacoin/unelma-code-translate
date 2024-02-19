@@ -197,6 +197,26 @@ export default function Home() {
     changeBodyBackgroundColor(backgroundColor);
   }, [isDark]);
 
+  
+
+  useEffect(()=>{
+    const handleSwap = () => {
+      setInputLanguage(outputLanguage);
+       setOutputLanguage(inputLanguage);
+      setInputCode(outputCode);
+      setOutputCode(inputCode);
+    };
+    const handleKeyboardShortcut = (event: any) =>{
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toUpperCase() === 'S') {
+        handleSwap()
+      }
+    }
+    document.addEventListener('keydown', handleKeyboardShortcut);
+    return () => {
+      document.removeEventListener('keydown', handleKeyboardShortcut);
+    };
+  }, [inputCode, inputLanguage, outputCode, outputLanguage])
+
   return (
     <div
      style={{ background: bodyBg}}>
@@ -298,6 +318,7 @@ export default function Home() {
             </div>
             <div>
             <IoMdSwap
+            title='Swap languages (Cmd + Shift + S)'
               onClick={handleSwap}
               className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center w-12 text-3xl hover:opacity-80 ${
                 isDark ? 'text-white-700' : 'text-black'
