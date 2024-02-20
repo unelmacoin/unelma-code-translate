@@ -12,13 +12,13 @@ import ReactDOM from 'react-dom';
 import HistoryButton from '@/components/HistoryButton';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { languages } from '@/components/LanguageSelect';
+import Swal from "sweetalert2";
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
     useState<string>('Natural Language');
-  const [outputLanguage, setOutputLanguage] = useState<string>('Python');
+  const [outputLanguage, setOutputLanguage] = useState<string>('Py');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
   const [model, setModel] = useState<OpenAIModel>('gpt-3.5-turbo');
@@ -28,10 +28,6 @@ export default function Home() {
   const [isDark, setIsDark] = useState<boolean>(true);
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
-
-  useEffect(() => {
-    toast.info("Enter or upload some code in Input");
-  }, []);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('unelTheme');
@@ -96,20 +92,20 @@ export default function Home() {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
+
       code += chunkValue;
-      setOutputCode((prevCode) => prevCode + chunkValue); 
+
+      setOutputCode((prevCode) => prevCode + chunkValue);
     }
 
     setLoading(false);
     setHasTranslated(true);
     copyToClipboard(code);
 
-
     const updatedHistory = new Set([...history, inputCode]);
   const mergedHistory = new Set([...updatedHistory, ...JSON.parse(localStorage.getItem("userHistory") || "[]")]);
   setHistory(mergedHistory);
   localStorage.setItem("userHistory", JSON.stringify([...mergedHistory]));
-
   };
 
   const copyToClipboard = (text: string) => {
@@ -120,14 +116,14 @@ export default function Home() {
     document.execCommand('copy');
     document.body.removeChild(el);
   };
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
-    }, 2000);
+    }, 5000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [outputLanguage, inputCode]);
-
+  }, [outputLanguage, inputCode, model]);
 
   useEffect(() => {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -136,39 +132,58 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(()=>{
-    if(inputCode !== "" && loading){
-      toast.info("Translating...")
-    }
-  }, [inputCode, loading])
- 
   const handleUpload = (file: File) => {
-    const reader = new FileReader();
-  reader.onload = async (event) => {
-    if (file.type.startsWith('image/')) {
-      const imageData = event.target?.result as ArrayBuffer;
-      const blob = new Blob([imageData], { type: 'image/*' });
-      const imageUrl = URL.createObjectURL(blob);
-
-      const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
-      setInputCode(text);
-      URL.revokeObjectURL(imageUrl);
-    } else {
-      setInputCode(event.target?.result as string);
+    if (
+      file.type === "application/zip" ||
+      file.type === "application/x-rar-compressed" ||
+      file.type === "application/x-tar" ||
+      file.name.endsWith(".zip") ||
+      file.name.endsWith(".rar") ||
+      file.name.endsWith(".tar")
+    ) {
+      Swal.fire({
+        icon: "error",
+        text: "You cannot upload zip folders at the moment!",
+      });
+      return;
     }
-    setHasTranslated(!hasTranslated)
-  };
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        if (file.type.startsWith('image/')) {
+            const imageData = event.target?.result as ArrayBuffer;
+            const blob = new Blob([imageData], { type: 'image/*' });
+            const imageUrl = URL.createObjectURL(blob);
 
-  if (file.type.startsWith('image/')) {
-    reader.readAsArrayBuffer(file);
-  } else {
-    reader.readAsText(file);
-  }
-  };
+            const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng');
+            setInputCode(text);
+            setInputLanguage('Natural Language');
+            URL.revokeObjectURL(imageUrl);
+        } else {
+             setInputCode(event.target?.result as string);
+            const fileExtension = file.name.split('.').pop()?.toLowerCase();
+            if (fileExtension) {
+                const detectedLanguage = languages.find(lang => lang.value.toLowerCase() === fileExtension);
+                if (detectedLanguage) {
+                    setInputLanguage(detectedLanguage.value);
+                    setOutputLanguage("Natural Language")
+                } else {
+                    setInputLanguage("Natural Language");
+                }
+            }
+           
+        }
+    };
+
+    if (file.type.startsWith('image/')) {
+        reader.readAsArrayBuffer(file);
+    } else {
+        reader.readAsText(file);
+    }
+};
 
   const handleSwap = () => {
     setInputLanguage(outputLanguage);
-    setOutputLanguage(inputLanguage);
+     setOutputLanguage(inputLanguage);
     setInputCode(outputCode);
     setOutputCode(inputCode);
   };
@@ -191,16 +206,32 @@ export default function Home() {
   const changeBodyBackgroundColor = (color:any) => {
     document.body.style.backgroundColor = color;
   };
+
   useEffect(() => {
     const backgroundColor = isDark ? '#131416' : '#fff';
     changeBodyBackgroundColor(backgroundColor);
   }, [isDark]);
 
+  
+
   useEffect(()=>{
-    if(inputCode !=="" && hasTranslated){
-    toast.success("Your code is translated")
+    const handleSwap = () => {
+      setInputLanguage(outputLanguage);
+       setOutputLanguage(inputLanguage);
+      setInputCode(outputCode);
+      setOutputCode(inputCode);
+    };
+    const handleKeyboardShortcut = (event: any) =>{
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toUpperCase() === 'S') {
+        handleSwap()
+      }
     }
-  },[inputCode,hasTranslated])
+    document.addEventListener('keydown', handleKeyboardShortcut);
+    return () => {
+      document.removeEventListener('keydown', handleKeyboardShortcut);
+    };
+  }, [inputCode, inputLanguage, outputCode, outputLanguage])
+
   return (
     <div
      style={{ background: bodyBg}}>
@@ -246,6 +277,13 @@ export default function Home() {
             />
           </div>
 
+          <div className={`mt-2 ${historyExpand?"":"text-center"} text-xs`}>
+            {loading
+              ? 'Translating...'
+              : hasTranslated
+              ? 'Output copied to clipboard!'
+              : 'Enter some code in Input'}
+          </div>
           <div className='flex my-4'>
           
           </div>
@@ -278,6 +316,7 @@ export default function Home() {
                   onChange={(value) => {
                     setInputCode(value);
                     setHasTranslated(false);
+                    `${inputCode.length}/5000`
                   }}
                 />
               ) : (
@@ -292,12 +331,15 @@ export default function Home() {
                 />
               )}
             </div>
+            <div>
             <IoMdSwap
+            title='Swap languages (Cmd + Shift + S)'
               onClick={handleSwap}
-              className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center text-3xl hover:opacity-80 ${
+              className={`${historyExpand?"lg:mt-20": " mt-0 md:mt-20 lg:mt-20"} cursor-pointer items-center w-12 text-3xl hover:opacity-80 ${
                 isDark ? 'text-white-700' : 'text-black'
               }`}
             />
+            </div>
             <div className="flex h-full w-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
               <div className={`text-center ${historyExpand?"lg:mt-10":"mt-0 md:mt-10 lg:mt-10"} text-xl font-bold`}>Output</div>
 
@@ -321,7 +363,6 @@ export default function Home() {
         
       </div>
       <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
-      <ToastContainer autoClose={1000} style={{top:"5rem"}}/>
     </div>
    
   );

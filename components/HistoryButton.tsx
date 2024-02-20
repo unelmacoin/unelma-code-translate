@@ -23,7 +23,7 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
   }, []);
 
   const handleCloseWindow = () => {
-    setIsExpanded(!isExpanded)
+    setIsExpanded(false)
     onExpand();
   }
 
@@ -43,16 +43,15 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
 
   return (
     <div>
-      <button className="flex items-center text-md cursor-pointer" onClick={handleToggleExpand} title="See your code translated history">
+      <button data-testid="history" className="flex items-center text-md cursor-pointer" onClick={handleToggleExpand} title="See your code translated history">
         <FaHistory size={32}/>
         History
-        {isExpanded ? "" : ""}
       </button>
       {isExpanded && (
         <ul className={`absolute top-24 z-50 lg:mx-4 md:mx-2 right-0 w-full md:w-80 lg:w-96 p-2 overflow-y-auto overflow-x-hidden ${isDark ? 'bg-slate-700' : 'bg-white'}`} style={{maxHeight:'55rem'}}>
           <div className="flex justify-between items-center">
           <h3 className="text-3xl bold">History</h3>
-          <button onClick={handleCloseWindow}>
+          <button aria-label="close" onClick={handleCloseWindow}>
             <IoClose size={28} />
           </button>
           </div>
