@@ -120,7 +120,7 @@ export default function Home() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
-    }, 2000);
+    }, 5000);
 
     return () => clearTimeout(delayDebounceFn);
   }, [outputLanguage, inputCode, model]);
