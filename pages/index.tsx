@@ -14,6 +14,7 @@ import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
 import { languages } from '@/components/LanguageSelect';
 import Swal from "sweetalert2";
+import { Feedback } from '@/components/Feedback';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -357,8 +358,14 @@ export default function Home() {
               ) : (
                 <CodeBlock code={outputCode} isDark={isDark} />
               )}
+              <div className=''>
+              <Feedback />
+              </div>
             </div>
+            
           </div>
+         
+          
         </div>
         
       </div>
