@@ -7,7 +7,8 @@ export const Feedback:React.FC = () => {
   const [expanded, setExpanded] = useState<boolean>(false)
   const [feedbackText, setFeedbackText] = useState<string>("");
   const form = useRef<HTMLFormElement>(null);
-  const emailAPi = process.env.EMAILJS_API_KEY
+
+
   const toggleFeedback = () => {
     setExpanded(!expanded)
   }
@@ -70,8 +71,8 @@ export const Feedback:React.FC = () => {
           </div>
         </>
       )}
-      <div className=" flex justify-end hover:underline italic">
-        <button onClick={toggleFeedback}>
+      <div className="flex justify-end hover:underline">
+        <button onClick={toggleFeedback} className='italic text-sm'>
           Send Feedback
         </button>
       </div>
