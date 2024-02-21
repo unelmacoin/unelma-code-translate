@@ -16,6 +16,7 @@ import { languages } from '@/components/LanguageSelect';
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Feedback } from '@/components/Feedback';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -366,14 +367,15 @@ export default function Home() {
               ) : (
                 <CodeBlock code={outputCode} isDark={isDark} />
               )}
+              <div className=''>
+              <Feedback />
+              </div>
             </div>
-          </div>
-        </div>
-        
+          </div> 
+        </div> 
       </div>
       <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
       <ToastContainer autoClose={2000} style={{top:"5rem"}}/>
     </div>
-   
   );
 }
