@@ -285,7 +285,7 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className={`flex h-full min-h-fit flex-col px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
+        <div className={`flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
           <div className={`flex flex-col ${historyExpand?"md:items-start":""}justify-center mt-20 lg:mt-10 md:mt-10`}>
             <div className="text-4xl font-bold">Unelma-Code Translator</div>
           </div>
@@ -296,6 +296,13 @@ export default function Home() {
               isDark={isDark}
               onChange={(value) => setModel(value)}
             />
+          </div>
+          <div className={`mt-2 ${historyExpand?"":"text-center"} text-xs`}>
+            {loading
+              ? 'Translating...'
+              : hasTranslated
+              ? 'Your code has been translated!'
+              : 'Enter some code in Input'}
           </div>
           
           <div className={`mt-6 flex w-full max-w-[1200px] flex-col lg:flex-row justify-center sm:space-x-4 ${historyExpand? "lg:w-2/3 md:flex-col items-center md:items-start": "md:flex-row"}`}>
