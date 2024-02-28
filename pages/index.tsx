@@ -14,6 +14,8 @@ import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
 import { languages } from '@/components/LanguageSelect';
 import Swal from "sweetalert2";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Feedback } from '@/components/Feedback';
 
 export default function Home() {
@@ -29,6 +31,10 @@ export default function Home() {
   const [isDark, setIsDark] = useState<boolean>(true);
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
+
+  useEffect(() => {
+    toast.info("Enter or upload some code in Input");
+  }, []);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('unelTheme');
@@ -117,6 +123,7 @@ export default function Home() {
     document.execCommand('copy');
     document.body.removeChild(el);
   };
+ 
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -132,6 +139,12 @@ export default function Home() {
       setApiKey(apiKey);
     }
   }, []);
+
+  useEffect(()=>{
+    if(loading){
+      toast.info("Translating...")
+    }
+  }, [loading])
 
   const handleUpload = (file: File) => {
     if (
@@ -149,6 +162,7 @@ export default function Home() {
       return;
     }
     const reader = new FileReader();
+    setHasTranslated(!hasTranslated)
     reader.onload = async (event) => {
         if (file.type.startsWith('image/')) {
             const imageData = event.target?.result as ArrayBuffer;
@@ -233,6 +247,12 @@ export default function Home() {
     };
   }, [inputCode, inputLanguage, outputCode, outputLanguage])
 
+  useEffect(()=>{
+    if(hasTranslated){
+    toast.success("Your code is translated")
+    }
+  },[hasTranslated])
+
   return (
     <div
      style={{ background: bodyBg}}>
@@ -265,7 +285,7 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className={`flex h-full min-h-fit flex-col px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
+        <div className={`flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
           <div className={`flex flex-col ${historyExpand?"md:items-start":""}justify-center mt-20 lg:mt-10 md:mt-10`}>
             <div className="text-4xl font-bold">Unelma-Code Translator</div>
           </div>
@@ -277,16 +297,12 @@ export default function Home() {
               onChange={(value) => setModel(value)}
             />
           </div>
-
           <div className={`mt-2 ${historyExpand?"":"text-center"} text-xs`}>
             {loading
               ? 'Translating...'
               : hasTranslated
-              ? 'Output copied to clipboard!'
+              ? 'Your code has been translated!'
               : 'Enter some code in Input'}
-          </div>
-          <div className='flex my-4'>
-          
           </div>
           
           <div className={`mt-6 flex w-full max-w-[1200px] flex-col lg:flex-row justify-center sm:space-x-4 ${historyExpand? "lg:w-2/3 md:flex-col items-center md:items-start": "md:flex-row"}`}>
@@ -362,15 +378,11 @@ export default function Home() {
               <Feedback />
               </div>
             </div>
-            
-          </div>
-         
-          
-        </div>
-        
+          </div> 
+        </div> 
       </div>
       <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
+      <ToastContainer autoClose={2000} style={{top:"5rem"}}/>
     </div>
-   
   );
 }

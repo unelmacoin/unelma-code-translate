@@ -4,6 +4,8 @@ import { tokyoNight } from '@uiw/codemirror-theme-tokyo-night';
 import CodeMirror from '@uiw/react-codemirror';
 import { FC, useEffect, useState } from 'react';
 import {EditorView} from "@codemirror/view"
+import { toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 
 interface Props {
   code: string;
@@ -39,7 +41,6 @@ export const CodeBlock: FC<Props> = ({
   const [copyText, setCopyText] = useState<string>('Copy');
   const bg = isDark ? 'bg-[#1A1B26] hover:bg-[#2D2E3A] active:bg-[#2D2E3A]': 'bg-[#FFFFFF]';
   const text = isDark ? 'text-white ': 'text-black';
-  
   useEffect(() => {
     const timeout = setTimeout(() => {
       setCopyText('Copy');
@@ -47,6 +48,7 @@ export const CodeBlock: FC<Props> = ({
 
     return () => clearTimeout(timeout);
   }, [copyText]);
+  
 
   return (
     <div className="relative">
@@ -55,6 +57,7 @@ export const CodeBlock: FC<Props> = ({
         onClick={() => {
           navigator.clipboard.writeText(code);
           setCopyText('Copied!');
+          toast.info("Output copied to clipboard")
         }}
       >
         {copyText}
@@ -68,7 +71,6 @@ export const CodeBlock: FC<Props> = ({
         onChange={(value) => onChange(value)}
         data-testid="code"      
       />
-      
     </div>
   );
 };
