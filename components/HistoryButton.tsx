@@ -12,6 +12,7 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
   const [isExpanded, setIsExpanded] = useState(false);
   const [historyList, setHistoryList] = useState<string[]>([]);
   const [itemsToShow, setItemsToShow] = useState(10);
+  
 
   useEffect(() => {
     const storedHistory = localStorage.getItem("userHistory");
@@ -34,7 +35,7 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
 
   const handleClearHistory = () => {
     setHistoryList([]);
-    localStorage.removeItem("textInput");
+    localStorage.removeItem("userHistory");
   };
 
   const handleMore = () =>{
