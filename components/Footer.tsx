@@ -1,14 +1,10 @@
-import React, { MouseEventHandler } from 'react';
-
-import { Tooltip } from 'react-tooltip';
-import ThemeButton from '@/components/ThemeButton';
+import React from 'react';
 
 interface themeBtn {
-  isDark: boolean;
-  toggleDarkMode: MouseEventHandler<HTMLButtonElement>;
+  isDark: boolean
 }
 
-const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
+const Footer: React.FC<themeBtn> = ({ isDark}) => {
   const date = new Date();
   const year = date.getFullYear()
   return (
@@ -25,33 +21,6 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
                  : 'bg-[#e0e0e8] text-[#000] transition-all duration-300'
              }`}
     >
-      <Tooltip
-        id="my-tooltip"
-        style={{
-            height:"26px",
-            width:"auto",
-            backgroundColor: isDark ? 'white' : 'black',
-            color: isDark ? 'black' : 'white',
-            fontSize: '14px',
-            display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center' 
-          }}
-      />
-
-<Tooltip
-        id="theme"
-        style={{
-            height:"30px",
-            width:'auto',
-            backgroundColor: isDark ? 'white' : 'black',
-            color: isDark ? 'black' : 'white',
-            fontSize: '14px',
-            display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center' 
-          }}
-          />
       <div className="mb-2 block sm:flex sm:justify-between ">
         <div>
           <a
@@ -61,16 +30,6 @@ const Footer: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
             <span className="mb-2">U16P</span>
           </a>
           <div className=" text-base">Copyright © {year} U16P.</div>
-        </div>
-
-        <div className="mb-2 h sm:mt-0 mt-2" data-tooltip-id="theme"
-            data-tooltip-content={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
-            
-          <ThemeButton
-            isDark={isDark}
-            toggleDarkMode={toggleDarkMode}
-            
-          />
         </div>
       </div>
 
