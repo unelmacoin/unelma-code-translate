@@ -8,7 +8,7 @@ const Nav: React.FC<themeBtn> = ({isDark}
 ) => {
   return (
     <nav>
-      <div className=" sm:px-10 flex w-100 relative flex-wrap items-center justify-between py-2 px-4 cursor-pointer">
+      <div className="sm:px-10 flex w-full flex-wrap  items-center justify-between py-2 px-4 cursor-pointer">
         <a  href="https://translate.u16p.com/">
         <h1 className='text-2xl font-medium '>Unelma-Code Translator</h1>
         </a>

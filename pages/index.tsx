@@ -216,7 +216,7 @@ export default function Home() {
     isDark === true
       ? '#000'
       : '#E6E6FA';
-  const navBg = isDark === true ?'#333333':'#E8EBF5';
+  const navBg = isDark === true ?'#333333':'#EBE8F5';
 
   const changeBodyBackgroundColor = (color:any) => {
     document.body.style.backgroundColor = color;
@@ -258,10 +258,10 @@ export default function Home() {
      style={{ background: bodyBg}}>
       <div
         style={{ background: navBg }}
-        className={` ${
+        className={`fixed top-0 bg-black z-50 ${
           isDark
-            ? ' py-4 text-white transition-all duration-300'
-            : 'py-4  transition-all duration-300'
+            ? ' py-4  w-full text-white transition-all duration-300'
+            : 'py-4  w-full  transition-all duration-300'
         }`}
       >
         {' '}
@@ -285,7 +285,7 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className={`flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
+        <div className={`pt-4 md:pt-16 flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 sm:px-10 ${historyExpand?"":"items-center"}`}>
           <div className={`flex flex-col ${historyExpand?"md:items-start":""}justify-center mt-20 lg:mt-10 md:mt-10`}>
             <div className="text-4xl font-bold">Unelma-Code Translator</div>
           </div>
