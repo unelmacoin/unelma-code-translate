@@ -305,7 +305,7 @@ export default function Home() {
               : 'Enter some code in Input'}
           </div>
           
-          <div className={`mt-6 flex w-full max-w-[1200px] flex-col lg:flex-row justify-center sm:space-x-4 ${historyExpand? "lg:w-2/3 md:flex-col items-center md:items-start": "md:flex-row"}`}>
+          <div className={`mt-6 flex w-full max-w-[1200px] flex-col lg:flex-row justify-center sm:space-x-4 ${historyExpand? "lg:w-2/3 md:flex-col items-center md:items-start ml-4": "md:flex-row"}`}>
             <div className="max-h-200 w-full flex flex-col space-y-2 sm:w-2/4">
               <div className='flex space-x-4'>
             <UploadImagesAndFiles onUpload={handleUpload}/>
