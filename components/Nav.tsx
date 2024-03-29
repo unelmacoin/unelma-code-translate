@@ -14,7 +14,7 @@ const Nav: React.FC<themeBtn> = ({isDark, toggleDarkMode}
         <a  href="https://translate.u16p.com/">
         <h1 className='text-2xl font-medium '>Unelma-Code Translator</h1>
         </a>
-        <div className='flex space-x-4'>
+        <div className='flex justify-center items-center space-x-4'>
         <a className={
            isDark
           ? 'text-[#FFFFFF] '
