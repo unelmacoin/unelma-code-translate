@@ -21,7 +21,7 @@ export const LanguageSelect: FC<Props> = ({ language, onChange ,isDark}) => {
       onChange={handleChange}
     >
       {languages
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => a.label.localeCompare(b.label))
         .map((language) => (
           <option key={language.id} value={language.value}>
             {language.label}
