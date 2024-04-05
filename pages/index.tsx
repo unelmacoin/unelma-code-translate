@@ -265,7 +265,7 @@ export default function Home() {
         }`}
       >
         {' '}
-        <Nav isDark={isDark} />
+        <Nav isDark={isDark} toggleDarkMode={toggleDarkMode}/>
       </div>
 
       <div
@@ -381,7 +381,7 @@ export default function Home() {
           </div> 
         </div> 
       </div>
-      <Footer isDark={isDark} toggleDarkMode={toggleDarkMode} />
+      <Footer isDark={isDark} />
       <ToastContainer autoClose={2000} style={{top:"5rem"}}/>
     </div>
   );
