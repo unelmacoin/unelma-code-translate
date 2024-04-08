@@ -56,7 +56,9 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
           </button>
           </div>
           <hr/>
-          <button type="reset" onClick={handleClearHistory}>Clear history</button>
+          <div className="p-2 text-right">
+          <button type="reset" onClick={handleClearHistory} className={`p-1 text-xl rounded ${isDark ? 'text-blue-100':'text-blue-800 hover:bg-gray-200' } `}>Clear history</button>
+          </div>
           <hr className="mb-5"/>
           {historyList && historyList.slice(0, itemsToShow).map((item, index) => (
             <li key={index} onClick={() => onSelect(item)} className="my-2 cursor-pointer">
@@ -66,9 +68,9 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
           ))}
           
           {historyList.length > itemsToShow && (
-          <>
-          <button type="submit" onClick={handleMore} className="mb-3" >See more history</button>
-          </>
+          <div className="p-2 text-center">
+          <button type="submit" onClick={handleMore} className={`p-1 text-xl rounded ${isDark ? 'text-blue-100':'text-blue-800 hover:bg-gray-200' } `}>See more history</button>
+          </div>
           )}
         </ul>
       )}
