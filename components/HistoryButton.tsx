@@ -43,9 +43,9 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
 
   return (
     <div>
-      <button data-testid="history" className="flex items-center text-md cursor-pointer" onClick={handleToggleExpand} title="See your code translated history">
+      <button data-testid="history" className="flex items-center space-x-1 text-md cursor-pointer" onClick={handleToggleExpand} title="See your code translated history">
         <FaHistory size={32}/>
-        History
+       <p>History</p> 
       </button>
       {isExpanded && (
         <ul className={`absolute top-24 z-50 lg:mx-4 md:mx-2 right-0 w-full md:w-80 lg:w-96 p-2 overflow-y-auto overflow-x-hidden ${isDark ? 'bg-slate-700' : 'bg-white'}`} style={{maxHeight:'55rem'}}>
