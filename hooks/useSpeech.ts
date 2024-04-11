@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-  let recognition: any = null
+let recognition: any = null
 if(typeof window !== 'undefined' && 'webkitSpeechRecognition' in window){
  recognition = new webkitSpeechRecognition();
  recognition.continuous = true;
@@ -22,15 +22,23 @@ export const useSpeech = () => {
   }, [])
 
   const handleListening = () =>{
-    setTextSpeech(' ')
+    if(recognition){
+      setTextSpeech(' ')
     setIsListening(true);
     recognition.start()
   }
+    
+    if (recognition === null){
+      alert("hello");
+    }
+  }
+
+
   return {
     textSpeech,
     isListening,
+    recognition,
     handleListening,
-    hasRecognitionSupport: !! recognition,
   }
 
 }

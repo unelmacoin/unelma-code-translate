@@ -1,3 +1,4 @@
+"use client"
 import { useSpeech } from "@/hooks/useSpeech";
 import { useEffect, useRef, useState } from "react";
 import { IoMdMic, IoMdMicOff } from "react-icons/io";
@@ -32,7 +33,6 @@ export const TextBlock: React.FC<Props> = ({
     textSpeech,
     isListening,
     handleListening,
-    hasRecognitionSupport,
   } = useSpeech();
 
   useEffect(() => {
@@ -55,22 +55,18 @@ export const TextBlock: React.FC<Props> = ({
 
   return (
     <div className="relative">
-      {hasRecognitionSupport ? (
         <button onClick={handleListening}>
           {isListening ? (
             <IoMdMic className="absolute bottom-3 right-20" size={32} title="Click to stop voice input" />
           ) : (
-            <IoMdMicOff className="absolute bottom-3 right-20" size={32} title="Click to start voice input" />
+            <IoMdMicOff className="absolute bottom-3 right-20" size={32} title="Click to start voice input, currently doesn't support on firefox" />
           )}
         </button>
-      ):(
-        <h1>Your browser does not support voice recognition</h1>
-      )}
       <textarea
         ref={textareaRef}
         className={`min-h-[500px] ${bg} w-full p-4 text-[15px] focus:outline-none ${textColor} transition-all duration-300`}
         style={{ resize: 'none' }}
-        value={text || speechText}
+        value={text||speechText}
         onChange={handleInputChange}
         disabled={!editable}
         maxLength={maxCharacterCount}
