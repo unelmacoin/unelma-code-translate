@@ -214,9 +214,9 @@ export default function Home() {
 
   const bodyBg =
     isDark === true
-      ? '#000'
-      : '#E6E6FA';
-  const navBg = isDark === true ?'#333333':'#EBE8F5';
+      ? '#0E2810'
+      : '#E0E0E0';
+  const navBg = isDark === true ?'#333333':'#E8EBF5';
 
   const changeBodyBackgroundColor = (color:any) => {
     document.body.style.backgroundColor = color;
