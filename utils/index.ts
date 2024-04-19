@@ -16,9 +16,6 @@ const createPrompt = (
 
     Example translating from natural language to JavaScript:
 
-    Natural language:
-    Print the numbers 0 to 9.
-
     JavaScript code:
     for (let i = 0; i < 10; i++) {
       console.log(i);
@@ -78,6 +75,10 @@ export const OpenAIStream = async (
   model: string,
   key: string,
 ) => {
+  if (inputCode.trim() === '') {
+    return null;
+  }
+
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
   const system = { role: 'system', content: prompt };
