@@ -129,7 +129,7 @@ export default function Home() {
     const delayDebounceFn = setTimeout(() => {
       handleTranslate();
     }, 5000);
-
+ 
     return () => clearTimeout(delayDebounceFn);
   }, [outputLanguage, inputCode, model]);
 
@@ -141,7 +141,7 @@ export default function Home() {
   }, []);
 
   useEffect(()=>{
-    if(loading){
+    if(inputCode.trim()!== "" && loading){
       toast.info("Translating...")
     }
   }, [loading])
@@ -248,7 +248,7 @@ export default function Home() {
   }, [inputCode, inputLanguage, outputCode, outputLanguage])
 
   useEffect(()=>{
-    if(hasTranslated){
+    if(outputCode.trim() !== "" && hasTranslated){
     toast.success("Your code is translated")
     }
   },[hasTranslated])
@@ -298,9 +298,9 @@ export default function Home() {
             />
           </div>
           <div className={`mt-2 ${historyExpand?"":"text-center"} text-xs`}>
-            {loading
+            {inputCode.trim()!=="" && loading
               ? 'Translating...'
-              : hasTranslated
+              : outputCode.trim()!=="" && hasTranslated
               ? 'Your code has been translated!'
               : 'Enter some code in Input'}
           </div>
