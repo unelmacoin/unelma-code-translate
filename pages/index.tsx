@@ -105,8 +105,8 @@ export default function Home() {
     }
 
     setLoading(false);
-    setHasTranslated(true);
     copyToClipboard(code);
+    setHasTranslated(true);
 
     const updatedHistory = new Set([...history, inputCode]);
     const mergedHistory = new Set([
