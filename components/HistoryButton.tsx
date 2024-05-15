@@ -34,7 +34,7 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
 
   const handleClearHistory = () => {
     setHistoryList([]);
-    localStorage.removeItem("textInput");
+    localStorage.removeItem("userHistory");
   };
 
   const handleMore = () =>{
