@@ -216,7 +216,7 @@ export default function Home() {
     setInputCode(value);
   };
 
-  const bodyBg = isDark === true ? '#0E2810' : '#E0E0E0';
+  const bodyBg = isDark === true ? '#000' : '#E0E0E0';
   const navBg = isDark === true ? '#333333' : '#E8EBF5';
 
   const changeBodyBackgroundColor = (color: any) => {
