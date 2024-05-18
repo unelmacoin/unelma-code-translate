@@ -77,5 +77,6 @@ export const languages = [
   { id: 43, value: 'HTML', label: 'HTML' },
   { id: 44, value: 'NoSQL', label: 'NoSQL' },
   { id: 45, value: 'YAML', label: 'YAML' },
-  { id: 46, value: 'ZIG', label: 'Zig' }
+  { id: 46, value: 'ZIG', label: 'Zig' },
+  { id: 47, value: '', label: 'Select Programming Language' },
 ];

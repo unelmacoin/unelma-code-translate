@@ -14,12 +14,6 @@ const createPrompt = (
     return endent`
     You are an expert programmer in all programming languages. Translate the natural language to "${outputLanguage}" code. Do not include \`\`\`.
 
-    Example translating from natural language to JavaScript:
-
-    JavaScript code:
-    for (let i = 0; i < 10; i++) {
-      console.log(i);
-    }
 
     Natural language:
     ${inputCode}
@@ -29,16 +23,6 @@ const createPrompt = (
   } else if (outputLanguage === 'Natural Language') {
     return endent`
       You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to natural language in plain English that the average adult could understand. Respond as bullet points starting with -.
-  
-      Example translating from JavaScript to natural language:
-  
-      JavaScript code:
-      for (let i = 0; i < 10; i++) {
-        console.log(i);
-      }
-  
-      Natural language:
-      Print the numbers 0 to 9.
       
       ${inputLanguage} code:
       ${inputCode}
@@ -48,17 +32,6 @@ const createPrompt = (
   } else {
     return endent`
       You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to "${outputLanguage}" code. Do not include \`\`\`.
-  
-      Example translating from JavaScript to Python:
-  
-      JavaScript code:
-      for (let i = 0; i < 10; i++) {
-        console.log(i);
-      }
-  
-      Python code:
-      for i in range(10):
-        print(i)
       
       ${inputLanguage} code:
       ${inputCode}

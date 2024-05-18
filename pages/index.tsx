@@ -21,7 +21,7 @@ import { Feedback } from '@/components/Feedback';
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
     useState<string>('Natural Language');
-  const [outputLanguage, setOutputLanguage] = useState<string>('Py');
+  const [outputLanguage, setOutputLanguage] = useState<string>('');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
   const [model, setModel] = useState<OpenAIModel>('gpt-3.5-turbo');
@@ -50,6 +50,10 @@ export default function Home() {
   const handleTranslate = async () => {
     if (inputLanguage === outputLanguage) {
       alert('Please select different languages.');
+      return;
+    }
+    if(inputCode.trim() !== '' && outputLanguage === ''){
+      alert('please select the output language')
       return;
     }
 
