@@ -28,7 +28,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
-  const [isDark, setIsDark] = useState<boolean>(true);
+  const [isDark, setIsDark] = useState<boolean>(false);
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
 
@@ -38,7 +38,7 @@ export default function Home() {
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('unelTheme');
-    if (storedTheme !== null) {
+    if (isDark && storedTheme !== null) {
       setIsDark(JSON.parse(storedTheme));
     }
   }, []);
@@ -230,6 +230,7 @@ export default function Home() {
   useEffect(() => {
     const backgroundColor = isDark ? '#131416' : '#fff';
     changeBodyBackgroundColor(backgroundColor);
+      
   }, [isDark]);
 
   useEffect(() => {
