@@ -8,8 +8,8 @@ interface Props {
 }
 
 export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
-  const bg = isDark ? 'bg-[#1A1B26]': 'bg-[#fff]';
-  const textColor = isDark ? 'text-neutral-200 ': 'text-black';
+  const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
+  const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value as OpenAIModel);
   };
@@ -25,6 +25,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
       <option value="gpt-4-turbo">GPT-4-Turbo</option>
       <option value="gpt-4o">GPT-4o</option>
       <option value="gpt-4-0125-preview">GPT-4-0125-Preview</option>
+      <option value="gpt-4o mini">GPT-4o mini</option>
     </select>
   );
 };
