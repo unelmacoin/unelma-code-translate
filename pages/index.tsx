@@ -52,8 +52,8 @@ export default function Home() {
       alert('Please select different languages.');
       return;
     }
-    if(inputCode.trim() !== '' && outputLanguage === ''){
-      alert('please select the output language')
+    if (inputCode.trim() !== '' && outputLanguage === '') {
+      alert('please select the output language');
       return;
     }
 
@@ -282,7 +282,7 @@ export default function Home() {
         }
       >
         <Head>
-          <title className="pt-2">Unelma-Code Translator</title>
+          <title className="pt-2">Code Translator</title>
           <meta
             name="description"
             content="Use AI to translate code from one language to another."
@@ -301,7 +301,7 @@ export default function Home() {
               historyExpand ? 'md:items-start' : ''
             }justify-center mt-20 md:mt-10 lg:mt-10`}
           >
-            <div className="text-4xl font-bold">Unelma-Code Translator</div>
+            <div className="text-4xl font-bold">Code Translator</div>
           </div>
 
           <div
