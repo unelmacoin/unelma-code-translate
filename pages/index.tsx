@@ -49,7 +49,7 @@ export default function Home() {
 
   const handleTranslate = async () => {
     if (inputLanguage === outputLanguage) {
-      alert('Please select different languages.');
+      alert('Sweet Alert.');
       return;
     }
     if (inputCode.trim() !== '' && outputLanguage === '') {
