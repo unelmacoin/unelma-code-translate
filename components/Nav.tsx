@@ -11,7 +11,11 @@ const Nav: React.FC<themeBtn> = ({ isDark, toggleDarkMode }) => {
     <nav>
       <div className="flex w-full cursor-pointer flex-wrap  items-center justify-between px-4 py-2 sm:px-10">
         <a href="https://translate.u16p.com/">
+<<<<<<< Updated upstream
           <h1 className="text-2xl font-medium ">Code Translator</h1>
+=======
+          <h1 className="text-2xl font-medium ">Unelma-Code Translator</h1>
+>>>>>>> Stashed changes
         </a>
         <div className="flex items-center justify-center space-x-4">
           <a
