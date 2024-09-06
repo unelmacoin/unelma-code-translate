@@ -52,8 +52,8 @@ export default function Home() {
       alert('Please select different languages.');
       return;
     }
-    if(inputCode.trim() !== '' && outputLanguage === ''){
-      alert('please select the output language')
+    if (inputCode.trim() !== '' && outputLanguage === '') {
+      alert('please select the output language');
       return;
     }
 
@@ -301,7 +301,7 @@ export default function Home() {
               historyExpand ? 'md:items-start' : ''
             }justify-center mt-20 md:mt-10 lg:mt-10`}
           >
-            <div className="text-4xl font-bold">Unelma-Code Translator</div>
+            <div className="text-4xl font-bold">Code Translator</div>
           </div>
 
           <div
