@@ -46,20 +46,16 @@ export default function Home() {
   const handleHistoryExpand = () => {
     setHistoryExpand(!historyExpand);
   };
-  const showAlert = (message: string) => {
-    Swal.fire({
-      icon: 'erro',
-      text: 'Sweet Alert',
-    });
-  };
 
   const handleTranslate = async () => {
     if (inputLanguage === outputLanguage) {
-      showAlert('Please select different languages.');
+      alert('Please select different languages.');
       return;
     }
+
     if (inputCode.trim() !== '' && outputLanguage === '') {
-      showAlert('Sweet Alert');
+      alert('Sweet Alert');
+
       return;
     }
 
@@ -87,7 +83,7 @@ export default function Home() {
 
     if (!response.ok) {
       setLoading(false);
-      showAlert('Something went wrong.');
+      alert('Something went wrong.');
       return;
     }
 
@@ -95,7 +91,7 @@ export default function Home() {
 
     if (!data) {
       setLoading(false);
-      showAlert('Something went wrong.');
+      alert('Something went wrong.');
       return;
     }
 
