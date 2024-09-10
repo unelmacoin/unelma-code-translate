@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Feedback } from '@/components/Feedback';
+import SweetAlert from '@/components/SweetAlert';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -53,7 +54,10 @@ export default function Home() {
       return;
     }
     if (inputCode.trim() !== '' && outputLanguage === '') {
-      alert('please select the output language');
+      Swal.fire({
+        icon: 'error',
+        text: 'Sweet Alert',
+      });
       return;
     }
 
