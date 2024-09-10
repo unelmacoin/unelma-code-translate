@@ -56,7 +56,7 @@ export default function Home() {
     if (inputCode.trim() !== '' && outputLanguage === '') {
       Swal.fire({
         icon: 'error',
-        text: 'Sweet Alert',
+        text: 'Please select the output language',
       });
       return;
     }
