@@ -57,6 +57,7 @@ export default function Home() {
       Swal.fire({
         icon: 'error',
         text: 'Please select the output language',
+        width: '250px',
       });
       return;
     }
