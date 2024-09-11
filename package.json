@@ -24,6 +24,7 @@
     "react-icons": "^4.10.1",
     "react-toastify": "^10.0.4",
     "react-tooltip": "^5.21.4",
+    "sweetalert": "^2.1.2",
     "sweetalert2": "^11.10.5",
     "tesseract.js": "^5.0.4"
   },
