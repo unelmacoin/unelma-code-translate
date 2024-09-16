@@ -15,6 +15,7 @@
     "@types/dom-speech-recognition": "^0.0.4",
     "@uiw/codemirror-theme-tokyo-night": "^4.19.11",
     "@uiw/react-codemirror": "^4.19.11",
+    "dotenv": "^16.4.5",
     "emailjs-com": "^3.2.0",
     "endent": "^2.1.0",
     "eventsource-parser": "^1.0.0",

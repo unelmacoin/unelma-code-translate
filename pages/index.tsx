@@ -1,3 +1,4 @@
+// import section
 import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
@@ -17,8 +18,10 @@ import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Feedback } from '@/components/Feedback';
+require('dotenv').config();
 
 export default function Home() {
+  // state variables
   const [inputLanguage, setInputLanguage] =
     useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('');
@@ -32,11 +35,15 @@ export default function Home() {
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
 
+  // effects
+
   useEffect(() => {
+    // show toast if there is no code
     toast.info('Enter or upload some code in Input');
   }, []);
 
   useEffect(() => {
+    // set dark mode
     const storedTheme = localStorage.getItem('unelTheme');
     if (storedTheme !== null) {
       setIsDark(JSON.parse(storedTheme));
@@ -46,6 +53,8 @@ export default function Home() {
   const handleHistoryExpand = () => {
     setHistoryExpand(!historyExpand);
   };
+
+  //code translation handler
 
   const handleTranslate = async () => {
     if (inputLanguage === outputLanguage) {
@@ -121,6 +130,7 @@ export default function Home() {
     localStorage.setItem('userHistory', JSON.stringify([...mergedHistory]));
   };
 
+  // copy to clipboard
   const copyToClipboard = (text: string) => {
     const el = document.createElement('textarea');
     el.value = text;
@@ -151,6 +161,7 @@ export default function Home() {
     }
   }, [loading]);
 
+  //handle upload
   const handleUpload = (file: File) => {
     if (
       file.type === 'application/zip' ||
@@ -170,6 +181,7 @@ export default function Home() {
     setHasTranslated(!hasTranslated);
     reader.onload = async (event) => {
       if (file.type.startsWith('image/')) {
+        // ocr processing
         const imageData = event.target?.result as ArrayBuffer;
         const blob = new Blob([imageData], { type: 'image/*' });
         const imageUrl = URL.createObjectURL(blob);
@@ -182,6 +194,7 @@ export default function Home() {
         URL.revokeObjectURL(imageUrl);
       } else {
         setInputCode(event.target?.result as string);
+        // Detect file language based on extension
         const fileExtension = file.name.split('.').pop()?.toLowerCase();
         if (fileExtension) {
           const detectedLanguage = languages.find(
@@ -261,6 +274,7 @@ export default function Home() {
   }, [hasTranslated]);
 
   return (
+    //Rendering Components
     <div style={{ background: bodyBg }}>
       <div
         style={{ background: navBg }}
@@ -330,7 +344,7 @@ export default function Home() {
                 : 'md:flex-row'
             }`}
           >
-            <div className="max-h-200 flex w-full flex-col space-y-2 sm:w-2/4">
+            <div className="flex flex-col w-full space-y-2 max-h-200 sm:w-2/4">
               <div className="flex space-x-4">
                 <UploadImagesAndFiles onUpload={handleUpload} />
                 <HistoryButton
@@ -339,7 +353,7 @@ export default function Home() {
                   isDark={isDark}
                 />
               </div>
-              <div className="text-center text-xl font-bold">Input</div>
+              <div className="text-xl font-bold text-center">Input</div>
 
               <LanguageSelect
                 language={inputLanguage}
@@ -387,7 +401,7 @@ export default function Home() {
                 }`}
               />
             </div>
-            <div className="flex h-full w-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
+            <div className="flex flex-col justify-center w-full h-full space-y-2 sm:mt-0 sm:w-2/4">
               <div
                 className={`text-center ${
                   historyExpand ? 'lg:mt-10' : 'mt-0 md:mt-10 lg:mt-10'
