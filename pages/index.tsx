@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Feedback } from '@/components/Feedback';
+import SweetAlert from '@/components/SweetAlert';
 require('dotenv').config();
 
 export default function Home() {
@@ -62,7 +63,11 @@ export default function Home() {
       return;
     }
     if (inputCode.trim() !== '' && outputLanguage === '') {
-      alert('please select the output language');
+      Swal.fire({
+        icon: 'error',
+        text: 'Please select the output language',
+        width: '250px',
+      });
       return;
     }
 
