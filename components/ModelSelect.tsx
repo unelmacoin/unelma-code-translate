@@ -5,15 +5,9 @@ interface Props {
   model: OpenAIModel;
   onChange: (model: OpenAIModel) => void;
   isDark: boolean;
-  availableModels: string[];
 }
 
-export const ModelSelect: FC<Props> = ({
-  model,
-  onChange,
-  isDark,
-  availableModels,
-}) => {
+export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

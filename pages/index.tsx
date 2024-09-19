@@ -146,14 +146,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      handleTranslate();
-    }, 5000);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [outputLanguage, inputCode, model]);
-
-  useEffect(() => {
     const apiKey = process.env.OPENAI_API_KEY;
     if (apiKey) {
       setApiKey(apiKey);
