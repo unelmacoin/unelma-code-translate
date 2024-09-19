@@ -5,6 +5,7 @@ interface Props {
   model: OpenAIModel;
   onChange: (model: OpenAIModel) => void;
   isDark: boolean;
+  availableModels: string[];
 }
 
 export const ModelSelect: FC<Props> = ({
