@@ -7,7 +7,12 @@ interface Props {
   isDark: boolean;
 }
 
-export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
+export const ModelSelect: FC<Props> = ({
+  model,
+  onChange,
+  isDark,
+  availableModels,
+}) => {
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
