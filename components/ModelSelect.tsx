@@ -24,9 +24,9 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
       <option value="gpt-4">GPT-4</option>
       <option value="gpt-4-turbo">GPT-4-Turbo</option>
       <option value="gpt-4o">GPT-4o</option>
-      <option value="gpt-4-0125-preview">GPT-4-0125-Preview</option>
+      {/*  <option value="gpt-4-0125-preview">GPT-4-0125-Preview</option> */}
       <option value="gpt-4o-mini">GPT-4o mini</option>
-      <option value="o1-preview">GPT-o1-preview</option>
+      <option value="o1-preview">o1-mini</option>
     </select>
   );
 };
