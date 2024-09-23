@@ -18,6 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Feedback } from '@/components/Feedback';
 import SweetAlert from '@/components/SweetAlert';
+require('dotenv').config();
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -335,7 +336,7 @@ export default function Home() {
                 : 'md:flex-row'
             }`}
           >
-            <div className="max-h-200 flex w-full flex-col space-y-2 sm:w-2/4">
+            <div className="flex flex-col w-full space-y-2 max-h-200 sm:w-2/4">
               <div className="flex space-x-4">
                 <UploadImagesAndFiles onUpload={handleUpload} />
                 <HistoryButton
@@ -344,7 +345,7 @@ export default function Home() {
                   isDark={isDark}
                 />
               </div>
-              <div className="text-center text-xl font-bold">Input</div>
+              <div className="text-xl font-bold text-center">Input</div>
 
               <LanguageSelect
                 language={inputLanguage}
@@ -392,7 +393,7 @@ export default function Home() {
                 }`}
               />
             </div>
-            <div className="flex h-full w-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
+            <div className="flex flex-col justify-center w-full h-full space-y-2 sm:mt-0 sm:w-2/4">
               <div
                 className={`text-center ${
                   historyExpand ? 'lg:mt-10' : 'mt-0 md:mt-10 lg:mt-10'
