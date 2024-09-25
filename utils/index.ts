@@ -12,32 +12,32 @@ const createPrompt = (
 ) => {
   if (inputLanguage === 'Natural Language') {
     return endent`
-    You are an expert programmer in all programming languages. Translate the natural language to "${outputLanguage}" code. Do not include \`\`\`.
+You are an expert programmer in all programming languages. Translate the natural language to "${outputLanguage}" code. Do not include \`\`\`.
 
 
-    Natural language:
-    ${inputCode}
+Natural language:
+${inputCode}
 
-    ${outputLanguage} code (no \`\`\`):
-    `;
+${outputLanguage} code (no \`\`\`):
+`;
   } else if (outputLanguage === 'Natural Language') {
     return endent`
-      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to natural language in plain English that the average adult could understand. Respond as bullet points starting with -.
-      
-      ${inputLanguage} code:
-      ${inputCode}
+You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to natural language in plain English that the average adult could understand. Respond as bullet points starting with -.
 
-      Natural language:
-     `;
+${inputLanguage} code:
+${inputCode}
+
+Natural language:
+`;
   } else {
     return endent`
-      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to "${outputLanguage}" code. Do not include \`\`\`.
-      
-      ${inputLanguage} code:
-      ${inputCode}
+You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to "${outputLanguage}" code. Do not include \`\`\`.
 
-      ${outputLanguage} code (no \`\`\`):
-     `;
+${inputLanguage} code:
+${inputCode}
+
+${outputLanguage} code (no \`\`\`):
+`;
   }
 };
 
@@ -54,20 +54,31 @@ export const OpenAIStream = async (
 
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
-  const system = { role: 'system', content: prompt };
+  const messages =
+    model === 'o1-preview'
+      ? [{ role: 'user', content: prompt }]
+      : [
+          { role: 'system', content: prompt },
+          { role: 'user', content: inputCode },
+        ];
 
-  const res = await fetch(`https://api.openai.com/v1/chat/completions`, {
+  const body = {
+    model,
+    messages,
+  };
+
+  if (model !== 'o1-preview') {
+    body['temperature'] = 0;
+    body['stream'] = true;
+  }
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`,
     },
     method: 'POST',
-    body: JSON.stringify({
-      model,
-      messages: [system],
-      temperature: 0,
-      stream: true,
-    }),
+    body: JSON.stringify(body),
   });
 
   const encoder = new TextEncoder();
@@ -81,6 +92,18 @@ export const OpenAIStream = async (
         decoder.decode(result?.value) || statusText
       }`,
     );
+  }
+
+  if (model === 'o1-preview') {
+    const result = await res.json();
+    const text = result.choices[0].message.content;
+    const queue = encoder.encode(text);
+    return new ReadableStream({
+      start(controller) {
+        controller.enqueue(queue);
+        controller.close();
+      },
+    });
   }
 
   const stream = new ReadableStream({
