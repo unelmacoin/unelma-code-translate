@@ -5,10 +5,17 @@ import {
   ReconnectInterval,
 } from 'eventsource-parser';
 
+interface RequestBody {
+  model: string;
+  messages: { role: string; content: string }[];
+  temperature?: number; // Add temperature as an optional property
+  stream?: boolean; // Add stream as an optional property
+}
+
 const createPrompt = (
   inputLanguage: string,
   outputLanguage: string,
-  inputCode: string,
+  inputCode: string
 ) => {
   if (inputLanguage === 'Natural Language') {
     return endent`
@@ -46,7 +53,7 @@ export const OpenAIStream = async (
   outputLanguage: string,
   inputCode: string,
   model: string,
-  key: string,
+  key: string
 ) => {
   if (inputCode.trim() === '') {
     return null;
@@ -62,7 +69,7 @@ export const OpenAIStream = async (
           { role: 'user', content: inputCode },
         ];
 
-  const body = {
+  const body: RequestBody = {
     model,
     messages,
   };
@@ -90,7 +97,7 @@ export const OpenAIStream = async (
     throw new Error(
       `OpenAI API returned an error: ${
         decoder.decode(result?.value) || statusText
-      }`,
+      }`
     );
   }
 
