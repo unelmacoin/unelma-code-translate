@@ -1,3 +1,4 @@
+// import section
 import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
@@ -21,6 +22,7 @@ import SweetAlert from '@/components/SweetAlert';
 require('dotenv').config();
 
 export default function Home() {
+  // state variables
   const [inputLanguage, setInputLanguage] =
     useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('');
@@ -34,11 +36,15 @@ export default function Home() {
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
 
+  // effects
+
   useEffect(() => {
+    // show toast if there is no code
     toast.info('Enter or upload some code in Input');
   }, []);
 
   useEffect(() => {
+    // set dark mode
     const storedTheme = localStorage.getItem('unelTheme');
     if (storedTheme !== null) {
       setIsDark(JSON.parse(storedTheme));
@@ -48,6 +54,8 @@ export default function Home() {
   const handleHistoryExpand = () => {
     setHistoryExpand(!historyExpand);
   };
+
+  //code translation handler
 
   const handleTranslate = async () => {
     if (inputLanguage === outputLanguage) {
@@ -127,6 +135,7 @@ export default function Home() {
     localStorage.setItem('userHistory', JSON.stringify([...mergedHistory]));
   };
 
+  // copy to clipboard
   const copyToClipboard = (text: string) => {
     const el = document.createElement('textarea');
     el.value = text;
@@ -135,14 +144,6 @@ export default function Home() {
     document.execCommand('copy');
     document.body.removeChild(el);
   };
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      handleTranslate();
-    }, 5000);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [outputLanguage, inputCode, model]);
 
   useEffect(() => {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -157,6 +158,7 @@ export default function Home() {
     }
   }, [loading]);
 
+  //handle upload
   const handleUpload = (file: File) => {
     if (
       file.type === 'application/zip' ||
@@ -176,6 +178,7 @@ export default function Home() {
     setHasTranslated(!hasTranslated);
     reader.onload = async (event) => {
       if (file.type.startsWith('image/')) {
+        // ocr processing
         const imageData = event.target?.result as ArrayBuffer;
         const blob = new Blob([imageData], { type: 'image/*' });
         const imageUrl = URL.createObjectURL(blob);
@@ -188,6 +191,7 @@ export default function Home() {
         URL.revokeObjectURL(imageUrl);
       } else {
         setInputCode(event.target?.result as string);
+        // Detect file language based on extension
         const fileExtension = file.name.split('.').pop()?.toLowerCase();
         if (fileExtension) {
           const detectedLanguage = languages.find(
@@ -267,6 +271,7 @@ export default function Home() {
   }, [hasTranslated]);
 
   return (
+    //Rendering Components
     <div style={{ background: bodyBg }}>
       <div
         style={{ background: navBg }}
