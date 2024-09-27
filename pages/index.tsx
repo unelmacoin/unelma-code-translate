@@ -18,6 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Feedback } from '@/components/Feedback';
 import SweetAlert from '@/components/SweetAlert';
+require('dotenv').config();
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -44,8 +45,10 @@ export default function Home() {
     }
   }, []);
 
-  const handleHistoryExpand = () => {
-    setHistoryExpand(!historyExpand);
+  const handleHistoryExpand = (value: boolean) => {
+    console.log('History expanded:', value);
+    /*setHasTranslated(false); 
+    setHistoryExpand(value);   */
   };
 
   const handleTranslate = async () => {
@@ -223,6 +226,7 @@ export default function Home() {
 
   const handleHistorySelect = (value: string) => {
     setInputCode(value);
+    setHasTranslated(false);
   };
 
   const bodyBg = isDark === true ? '#000' : '#E0E0E0';
