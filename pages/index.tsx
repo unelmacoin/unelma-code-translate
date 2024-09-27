@@ -45,8 +45,10 @@ export default function Home() {
     }
   }, []);
 
-  const handleHistoryExpand = () => {
-    setHistoryExpand(!historyExpand);
+  const handleHistoryExpand = (value: boolean) => {
+    console.log('History expanded:', value);
+    /*setHasTranslated(false); 
+    setHistoryExpand(value);   */
   };
 
   const handleTranslate = async () => {
@@ -224,6 +226,7 @@ export default function Home() {
 
   const handleHistorySelect = (value: string) => {
     setInputCode(value);
+    setHasTranslated(false);
   };
 
   const bodyBg = isDark === true ? '#000' : '#E0E0E0';
