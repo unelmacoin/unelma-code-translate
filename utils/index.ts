@@ -62,22 +62,22 @@ export const OpenAIStream = async (
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
   const messages =
-    model === 'o1-preview'
-      ? [{ role: 'user', content: prompt }]
-      : [
-          { role: 'system', content: prompt },
-          { role: 'user', content: inputCode },
-        ];
+  model === 'o1-preview' || model === 'o1-mini'
+    ? [{ role: 'user', content: prompt }]
+    : [
+        { role: 'system', content: prompt },
+        { role: 'user', content: inputCode },
+      ];
 
-  const body: RequestBody = {
-    model,
-    messages,
-  };
+const body: RequestBody = {
+  model,
+  messages,
+};
 
-  if (model !== 'o1-preview') {
-    body['temperature'] = 0;
-    body['stream'] = true;
-  }
+if (model !== 'o1-preview' && model !== 'o1-mini') {
+  body['temperature'] = 0;
+  body['stream'] = true;
+}
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     headers: {
@@ -100,8 +100,8 @@ export const OpenAIStream = async (
       }`
     );
   }
-
-  if (model === 'o1-preview') {
+  
+  if (model === 'o1-preview' || model === 'o1-mini') {
     const result = await res.json();
     const text = result.choices[0].message.content;
     const queue = encoder.encode(text);
@@ -112,18 +112,18 @@ export const OpenAIStream = async (
       },
     });
   }
-
+  
   const stream = new ReadableStream({
     async start(controller) {
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data;
-
+  
           if (data === '[DONE]') {
             controller.close();
             return;
           }
-
+  
           try {
             const json = JSON.parse(data);
             const text = json.choices[0].delta.content;
@@ -134,7 +134,7 @@ export const OpenAIStream = async (
           }
         }
       };
-
+  
       const parser = createParser(onParse);
 
       for await (const chunk of res.body as any) {
@@ -142,6 +142,6 @@ export const OpenAIStream = async (
       }
     },
   });
-
+  
   return stream;
 };
