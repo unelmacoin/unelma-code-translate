@@ -1,9 +1,9 @@
-import { OpenAIModel } from '@/types/types';
+import { OpenAIModel, xAI } from '@/types/types';
 import { FC } from 'react';
 
 interface Props {
-  model: OpenAIModel;
-  onChange: (model: OpenAIModel) => void;
+  model: OpenAIModel | xAI;
+  onChange: (model: OpenAIModel | xAI) => void;
   isDark: boolean;
 }
 
@@ -11,7 +11,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(e.target.value as OpenAIModel);
+    onChange(e.target.value as OpenAIModel | xAI);
   };
 
   return (
@@ -27,6 +27,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
       <option value="gpt-4o-mini">GPT-4o mini</option>
       <option value="o1-preview">GPT-o1-preview</option>
       <option value="o1-mini">GPT-o1-mini</option>
+      <option value="grok-2-latest">Grok-2-Latest</option>
     </select>
   );
 };

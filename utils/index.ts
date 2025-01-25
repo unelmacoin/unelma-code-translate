@@ -62,7 +62,7 @@ export const OpenAIStream = async (
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
   const messages =
-  model === 'o1-preview' || model === 'o1-mini'
+  model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest'
     ? [{ role: 'user', content: prompt }]
     : [
         { role: 'system', content: prompt },
@@ -74,15 +74,18 @@ const body: RequestBody = {
   messages,
 };
 
-if (model !== 'o1-preview' && model !== 'o1-mini') {
+if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest') {
   body['temperature'] = 0;
   body['stream'] = true;
 }
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const apiUrl = model === 'grok-2-latest' ? 'https://api.x.ai/v1/chat/completions' : 'https://api.openai.com/v1/chat/completions';
+  const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : key || process.env.OPENAI_API_KEY;
+
+  const res = await fetch(apiUrl, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${apiKey}`,
     },
     method: 'POST',
     body: JSON.stringify(body),
@@ -94,14 +97,14 @@ if (model !== 'o1-preview' && model !== 'o1-mini') {
   if (res.status !== 200) {
     const statusText = res.statusText;
     const result = await res.body?.getReader().read();
-    throw new Error(
-      `OpenAI API returned an error: ${
-        decoder.decode(result?.value) || statusText
-      }`
-    );
+    const errorMessage = decoder.decode(result?.value) || statusText;
+    if (model === 'grok-2-latest') {
+      throw new Error(`xAI API returned an error: ${errorMessage}`);
+    } else {
+      throw new Error(`OpenAI API returned an error: ${errorMessage}`);
+    }
   }
-  
-  if (model === 'o1-preview' || model === 'o1-mini') {
+  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest') {
     const result = await res.json();
     const text = result.choices[0].message.content;
     const queue = encoder.encode(text);
