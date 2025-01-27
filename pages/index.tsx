@@ -4,11 +4,10 @@ import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
 import { OpenAIModel, xAI, TranslateBody } from '@/types/types';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { IoMdSwap } from 'react-icons/io';
-import ReactDOM from 'react-dom';
 import HistoryButton from '@/components/HistoryButton';
 import Tesseract from 'tesseract.js';
 import UploadImagesAndFiles from '@/components/UploadImagesAndFiles';
@@ -20,9 +19,41 @@ import { Feedback } from '@/components/Feedback';
 import SweetAlert from '@/components/SweetAlert';
 require('dotenv').config();
 
+type AnyFunction = (...args: any[]) => any;
+
+interface DebouncedFunction<T extends AnyFunction> {
+  (...args: Parameters<T>): ReturnType<T>;
+  cancel: () => void;
+}
+
+function debounce<T extends AnyFunction>(fn: T, delay: number): DebouncedFunction<T> {
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  // Define the debounced function
+  function debouncedFunction(this: ThisParameterType<T>, ...args: Parameters<T>): ReturnType<T> {
+    const later = () => {
+      timeoutId = null;
+      return fn.apply(this, args);
+    };
+    clearTimeout(timeoutId as NodeJS.Timeout);
+    timeoutId = setTimeout(later, delay);
+    return undefined as any; // TypeScript doesn't like void return here
+  }
+
+  // Add cancel method to the debounced function
+  const debouncedWithCancel: DebouncedFunction<T> = Object.assign(debouncedFunction, {
+    cancel: function() {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+    }
+  });
+
+  return debouncedWithCancel;
+}
 export default function Home() {
-  const [inputLanguage, setInputLanguage] =
-    useState<string>('Natural Language');
+  const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
@@ -33,6 +64,7 @@ export default function Home() {
   const [isDark, setIsDark] = useState<boolean>(true);
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
+  const translateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     toast.info('Enter or upload some code in Input');
@@ -49,24 +81,40 @@ export default function Home() {
     setHistoryExpand(!historyExpand);
   };
 
-  const handleTranslate = async () => {
+  const handleTranslate = useCallback(async () => {
+    if (loading) return; // Prevent multiple translations
     if (inputLanguage === outputLanguage) {
-      alert('Please select different languages.');
-      return;
-    }
-    if (inputCode.trim() !== '' && outputLanguage === '') {
       Swal.fire({
         icon: 'error',
-        text: 'Please select the output language',
-        width: '250px',
+        title: 'Error',
+        text: 'Please select different languages.',
       });
+      return;
+    }
+
+    if (inputCode.trim() === '' || outputLanguage === '') {
+      if (inputCode.trim() === '') {
+        Swal.fire({
+          icon: 'info',
+          title: 'Notice',
+          text: 'Please enter some code to translate.',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Please select the output language.',
+        });
+      }
       return;
     }
 
     setLoading(true);
     setOutputCode('');
+    setHasTranslated(false); // Set to false before starting translation
 
-    const controller = new AbortController();
+    try {
+      const controller = new AbortController();
 
     const body: TranslateBody = {
       inputLanguage,
@@ -85,19 +133,15 @@ export default function Home() {
       body: JSON.stringify(body),
     });
 
-    if (!response.ok) {
-      setLoading(false);
-      alert('Something went wrong.');
-      return;
-    }
+      if (!response.ok) {
+        throw new Error('Something went wrong with the translation.');
+      }
 
-    const data = response.body;
+      const data = response.body;
 
-    if (!data) {
-      setLoading(false);
-      alert('Something went wrong.');
-      return;
-    }
+      if (!data) {
+        throw new Error('No data received from translation API.');
+      }
 
     const reader = data.getReader();
     const decoder = new TextDecoder();
@@ -114,7 +158,6 @@ export default function Home() {
       setOutputCode((prevCode) => prevCode + chunkValue);
     }
 
-    setLoading(false);
     copyToClipboard(code);
     setHasTranslated(true);
 
@@ -125,7 +168,19 @@ export default function Home() {
     ]);
     setHistory(mergedHistory);
     localStorage.setItem('userHistory', JSON.stringify([...mergedHistory]));
-  };
+  }catch (error) {
+    console.error('Translation error:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Translation Failed',
+      text: 'Please try again.',
+    });
+  } finally {
+    setLoading(false); // Always ensure loading is set back to false
+  }
+  //eslint-disable-next-line react-hooks/exhaustive-deps
+}, [inputLanguage, outputLanguage, inputCode, model, apiKey, history]);
+
 
   const copyToClipboard = (text: string) => {
     const el = document.createElement('textarea');
@@ -136,13 +191,31 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+  const debouncedTranslate = 
+  //eslint-disable-next-line react-hooks/exhaustive-deps
+  useCallback(
+    debounce(() => {
       handleTranslate();
-    }, 5000);
+    }, 1500),
+    [handleTranslate]
+  );
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [outputLanguage, inputCode, model]);
+  useEffect(() => {
+    if (inputCode.trim() !== '' && !loading && !hasTranslated) {
+      debouncedTranslate();
+    }
+
+    return () => {
+      debouncedTranslate.cancel();
+    };
+  }, [inputCode, loading, hasTranslated, debouncedTranslate]);
+
+  useEffect(() => {
+    if (inputCode.trim() !== '' && !loading && !hasTranslated) {
+      debouncedTranslate();
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [model, outputLanguage, inputCode, loading, hasTranslated]);
 
   useEffect(() => {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -155,7 +228,7 @@ export default function Home() {
     if (inputCode.trim() !== '' && loading) {
       toast.info('Translating...');
     }
-  }, [loading]);
+  }, [loading, inputCode]);
 
   const handleUpload = (file: File) => {
     if (
@@ -168,6 +241,7 @@ export default function Home() {
     ) {
       Swal.fire({
         icon: 'error',
+        title: 'Error',
         text: 'You cannot upload zip folders at the moment!',
       });
       return;
@@ -215,16 +289,22 @@ export default function Home() {
     setOutputLanguage(inputLanguage);
     setInputCode(outputCode);
     setOutputCode(inputCode);
+    setHasTranslated(false); // Reset translation state when swapping languages
   };
+
   const toggleDarkMode = () => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
     localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
   };
 
-  const handleHistorySelect = (value: string) => {
-    setInputCode(value);
-  };
+  const handleHistorySelect = useCallback((value: string) => {
+    if (inputCode !== value) {
+      setInputCode(value);
+      setHasTranslated(false);
+      setHistoryExpand(false); // Close the history field
+    }
+  }, [inputCode]);
 
   const bodyBg = isDark === true ? '#000' : '#E0E0E0';
   const navBg = isDark === true ? '#333333' : '#E8EBF5';
@@ -244,6 +324,7 @@ export default function Home() {
       setOutputLanguage(inputLanguage);
       setInputCode(outputCode);
       setOutputCode(inputCode);
+      setHasTranslated(false); // Reset translation state when swapping languages
     };
     const handleKeyboardShortcut = (event: any) => {
       if (
@@ -264,7 +345,12 @@ export default function Home() {
     if (outputCode.trim() !== '' && hasTranslated) {
       toast.success('Your code is translated');
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasTranslated]);
+
+  useEffect(() => {
+    console.log('inputCode changed to:', inputCode);
+  }, [inputCode]);
 
   return (
     <div style={{ background: bodyBg }}>
@@ -276,7 +362,6 @@ export default function Home() {
             : 'w-full  py-4  transition-all duration-300'
         }`}
       >
-        {' '}
         <Nav isDark={isDark} toggleDarkMode={toggleDarkMode} />
       </div>
 
@@ -318,7 +403,10 @@ export default function Home() {
             <ModelSelect
               model={model}
               isDark={isDark}
-              onChange={(value) => setModel(value as OpenAIModel | xAI)}
+              onChange={(value) => {
+                setModel(value as OpenAIModel | xAI);
+                setHasTranslated(false); // Reset translation state when changing model
+              }}
             />
           </div>
           <div className={`mt-2 ${historyExpand ? '' : 'text-center'} text-xs`}>
@@ -352,7 +440,9 @@ export default function Home() {
                 onChange={(value) => {
                   setInputLanguage(value);
                   setHasTranslated(false);
-                  setInputCode('');
+                  if (value !== 'Natural Language' && inputLanguage === 'Natural Language') {
+                    setInputCode('');
+                  }
                   setOutputCode('');
                 }}
                 isDark={isDark}
@@ -407,6 +497,7 @@ export default function Home() {
                 onChange={(value) => {
                   setOutputLanguage(value);
                   setOutputCode('');
+                  setHasTranslated(false); 
                 }}
                 isDark={isDark}
               />
@@ -416,9 +507,15 @@ export default function Home() {
                   text={outputCode}
                   isDark={isDark}
                   maxCharacterCount={5000}
+                  editable={false}
                 />
               ) : (
-                <CodeBlock code={outputCode} isDark={isDark} />
+                <CodeBlock
+                  code={outputCode}
+                  isDark={isDark}
+                  editable={false}
+                  onChange={() => {}}
+                />
               )}
               <div className="">
                 <Feedback />
