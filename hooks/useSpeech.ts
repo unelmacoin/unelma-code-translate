@@ -8,37 +8,47 @@ if(typeof window !== 'undefined' && 'webkitSpeechRecognition' in window){
 }
 
 export const useSpeech = () => {
-  const [textSpeech, setTextSpeech] = useState(' ')
+  const [textSpeech, setTextSpeech] = useState('')
   const [isListening, setIsListening] = useState(false);
 
   useEffect(()=>{
     if(!recognition) return;
     recognition.onresult = (event: SpeechRecognitionEvent) =>{
-      setTextSpeech(event.results[0][0].transcript)
+      const transcript = Array.from(event.results)
+      .map((result: SpeechRecognitionResult) => result[0])
+      .map((result: SpeechRecognitionAlternative) => result.transcript)
+      .join('');
+    setTextSpeech(transcript);
       recognition.stop();
       setIsListening(false);
+    };
 
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error(event.error);
+      setIsListening(false);
+    };
+
+    return () => {
+      recognition.stop();
+    };
+  }, []);
+
+
+  const handleListening = () => {
+    if (recognition) {
+      if (isListening) {
+        recognition.stop();
+      } else {
+        setTextSpeech('');
+        recognition.start();
+      }
+      setIsListening(!isListening);
     }
-  }, [])
-
-  const handleListening = () =>{
-    if(recognition){
-      setTextSpeech(' ')
-    setIsListening(true);
-    recognition.start()
-  }
-    
-    if (recognition === null){
-      alert("hello");
-    }
-  }
-
+  };
 
   return {
     textSpeech,
     isListening,
-    recognition,
     handleListening,
-  }
-
-}
+  };
+};
