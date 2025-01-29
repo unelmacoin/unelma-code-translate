@@ -161,10 +161,19 @@ export default function Home() {
     copyToClipboard(code);
     setHasTranslated(true);
 
-    const updatedHistory = new Set([...history, inputCode]);
+    const updatedHistory = new Set([
+      ...history,
+      JSON.stringify({ inputCode, inputLanguage, outputLanguage,model })
+    ]);
     const mergedHistory = new Set([
       ...updatedHistory,
-      ...JSON.parse(localStorage.getItem('userHistory') || '[]'),
+      ...JSON.parse(localStorage.getItem('userHistory') || '[]').map((item: string) => {
+        try {
+          return JSON.stringify(JSON.parse(item));
+        } catch {
+          return item;
+        }
+      }),
     ]);
     setHistory(mergedHistory);
     localStorage.setItem('userHistory', JSON.stringify([...mergedHistory]));
@@ -299,12 +308,14 @@ export default function Home() {
   };
 
   const handleHistorySelect = useCallback((value: string) => {
-    if (inputCode !== value) {
-      setInputCode(value);
-      setHasTranslated(false);
-      setHistoryExpand(false); // Close the history field
-    }
-  }, [inputCode]);
+    const { inputCode, inputLanguage, outputLanguage, model } = JSON.parse(value);
+    setInputCode(inputCode);
+    setInputLanguage(inputLanguage);
+    setOutputLanguage(outputLanguage);
+    setModel(model);
+    setHasTranslated(false);
+    setHistoryExpand(false); // Close the history field
+  }, []);
 
   const bodyBg = isDark === true ? '#000' : '#E0E0E0';
   const navBg = isDark === true ? '#333333' : '#E8EBF5';
