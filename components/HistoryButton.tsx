@@ -16,9 +16,15 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
   useEffect(() => {
     const storedHistory = localStorage.getItem("userHistory");
     if (storedHistory) {
-      setHistoryList(JSON.parse(storedHistory).reverse());
+      setHistoryList(JSON.parse(storedHistory).map((item: string) => {
+        try {
+          return JSON.parse(item);
+        } catch {
+          return item;
+        }
+      }).reverse());
     } else {
-      setHistoryList([]); 
+      setHistoryList([]);
     }
   }, []);
 
@@ -41,7 +47,8 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
   setItemsToShow((prevItems) => prevItems +10)
   };
   const handleSelect = (item: string) => {
-    onSelect(item);
+    const { inputCode, inputLanguage, outputLanguage, model } = typeof item === 'string' ? JSON.parse(item) : item;
+    onSelect(JSON.stringify({ inputCode, inputLanguage, outputLanguage, model }));
     handleCloseWindow();
   };
 
@@ -63,12 +70,18 @@ const HistoryButton: React.FC<HistoryButtonProps> = ({ onSelect, isDark, onExpan
           <div className="p-2 text-right">
           <button type="reset" onClick={handleClearHistory} title="Delete all items from your history list" className={`p-1 text-xl rounded ${isDark ? 'text-blue-100':'text-blue-800 hover:bg-gray-200' } `}>Clear history</button>
           </div>
-          {historyList && historyList.slice(0, itemsToShow).map((item, index) => (
-            <li key={index} onClick={() => handleSelect(item)} className="my-2 cursor-pointer">
-              {item}
-              <hr />
-            </li>
-          ))}
+          {historyList && historyList.slice(0, itemsToShow).map((item, index) => {
+            const { inputCode, inputLanguage, outputLanguage, model } = typeof item === 'string' ? JSON.parse(item) : item;
+            return (
+              <li key={index} onClick={() => handleSelect(item)} className="my-2 cursor-pointer">
+                <div>{`Input code: ${inputCode}`}</div>
+                <div>{`Input Language: ${inputLanguage}`}</div>
+                <div>{`Output Language: ${outputLanguage}`}</div>
+                <div>{`Model: ${model}`}</div>
+                <hr />
+              </li>
+            );
+          })}
           
           {historyList.length > itemsToShow && (
           <div className="p-2 text-center">
