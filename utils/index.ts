@@ -74,13 +74,13 @@ const body: RequestBody = {
   messages,
 };
 
-if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest') {
+if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== 'deepseek-chat') {
   body['temperature'] = 0;
   body['stream'] = true;
 }
 
-  const apiUrl = model === 'grok-2-latest' ? 'https://api.x.ai/v1/chat/completions' : 'https://api.openai.com/v1/chat/completions';
-  const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : key || process.env.OPENAI_API_KEY;
+const apiUrl = model === 'grok-2-latest' ? 'https://api.x.ai/v1/chat/completions' : model === 'deepseek-chat' ? 'https://api.deepseek.com/chat/completions' : 'https://api.openai.com/v1/chat/completions';
+const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 'deepseek-chat' ? process.env.DEEPSEEK_API_KEY : key || process.env.OPENAI_API_KEY;
 
   const res = await fetch(apiUrl, {
     headers: {
@@ -100,11 +100,13 @@ if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest') 
     const errorMessage = decoder.decode(result?.value) || statusText;
     if (model === 'grok-2-latest') {
       throw new Error(`xAI API returned an error: ${errorMessage}`);
+    } else if (model === 'deepseek-chat') {
+      throw new Error(`DeepSeek API returned an error: ${errorMessage}`);
     } else {
       throw new Error(`OpenAI API returned an error: ${errorMessage}`);
     }
   }
-  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest') {
+  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'deepseek-chat') {
     const result = await res.json();
     const text = result.choices[0].message.content;
     const queue = encoder.encode(text);
