@@ -2,7 +2,7 @@ import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
-import { OpenAIModel, xAI, TranslateBody } from '@/types/types';
+import { OpenAIModel, xAI, OpenAI, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Nav from '@/components/Nav';
@@ -57,7 +57,7 @@ export default function Home() {
   const [outputLanguage, setOutputLanguage] = useState<string>('');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
-  const [model, setModel] = useState<OpenAIModel | xAI>('gpt-3.5-turbo');
+  const [model, setModel] = useState<OpenAIModel | xAI | OpenAI>('gpt-3.5-turbo');
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
@@ -415,7 +415,7 @@ export default function Home() {
               model={model}
               isDark={isDark}
               onChange={(value) => {
-                setModel(value as OpenAIModel | xAI);
+                setModel(value as OpenAIModel | xAI | OpenAI);
                 setHasTranslated(false); // Reset translation state when changing model
               }}
             />
