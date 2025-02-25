@@ -17,6 +17,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Feedback } from '@/components/Feedback';
 import SweetAlert from '@/components/SweetAlert';
+import { useTranslationLimit } from '../hooks/useTranslationLimit';
+import RestrictedModelModal from '../components/RestrictedModelModal';
 require('dotenv').config();
 
 type AnyFunction = (...args: any[]) => any;
@@ -65,6 +67,7 @@ export default function Home() {
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
   const translateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { showLimitModal, setShowLimitModal, checkAndIncrementLimit } = useTranslationLimit(model);
 
   useEffect(() => {
     toast.info('Enter or upload some code in Input');
@@ -82,6 +85,9 @@ export default function Home() {
   };
 
   const handleTranslate = useCallback(async () => {
+    if (!checkAndIncrementLimit()) {
+      return;
+    }
     if (loading) return; // Prevent multiple translations
     if (inputLanguage === outputLanguage) {
       Swal.fire({
@@ -384,7 +390,7 @@ export default function Home() {
         }
       >
         <Head>
-          <title className="pt-2">Unelma-Code Translator</title>
+          <title className="pt-0">Unelma-Code Translator</title>
           <meta
             name="description"
             content="Use AI to translate code from one language to another."
@@ -401,7 +407,7 @@ export default function Home() {
           <div
             className={`flex flex-col ${
               historyExpand ? 'md:items-start' : ''
-            }justify-center mt-20 md:mt-10 lg:mt-10`}
+            }justify-center mt-0 md:mt-0 lg:mt-0`}
           >
             <div className="text-4xl font-bold">Code Translator</div>
           </div>
@@ -537,6 +543,10 @@ export default function Home() {
       </div>
       <Footer isDark={isDark} />
       <ToastContainer autoClose={2000} style={{ top: '5rem' }} />
+      <RestrictedModelModal 
+        isOpen={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+      />
     </div>
   );
 }
