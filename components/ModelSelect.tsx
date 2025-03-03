@@ -25,6 +25,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
       <option value="gpt-4-0125-preview">GPT-4-0125-Preview</option>
       <option value="o1-preview">GPT-o1-Preview</option>
       <option value="o1-mini">GPT-o1-Mini</option>
+      <option value="o3-mini">GPT-o3-mini</option>
       <option value="grok-2-latest">Grok-2-Latest</option>
       <option value="deepseek-chat">DeepSeek</option>
     </select>

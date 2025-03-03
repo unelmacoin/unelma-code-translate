@@ -74,7 +74,7 @@ const body: RequestBody = {
   messages,
 };
 
-if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== 'deepseek-chat') {
+if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== 'deepseek-chat' && model !== 'o3-mini') {
   body['temperature'] = 0;
   body['stream'] = true;
 }
@@ -106,7 +106,7 @@ const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 
       throw new Error(`OpenAI API returned an error: ${errorMessage}`);
     }
   }
-  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'deepseek-chat') {
+  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'deepseek-chat' || model === 'o3-mini') {
     const result = await res.json();
     const text = result.choices[0].message.content;
     const queue = encoder.encode(text);
