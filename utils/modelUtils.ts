@@ -3,7 +3,8 @@ export const RESTRICTED_MODELS = [
   'gpt-4-turbo',
   'gpt-4o',
   'gpt-4o-mini',
-  'gpt-4-0125-preview'
+  'gpt-4-0125-preview',
+  'gpt-4.5-preview'
 ];
 
 export const isRestrictedModel = (model: string): boolean => {
