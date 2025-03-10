@@ -1,20 +1,18 @@
-import "@/styles/globals.css";
-import type { AppProps } from "next/app";
-import { Inter } from "next/font/google";
+import '@/styles/globals.css';
+import type { AppProps } from 'next/app';
 import { AuthProvider } from '../contexts/AuthContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import { Toaster } from 'react-hot-toast';
-import Nav from '../components/Nav';
 
-const inter = Inter({ subsets: ["latin"] });
-
-function App({ Component, pageProps }: AppProps<{}>) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
-      <main className={inter.className}>
-        <Nav isDark={false} toggleDarkMode={() => {}} />
-        <Component {...pageProps} />
-      </main>
-      <Toaster position="top-center" />
+      <ThemeProvider>
+        <main>
+          <Component {...pageProps} />
+        </main>
+        <Toaster position="top-center" />
+      </ThemeProvider>
     </AuthProvider>
   );
 }
