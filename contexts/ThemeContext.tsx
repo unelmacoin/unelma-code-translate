@@ -8,14 +8,13 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => 
+    typeof window !== 'undefined' && JSON.parse(localStorage.getItem('unelTheme') || 'false')
+  );
 
   useEffect(() => {
-    // Change this to use the same key as index page
-    const savedDarkMode = localStorage.getItem('unelTheme') === 'true';
-    setIsDark(savedDarkMode);
-    document.body.style.backgroundColor = savedDarkMode ? '#131416' : '#fff';
-  }, []);
+    document.body.style.backgroundColor = isDark ? '#131416' : '#fff';
+  }, [isDark]);
 
   const toggleDarkMode = () => {
     const newIsDark = !isDark;
