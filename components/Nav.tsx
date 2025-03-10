@@ -1,9 +1,7 @@
-import React, { useState, useEffect, MouseEventHandler } from 'react';
+import React from 'react';
 import ThemeButton from './ThemeButton';
 import { useAuth } from '../contexts/AuthContext';
 import Link from 'next/link';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../config/firebase';
 
 interface NavProps {
   isDark: boolean;
@@ -11,29 +9,12 @@ interface NavProps {
   showAuthButtons?: boolean;
 }
 
-export const signInWithGoogle = async (handleSignInSuccess?: () => void) => {
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    if (result.user && handleSignInSuccess) {
-      setTimeout(handleSignInSuccess, 1500); // Call handler after 1.5 seconds
-    }
-  } catch (error) {
-    console.error('Error signing in with Google:', error);
-  }
-};
-
 const Nav: React.FC<NavProps> = ({
   isDark,
   toggleDarkMode,
   showAuthButtons = true,
 }) => {
   const { user, signOut } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -46,10 +27,6 @@ const Nav: React.FC<NavProps> = ({
   const handleDarkModeToggle = () => {
     toggleDarkMode(); // Just call the function directly
   };
-
-  if (isLoading) {
-    return null; // or a loading spinner
-  }
 
   return (
     <nav
