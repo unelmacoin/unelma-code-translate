@@ -7,11 +7,6 @@ import Nav from '../components/Nav';
 import { auth } from '../config/firebase';
 import { useTheme } from '../contexts/ThemeContext';
 
-interface SignUpProps {
-  isDark: boolean;
-  toggleDarkMode: (isDark: boolean) => void;
-}
-
 const SignUpWithEmail: React.FC = () => {
   const { isDark, toggleDarkMode } = useTheme();
   const [firstName, setFirstName] = useState('');
@@ -21,6 +16,23 @@ const SignUpWithEmail: React.FC = () => {
   const router = useRouter();
 
   const handleSignUp = async () => {
+    // Basic validation
+    if (!firstName || !lastName || !email || !password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -38,7 +50,8 @@ const SignUpWithEmail: React.FC = () => {
       });
       router.push('/login');
     } catch (error) {
-      toast.error('Error signing up.');
+      const errorMessage = error instanceof Error ? error.message : 'Error signing up.';
+      toast.error(errorMessage);
     }
   };
 
@@ -123,9 +136,6 @@ const SignUpWithEmail: React.FC = () => {
           >
             Sign Up
           </button>
-          {/* <Link href="/" className={`hover:underline ${isDark ? 'text-white' : 'text-black'}`}>
-            Back to Home
-          </Link> */}
         </div>
       </div>
     </div>
