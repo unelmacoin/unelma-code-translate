@@ -1,25 +1,38 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signInWithGoogle } from '../components/Nav';
 import Image from 'next/image';
 import Nav from '../components/Nav';
 import { toast } from 'react-hot-toast';
 import { useTheme } from '../contexts/ThemeContext';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../config/firebase';
+
+const signInWithGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error('Error signing in with Google:', error);
+    return null;
+  }
+};
 
 const SignUp: React.FC = () => {
   const { isDark, toggleDarkMode } = useTheme();
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const router = useRouter();
 
   const handleSignInWithGoogle = async () => {
-    try {
-      await signInWithGoogle();
+    setIsSigningIn(true);
+    const user = await signInWithGoogle();
+    setIsSigningIn(false);
+    if (user) {
       toast.success('Successfully signed in using Google !', {
         duration: 2000, // Show for 2 seconds
       });
       router.push('/');
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
     }
   };
 
@@ -61,7 +74,7 @@ const SignUp: React.FC = () => {
           >
             <div className="flex w-full items-center justify-center">
               <Image
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                src="/google.svg"
                 alt="Google logo"
                 width={36}
                 height={36}
