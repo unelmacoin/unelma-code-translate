@@ -1,36 +1,19 @@
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import ThemeButton from './ThemeButton';
 import { useAuth } from '../contexts/AuthContext';
 import Link from 'next/link';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import Image from 'next/image';
-import { auth } from '../config/firebase';
-import { toast } from 'react-toastify';
 
-interface themeBtn {
+interface NavProps {
   isDark: boolean;
-  toggleDarkMode: MouseEventHandler<HTMLButtonElement>;
-  handleSignInSuccess?: () => void;
+  toggleDarkMode: () => void; // Changed this type
+  showAuthButtons?: boolean;
 }
 
-export const signInWithGoogle = async (handleSignInSuccess?: () => void) => {
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    if (result.user) {
-      toast.success('Successfully signed in using google!\nYou now have unlimited access.', {
-        autoClose: 2000 // Show for 2 seconds
-      });
-      if (handleSignInSuccess) {
-        setTimeout(handleSignInSuccess, 1500); // Call handler after 1.5 seconds
-      }
-    }
-  } catch (error) {
-    console.error('Error signing in with Google:', error);
-  }
-};
-
-const Nav: React.FC<themeBtn> = ({isDark, toggleDarkMode, handleSignInSuccess}) => {
+const Nav: React.FC<NavProps> = ({
+  isDark,
+  toggleDarkMode,
+  showAuthButtons = true,
+}) => {
   const { user, signOut } = useAuth();
 
   const handleSignOut = async () => {
@@ -41,47 +24,75 @@ const Nav: React.FC<themeBtn> = ({isDark, toggleDarkMode, handleSignInSuccess}) 
     }
   };
 
+  const handleDarkModeToggle = () => {
+    toggleDarkMode(); // Just call the function directly
+  };
+
   return (
-    <nav className="mb-0">
-      <div className="sm:px-10 flex w-full flex-wrap items-center justify-between py-0 px-4">
-        <div className="flex items-center">
+    <nav
+      className={`fixed left-0 right-0 top-0 z-50 h-24 ${
+        isDark ? 'bg-[#333333] text-white' : 'bg-[#E8EBF5] text-black'
+      } transition-all duration-300`}
+    >
+      <div className="flex h-full w-full flex-wrap items-center justify-between px-4 sm:px-10">
+        <div className="flex h-full items-center">
           <Link href="https://translate.u16p.com/">
-            <h1 className='text-2xl font-medium -mt-1 leading-none'>Unelma-Code Translator</h1>
+            <h1 className="text-2xl font-medium leading-none">
+              Unelma-Code Translator
+            </h1>
           </Link>
         </div>
-        <div className='flex flex-col items-end space-y-0.5'>
-          <div className='flex items-center space-x-4'>
-            <Link href="https://u16p.com/" className={isDark ? 'text-[#FFFFFF]' : 'text-[#000000]'}>
+        <div className="flex h-full flex-col items-end">
+          <div className="mt-6 flex h-full items-center space-x-4">
+            <Link
+              href="https://u16p.com/"
+              className={isDark ? 'text-[#FFFFFF]' : 'text-[#000000]'}
+            >
               Back to U16P
             </Link>
-            <ThemeButton isDark={isDark} toggleDarkMode={toggleDarkMode}/>
+            <ThemeButton
+              isDark={isDark}
+              toggleDarkMode={handleDarkModeToggle}
+            />
           </div>
-          <div className={isDark ? 'text-[#FFFFFF] text-xs' : 'text-gray-600 text-xs'}>
-            {user ? (
-              `Signed in as ${user.displayName || user.email}`
-            ) : (
-              <button
-                onClick={() => signInWithGoogle(handleSignInSuccess)}
-                className={`flex items-center justify-center px-4 py-2 transform transition-transform duration-200 ${isDark ? 'text-[#FFFFFF] hover:scale-110' : 'text-[#000000] hover:scale-110'}`}
-              >
-                <Image
-                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                  alt="Google logo"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6 mr-2"
-                />
-                Sign in with Google
-              </button>
-            )}
-          </div>
-          {user && (
-            <button
-              onClick={handleSignOut}
-              className={`text-xs transform transition-transform duration-200 ${isDark ? 'text-[#FFFFFF] hover:scale-110' : 'text-[#000000] hover:scale-110'}`}
+          {showAuthButtons && (
+            <div
+              className={`${
+                isDark ? 'text-xs text-white' : 'text-xs text-gray-600'
+              } mb-4`}
             >
-              Sign out
-            </button>
+              {user ? (
+                <div className="flex items-center">
+                  <span className={isDark ? 'text-white' : 'text-black'}>
+                    Signed in as {user.displayName || user.email}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className={`ml-4 transform px-4 py-2 transition-transform duration-200 ${
+                      isDark
+                        ? 'text-white hover:scale-110'
+                        : 'text-black hover:scale-110'
+                    }`}
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <span className={isDark ? 'text-white' : 'text-black'}></span>
+                  <Link
+                    href="/signup"
+                    className={`flex transform items-center justify-center px-4 py-2 transition-transform duration-200 ${
+                      isDark
+                        ? 'text-white hover:scale-110'
+                        : 'text-black hover:scale-110'
+                    }`}
+                  >
+                    Sign up
+                  </Link>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>

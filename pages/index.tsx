@@ -19,6 +19,7 @@ import { Feedback } from '@/components/Feedback';
 import SweetAlert from '@/components/SweetAlert';
 import { useTranslationLimit } from '../hooks/useTranslationLimit';
 import RestrictedModelModal from '../components/RestrictedModelModal';
+import { useTheme } from '../contexts/ThemeContext';
 require('dotenv').config();
 
 type AnyFunction = (...args: any[]) => any;
@@ -55,7 +56,9 @@ function debounce<T extends AnyFunction>(fn: T, delay: number): DebouncedFunctio
   return debouncedWithCancel;
 }
 export default function Home() {
-  const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
+  const { isDark, toggleDarkMode } = useTheme();
+  const [inputLanguage, setInputLanguage] =
+    useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
@@ -63,7 +66,6 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
-  const [isDark, setIsDark] = useState<boolean>(true);
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
   const translateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -71,13 +73,6 @@ export default function Home() {
 
   useEffect(() => {
     toast.info('Enter or upload some code in Input');
-  }, []);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('unelTheme');
-    if (storedTheme !== null) {
-      setIsDark(JSON.parse(storedTheme));
-    }
   }, []);
 
   const handleHistoryExpand = () => {
@@ -307,12 +302,6 @@ export default function Home() {
     setHasTranslated(false); // Reset translation state when swapping languages
   };
 
-  const toggleDarkMode = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    localStorage.setItem('unelTheme', JSON.stringify(newIsDark));
-  };
-
   const handleHistorySelect = useCallback((value: string) => {
     const { inputCode, inputLanguage, outputLanguage, model } = JSON.parse(value);
     setInputCode(inputCode);
@@ -329,11 +318,6 @@ export default function Home() {
   const changeBodyBackgroundColor = (color: any) => {
     document.body.style.backgroundColor = color;
   };
-
-  useEffect(() => {
-    const backgroundColor = isDark ? '#131416' : '#fff';
-    changeBodyBackgroundColor(backgroundColor);
-  }, [isDark]);
 
   useEffect(() => {
     const handleSwap = () => {
@@ -407,7 +391,7 @@ export default function Home() {
           <div
             className={`flex flex-col ${
               historyExpand ? 'md:items-start' : ''
-            }justify-center mt-0 md:mt-0 lg:mt-0`}
+            }justify-center mt-16 md:mt-16 lg:mt-16`}
           >
             <div className="text-4xl font-bold">Code Translator</div>
           </div>
