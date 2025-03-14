@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { validateCSRF } from '../../middleware/csrf';
 
 // Utility function to initialize Firebase Admin SDK
 function initializeFirebase() {
@@ -15,7 +16,7 @@ function initializeFirebase() {
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -52,4 +53,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('Error checking email:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
+
+export default validateCSRF(handler);
