@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -15,14 +15,8 @@ const SignUpWithEmail: React.FC = () => {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleSignUp = async () => {
-    // Basic validation
-    if (!firstName || !lastName || !email || !password) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const handleSignup = async (email: string, password: string) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
     if (!emailPattern.test(email)) {
       toast.error('Please enter a valid email address');
       return;
@@ -32,27 +26,36 @@ const SignUpWithEmail: React.FC = () => {
       toast.error('Password must be at least 6 characters');
       return;
     }
-
+  
+    const normalizedEmail = email.trim().toLowerCase(); // Normalize email (trim and lowercase)
+  
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
+      // Step 1: Create user with normalized email and password
+      const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
       const user = userCredential.user;
+  
+      // Step 2: Send email verification
+      await sendEmailVerification(user);
+      toast.success('Your account has been successfully created! Please check your email to verify your account.', {
+        style: { fontSize: '14px' },
+      });
+  
+      // Step 3: Update profile with name
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`,
       });
-      toast.success('Your account has been successfully created!', {
-        style: {
-          fontSize: '14px',
-        },
-      });
+      console.log('User created:', user);
       router.push('/login');
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Error signing up.';
       toast.error(errorMessage);
+      console.error('Error during sign-up:', errorMessage);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSignup(email, password);
   };
 
   return (
@@ -69,7 +72,7 @@ const SignUpWithEmail: React.FC = () => {
         />
       </div>
       <div className="mt-24 flex flex-col items-center justify-center py-2">
-        <h1 className="mb-4 text-3xl font-bold">Sign Up</h1>
+        <h1 className="mb-4 text-3xl font-bold mt-10">Sign Up</h1>
         <h2 className="font mb-4 text-2xl">
           Already a member?{' '}
           <Link
@@ -81,7 +84,7 @@ const SignUpWithEmail: React.FC = () => {
             Log In
           </Link>
         </h2>
-        <div className="flex w-full max-w-md flex-col space-y-4">
+        <form onSubmit={handleSubmit} className="flex w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg flex-col space-y-4">
           <input
             type="text"
             placeholder="First Name"
@@ -92,6 +95,7 @@ const SignUpWithEmail: React.FC = () => {
                 ? 'border-gray-700 bg-gray-800 text-white'
                 : 'border-gray-300 bg-white text-black'
             }`}
+            autoComplete="given-name"
           />
           <input
             type="text"
@@ -103,6 +107,7 @@ const SignUpWithEmail: React.FC = () => {
                 ? 'border-gray-700 bg-gray-800 text-white'
                 : 'border-gray-300 bg-white text-black'
             }`}
+            autoComplete="family-name"
           />
           <input
             type="email"
@@ -114,6 +119,7 @@ const SignUpWithEmail: React.FC = () => {
                 ? 'border-gray-700 bg-gray-800 text-white'
                 : 'border-gray-300 bg-white text-black'
             }`}
+            autoComplete="email"
           />
           <input
             type="password"
@@ -125,9 +131,10 @@ const SignUpWithEmail: React.FC = () => {
                 ? 'border-gray-700 bg-gray-800 text-white'
                 : 'border-gray-300 bg-white text-black'
             }`}
+            autoComplete="new-password"
           />
           <button
-            onClick={handleSignUp}
+            type="submit"
             className={`rounded px-4 py-2 ${
               isDark
                 ? 'bg-[#FFFFFF] text-[#000000] hover:bg-[#E0E0E0]'
@@ -136,7 +143,7 @@ const SignUpWithEmail: React.FC = () => {
           >
             Sign Up
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

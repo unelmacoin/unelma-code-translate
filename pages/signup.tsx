@@ -51,7 +51,7 @@ const SignUp: React.FC = () => {
       </div>
       <div className="mt-24 flex flex-grow items-start justify-center">
         <div className="flex flex-col items-center justify-center space-y-6 py-2">
-          <h1 className="mb-4 text-3xl font-bold">Sign Up</h1>
+          <h1 className="mb-4 text-3xl font-bold mt-10">Sign Up</h1>
           <h2 className="font mb-12 text-2xl">
             Already a member?{' '}
             <Link href="/login" legacyBehavior>
@@ -66,33 +66,29 @@ const SignUp: React.FC = () => {
           </h2>
           <button
             onClick={handleSignInWithGoogle}
-            className={`mb-6 flex h-16 w-96 items-center justify-center rounded px-6 py-4 ${
+            className={`mb-6 flex h-16 w-full sm:w-72 md:w-96 lg:w-[32rem] items-center justify-center rounded px-6 py-4 mx-auto whitespace-nowrap ${
               isDark
                 ? 'bg-[#FFFFFF] text-[#000000] hover:bg-[#E0E0E0]'
                 : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#333333]'
             }`}
           >
-            <div className="flex w-full items-center justify-center">
-              <Image
-                src="/google.svg"
-                alt="Google logo"
-                width={36}
-                height={36}
-                className="mr-3 h-9 w-9"
-              />
-              <span className="-ml-8 flex-grow text-center text-xl">
-                Sign up with Google
-              </span>
-            </div>
+            <Image
+              src="/google.svg"
+              alt="Google logo"
+              width={36}
+              height={36}
+              className="mr-3 h-9 w-9"
+            />
+            <span className="text-xl">Sign up with Google</span>
           </button>
-          <div className="mb-6 flex w-96 items-center">
+          <div className="mb-6 flex w-full sm:w-72 md:w-96 lg:w-[32rem] items-center mx-auto">
             <hr className="flex-grow border-t border-gray-300" />
             <span className="mx-4 text-xl">or</span>
             <hr className="flex-grow border-t border-gray-300" />
           </div>
           <Link href="/signupwithemail" legacyBehavior>
             <a
-              className={`flex h-16 w-96 items-center justify-center rounded px-6 py-4 text-xl ${
+              className={`flex h-16 w-full sm:w-72 md:w-96 lg:w-[32rem] items-center justify-center rounded px-6 py-4 text-xl mx-auto whitespace-nowrap ${
                 isDark
                   ? 'bg-[#FFFFFF] text-[#000000] hover:bg-[#E0E0E0]'
                   : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#333333]'
