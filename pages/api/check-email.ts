@@ -2,17 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
-  }
-
-  // Initialize Firebase Admin SDK on each request
+// Utility function to initialize Firebase Admin SDK
+function initializeFirebase() {
   if (!getApps().length) {
     initializeApp({
       credential: cert({
@@ -22,6 +13,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }),
     });
   }
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Validate environment variables
+  if (!process.env.FIREBASE_PROJECT_ID || 
+      !process.env.FIREBASE_CLIENT_EMAIL || 
+      !process.env.FIREBASE_PRIVATE_KEY) {
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
+  const { email: rawEmail } = req.body;
+  const email = rawEmail ? rawEmail.trim().toLowerCase() : '';
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Invalid email format' });
+  }
+
+  // Initialize Firebase Admin SDK
+  initializeFirebase();
 
   try {
     await getAuth().getUserByEmail(email);
@@ -30,6 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (error.code === 'auth/user-not-found') {
       return res.status(200).json({ exists: false });
     }
-    return res.status(500).json({ error: 'Internal server error', details: error.message });
+    console.error('Error checking email:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
