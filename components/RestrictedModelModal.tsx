@@ -25,16 +25,16 @@ export default function RestrictedModelModal({ isOpen, onClose }: RestrictedMode
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg max-w-md w-full text-center">
-      <h2 className="text-2xl font-bold mb-4">Advanced Model Limit Reached</h2>
+      <div className="bg-white p-8 rounded-lg max-w-md w-full text-center mx-4 sm:mx-0">
+        <h2 className="text-2xl font-bold mb-4">Advanced Model Limit Reached</h2>
         <p className="mb-6">
           You have reached the limit for free translations using GPT-4.  
           To continue using advanced AI models:
         </p>
         <div className="ml-6 mt-2 text-center font-bold">
-          <p>sign up for unlimited access</p>
-          <p className="my-1">or</p>
-          <p>switch to GPT-3.5 for unlimited free translations</p>
+          <p>Sign Up For Full Access</p>
+          <p className="my-1">Or</p>
+          <p>Use GPT-3.5 For Free Translations</p>
         </div>
         <div className="flex justify-end gap-4 mt-4">
           <div className="flex w-full gap-4">
