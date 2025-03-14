@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -6,12 +6,18 @@ import Nav from '../components/Nav';
 import { useTheme } from '../contexts/ThemeContext';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { generateCSRFToken } from '../utils/csrf';
 
 const PasswordReset: React.FC = () => {
   const { isDark, toggleDarkMode } = useTheme();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    setCsrfToken(generateCSRFToken());
+  }, []);
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,8 +35,11 @@ const PasswordReset: React.FC = () => {
       const normalizedEmail = email.trim().toLowerCase();
       const response = await fetch('/api/check-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: normalizedEmail }),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
+        body: JSON.stringify({ email: normalizedEmail, csrfToken }),
       });
 
       if (!response.ok) {
@@ -70,6 +79,7 @@ const PasswordReset: React.FC = () => {
       <div className="mt-24 flex flex-col items-center justify-center py-2">
         <h1 className="mb-4 text-3xl font-bold mt-10">Reset Password</h1>
         <form onSubmit={handleSubmit} className="flex w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg flex-col space-y-4">
+        <input type="hidden" name="csrf" value={csrfToken} />
           <input
             type="email"
             placeholder="Enter your registered email address"
