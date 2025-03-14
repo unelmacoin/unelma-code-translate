@@ -1,4 +1,3 @@
-// filepath: /Users/ritabasnetsuyel/Desktop/unelma-code-translate/pages/api/check-email.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
@@ -25,14 +24,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    console.log('Checking email:', email);
     await getAuth().getUserByEmail(email);
-    console.log('User found for email:', email);
     return res.status(200).json({ exists: true });
   } catch (error: any) {
-    console.error('Error in getUserByEmail:', error);
     if (error.code === 'auth/user-not-found') {
-      console.log('User not found for email:', email);
       return res.status(200).json({ exists: false });
     }
     return res.status(500).json({ error: 'Internal server error', details: error.message });
