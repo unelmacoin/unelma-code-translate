@@ -393,7 +393,7 @@ export default function Home() {
               historyExpand ? 'md:items-start' : ''
             }justify-center mt-16 md:mt-16 lg:mt-16`}
           >
-            <div className="text-4xl font-bold">Code Translator</div>
+            <div className="text-4xl font-bold mt-20 sm:mt-0">Code Translator</div>
           </div>
 
           <div
