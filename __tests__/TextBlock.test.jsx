@@ -31,4 +31,29 @@ describe("TextBlock", ()=>{
     expect(screen.getByText("8/10")).toBeInTheDocument();
   });
 
-})
+  it("handles text exceeding the maximum character count", async () => {
+    const mockOnChange = jest.fn();
+    render(<TextBlock text="" maxCharacterCount={10} onChange={mockOnChange} />);
+    
+    const textarea = screen.getByRole('textbox');
+    
+    fireEvent.change(textarea, { target: { value: 'Exceeding text' } });
+  
+    // Ensure onChange was called with the truncated value
+    expect(mockOnChange).toHaveBeenCalledWith('Exceeding '); // Expecting only 10 chars
+    expect(screen.getByText("10/10")).toBeInTheDocument();
+  });
+  
+  
+
+  it("handles focus and blur events", () => {
+    const mockOnFocus = jest.fn();
+    const mockOnBlur = jest.fn();
+    render(<TextBlock text="Focus and Blur" onFocus={mockOnFocus} onBlur={mockOnBlur} />);
+    const textarea = screen.getByRole('textbox');
+    fireEvent.focus(textarea);
+    expect(mockOnFocus).toHaveBeenCalled();
+    fireEvent.blur(textarea);
+    expect(mockOnBlur).toHaveBeenCalled();
+  });
+});
