@@ -1,26 +1,34 @@
 "use client"
 import { useSpeech } from "@/hooks/useSpeech";
-import { useEffect, useRef} from "react";
+import { useEffect, useRef, FC } from "react";
 import { IoMdMic, IoMdMicOff } from "react-icons/io";
+import { useState } from "react";
 
-interface Props {
+interface TextBlockProps {
   text: string;
   editable?: boolean;
+  maxCharacterCount?: number;
   onChange?: (value: string) => void;
-  isDark: boolean;
-  maxCharacterCount: number;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  isDark?: boolean;
 }
 
-export const TextBlock: React.FC<Props> = ({
+export const TextBlock: FC<TextBlockProps> = ({
   text,
-  editable = false,
-  onChange = () => {},
-  isDark,
-  maxCharacterCount = 5000,
+  editable = true,
+  maxCharacterCount,
+  onChange = (value: string) => {},
+  onFocus = () => {},
+  onBlur = () => {},
+  isDark = false,
 }) => {
-  const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
-  const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
+  const [characterCount, setCharacterCount] = useState(text.length);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setCharacterCount(text.length);
+  }, [text]);
 
   useEffect(() => {
     if (editable && textareaRef.current) {
@@ -36,34 +44,52 @@ export const TextBlock: React.FC<Props> = ({
     }
   }, [textSpeech, text, onChange]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = e.target;
-    onChange(value);
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    let newText = e.target.value;
+    
+    if (maxCharacterCount && newText.length > maxCharacterCount) {
+      newText = newText.substring(0, maxCharacterCount); // Truncate extra characters
+    }
+    
+    onChange(newText);
+    setCharacterCount(newText.length);
   };
+  
+  
 
   return (
     <div className="relative">
-        <button onClick={handleListening}>
-          {isListening ? (
-            <IoMdMic className="absolute bottom-3 right-24" size={32} title="Click to stop voice input" />
-          ) : (
-            <IoMdMicOff className="absolute bottom-3 right-24" size={32} title="Click to start voice input, currently doesn't support on firefox" />
-          )}
-        </button>
+      <button onClick={handleListening}>
+        {isListening ? (
+          <IoMdMic
+            className="absolute bottom-3 right-24"
+            size={32}
+            title="Click to stop voice input"
+          />
+        ) : (
+          <IoMdMicOff
+            className="absolute bottom-3 right-24"
+            size={32}
+            title="Click to start voice input, currently doesn't support on firefox"
+          />
+        )}
+      </button>
       <textarea
         ref={textareaRef}
-        className={`min-h-[500px] ${bg} w-full p-4 text-[15px] focus:outline-none ${textColor} transition-all duration-300`}
-        style={{ resize: 'none' }}
         value={text}
-        onChange={handleInputChange}
+        onChange={handleChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
         disabled={!editable}
         maxLength={maxCharacterCount}
-        autoFocus={true}
+        className={`min-h-[500px] w-full p-4 text-[15px] transition-all duration-300 focus:outline-none ${
+          isDark ? 'bg-[#1A1B26] text-white' : 'bg-[#fff] text-black'
+        }`}
+        style={{ resize: 'none' }}
       />
-
-      {editable && (
-        <div className="flex justify-end absolute bottom-2 right-3">
-          {`${text.length}/${maxCharacterCount}`}
+      {maxCharacterCount && (
+        <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+          {characterCount}/{maxCharacterCount}
         </div>
       )}
     </div>
