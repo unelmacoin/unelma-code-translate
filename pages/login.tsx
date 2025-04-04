@@ -28,7 +28,7 @@ const Login: React.FC = () => {
       <div className="flex h-screen w-full items-center justify-center">
         <div className="text-center">
         <div className="flex justify-center items-center h-screen text-2xl">Loading...</div>
-          {/* <div className="text-gray-500">Please wait while we redirect you</div> */}
+          <div className="text-gray-500">Please wait while we redirect you</div>
         </div>
       </div>
     );
