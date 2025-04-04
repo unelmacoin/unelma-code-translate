@@ -172,7 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (currentPath === '/admin') {
         // Force navigation to login page when logging out from admin
-        window.location.href = '/login';
+        router.replace('/login');
       } else {
         await router.push('/');
       }
