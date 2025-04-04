@@ -3,17 +3,20 @@ import type { AppProps } from 'next/app';
 import { AuthProvider } from '../contexts/AuthContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { Toaster } from 'react-hot-toast';
+import { SessionProvider } from 'next-auth/react';
 
-function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <main>
-          <Component {...pageProps} />
-        </main>
-        <Toaster position="top-center" />
-      </ThemeProvider>
-    </AuthProvider>
+    <SessionProvider session={session}>
+      <AuthProvider>
+        <ThemeProvider>
+          <main>
+            <Component {...pageProps} />
+          </main>
+          <Toaster position="top-center" />
+        </ThemeProvider>
+      </AuthProvider>
+    </SessionProvider>
   );
 }
 
