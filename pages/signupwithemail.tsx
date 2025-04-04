@@ -55,7 +55,7 @@ const SignUpWithEmail: React.FC = () => {
   
       // Step 5: Sign out the user after signup
       await signOut(auth);
-      console.log('User signed out successfully');
+  
   
       // Step 6: Show success message
       toast.success('Your account has been successfully created! Please check your email to verify your account.', {
