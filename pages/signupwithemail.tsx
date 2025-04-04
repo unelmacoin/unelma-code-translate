@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Nav from '../components/Nav';
-import { auth } from '../config/firebase';
+import { auth, db } from '../config/firebase';
 import { useTheme } from '../contexts/ThemeContext';
+import { doc, setDoc } from 'firebase/firestore'; 
 
 const SignUpWithEmail: React.FC = () => {
   const { isDark, toggleDarkMode } = useTheme();
@@ -13,6 +14,7 @@ const SignUpWithEmail: React.FC = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false); 
   const router = useRouter();
 
   const handleSignup = async (email: string, password: string) => {
@@ -21,7 +23,7 @@ const SignUpWithEmail: React.FC = () => {
       toast.error('Please enter a valid email address');
       return;
     }
-
+  
     if (password.length < 6) {
       toast.error('Password must be at least 6 characters');
       return;
@@ -30,26 +32,49 @@ const SignUpWithEmail: React.FC = () => {
     const normalizedEmail = email.trim().toLowerCase(); // Normalize email (trim and lowercase)
   
     try {
+      setIsLoading(true); // Set loading state
+      
       // Step 1: Create user with normalized email and password
       const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
       const user = userCredential.user;
   
       // Step 2: Send email verification
       await sendEmailVerification(user);
-      toast.success('Your account has been successfully created! Please check your email to verify your account.', {
-        style: { fontSize: '14px' },
-      });
-  
+      
       // Step 3: Update profile with name
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`,
       });
-      console.log('User created:', user);
-      router.push('/login');
+  
+      // Step 4: Assign user role in Firestore
+      await setDoc(doc(db, "users", user.uid), { // Using setDoc directly
+        name: `${firstName} ${lastName}`,
+        email: user.email,
+        role: "user",
+      });
+  
+      // Step 5: Sign out the user after signup
+      await signOut(auth);
+      console.log('User signed out successfully');
+  
+      // Step 6: Show success message
+      toast.success('Your account has been successfully created! Please check your email to verify your account.', {
+        style: { fontSize: '14px' },
+        // duration: 5000, // Show for 5 seconds
+      });
+      
+      // Step 7: Reset form fields
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPassword('');
+      
     } catch (error: any) {
       const errorMessage = error instanceof Error ? error.message : 'Error signing up.';
       toast.error(errorMessage);
       console.error('Error during sign-up:', errorMessage);
+    } finally {
+      setIsLoading(false); 
     }
   };
 
@@ -135,13 +160,14 @@ const SignUpWithEmail: React.FC = () => {
           />
           <button
             type="submit"
+            disabled={isLoading}
             className={`rounded px-4 py-2 ${
               isDark
                 ? 'bg-[#FFFFFF] text-[#000000] hover:bg-[#E0E0E0]'
                 : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#333333]'
-            }`}
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            Sign Up
+            {isLoading ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
       </div>
