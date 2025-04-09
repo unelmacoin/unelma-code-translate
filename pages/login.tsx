@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -8,12 +8,31 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const { isDark, toggleDarkMode } = useTheme();
-  const { signInWithEmail } = useAuth();
+  const { user, isAdmin, signInWithEmail } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Let AuthContext handle the redirection, don't duplicate it here
+  useEffect(() => {
+    if (user) {
+      setIsLoading(true);
+    }
+  }, [user]);
+
+  // Don't show login page if already authenticated
+  if (user || isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="text-center">
+        <div className="flex justify-center items-center h-screen text-2xl">Loading...</div>
+          <div className="text-gray-500">Please wait while we redirect you</div>
+        </div>
+      </div>
+    );
+  }
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,13 +58,9 @@ const Login: React.FC = () => {
     setIsLoading(true);
     try {
       await signInWithEmail(email, password);
-      toast.success('Successfully logged in!', {
-        duration: 2000, // Show for 2 seconds
-      });
-      router.push('/');
+      toast.success('Successfully logged in!');
     } catch (error) {
       toast.error('Invalid email or password. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };

@@ -6,13 +6,33 @@ import Nav from '../components/Nav';
 import { toast } from 'react-hot-toast';
 import { useTheme } from '../contexts/ThemeContext';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../config/firebase'; 
 
 const signInWithGoogle = async () => {
   try {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    return result.user;
+    const user = result.user;
+
+    if (!user) return null;
+
+    // Check if the user already exists in Firestore
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      // New user → Add to Firestore with default role (`user`)
+      await setDoc(userRef, {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        role: 'user',
+        createdAt: new Date(),
+      });
+    }
+
+    return user;
   } catch (error) {
     console.error('Error signing in with Google:', error);
     return null;
@@ -94,7 +114,7 @@ const SignUp: React.FC = () => {
                   : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#333333]'
               }`}
             >
-              Sign up with Email
+              Create New Account
             </a>
           </Link>
         </div>
