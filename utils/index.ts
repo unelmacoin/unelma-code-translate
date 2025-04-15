@@ -62,25 +62,25 @@ export const OpenAIStream = async (
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
   const messages =
-  model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest'
-    ? [{ role: 'user', content: prompt }]
-    : [
+    model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest'
+      ? [{ role: 'user', content: prompt }]
+      : [
         { role: 'system', content: prompt },
         { role: 'user', content: inputCode },
       ];
 
-const body: RequestBody = {
-  model,
-  messages,
-};
+  const body: RequestBody = {
+    model,
+    messages,
+  };
 
-if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== 'deepseek-chat' && model !== 'o3-mini') {
-  body['temperature'] = 0;
-  body['stream'] = true;
-}
+  if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== 'deepseek-chat' && model !== 'o3-mini') {
+    body['temperature'] = 0;
+    body['stream'] = true;
+  }
 
-const apiUrl = model === 'grok-2-latest' ? 'https://api.x.ai/v1/chat/completions' : model === 'deepseek-chat' ? 'https://api.deepseek.com/chat/completions' : 'https://api.openai.com/v1/chat/completions';
-const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 'deepseek-chat' ? process.env.DEEPSEEK_API_KEY : key || process.env.OPENAI_API_KEY;
+  const apiUrl = model === 'grok-2-latest' ? 'https://api.x.ai/v1/chat/completions' : model === 'deepseek-chat' ? 'https://api.deepseek.com/chat/completions' : 'https://api.openai.com/v1/chat/completions';
+  const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 'deepseek-chat' ? process.env.DEEPSEEK_API_KEY : key || process.env.OPENAI_API_KEY;
 
   const res = await fetch(apiUrl, {
     headers: {
@@ -117,18 +117,18 @@ const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 
       },
     });
   }
-  
+
   const stream = new ReadableStream({
     async start(controller) {
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data;
-  
+
           if (data === '[DONE]') {
             controller.close();
             return;
           }
-  
+
           try {
             const json = JSON.parse(data);
             const text = json.choices[0].delta.content;
@@ -139,7 +139,7 @@ const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 
           }
         }
       };
-  
+
       const parser = createParser(onParse);
 
       for await (const chunk of res.body as any) {
@@ -147,6 +147,6 @@ const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 
       }
     },
   });
-  
+
   return stream;
 };
