@@ -45,7 +45,7 @@ function debounce<T extends AnyFunction>(fn: T, delay: number): DebouncedFunctio
 
   // Add cancel method to the debounced function
   const debouncedWithCancel: DebouncedFunction<T> = Object.assign(debouncedFunction, {
-    cancel: function() {
+    cancel: function () {
       if (timeoutId) {
         clearTimeout(timeoutId);
         timeoutId = null;
@@ -117,22 +117,22 @@ export default function Home() {
     try {
       const controller = new AbortController();
 
-    const body: TranslateBody = {
-      inputLanguage,
-      outputLanguage,
-      inputCode,
-      model,
-      apiKey,
-    };
+      const body: TranslateBody = {
+        inputLanguage,
+        outputLanguage,
+        inputCode,
+        model,
+        apiKey,
+      };
 
-    const response = await fetch('/api/translate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal,
-      body: JSON.stringify(body),
-    });
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+        body: JSON.stringify(body),
+      });
 
       if (!response.ok) {
         throw new Error('Something went wrong with the translation.');
@@ -144,52 +144,52 @@ export default function Home() {
         throw new Error('No data received from translation API.');
       }
 
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-    let code = '';
+      const reader = data.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+      let code = '';
 
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value);
 
-      code += chunkValue;
+        code += chunkValue;
 
-      setOutputCode((prevCode) => prevCode + chunkValue);
+        setOutputCode((prevCode) => prevCode + chunkValue);
+      }
+
+      copyToClipboard(code);
+      setHasTranslated(true);
+
+      const updatedHistory = new Set([
+        ...history,
+        JSON.stringify({ inputCode, inputLanguage, outputLanguage, model })
+      ]);
+      const mergedHistory = new Set([
+        ...updatedHistory,
+        ...JSON.parse(localStorage.getItem('userHistory') || '[]').map((item: string) => {
+          try {
+            return JSON.stringify(JSON.parse(item));
+          } catch {
+            return item;
+          }
+        }),
+      ]);
+      setHistory(mergedHistory);
+      localStorage.setItem('userHistory', JSON.stringify([...mergedHistory]));
+    } catch (error) {
+      console.error('Translation error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Translation Failed',
+        text: 'Please try again.',
+      });
+    } finally {
+      setLoading(false); // Always ensure loading is set back to false
     }
-
-    copyToClipboard(code);
-    setHasTranslated(true);
-
-    const updatedHistory = new Set([
-      ...history,
-      JSON.stringify({ inputCode, inputLanguage, outputLanguage,model })
-    ]);
-    const mergedHistory = new Set([
-      ...updatedHistory,
-      ...JSON.parse(localStorage.getItem('userHistory') || '[]').map((item: string) => {
-        try {
-          return JSON.stringify(JSON.parse(item));
-        } catch {
-          return item;
-        }
-      }),
-    ]);
-    setHistory(mergedHistory);
-    localStorage.setItem('userHistory', JSON.stringify([...mergedHistory]));
-  }catch (error) {
-    console.error('Translation error:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Translation Failed',
-      text: 'Please try again.',
-    });
-  } finally {
-    setLoading(false); // Always ensure loading is set back to false
-  }
-  //eslint-disable-next-line react-hooks/exhaustive-deps
-}, [inputLanguage, outputLanguage, inputCode, model, apiKey, history]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputLanguage, outputLanguage, inputCode, model, apiKey, history]);
 
 
   const copyToClipboard = (text: string) => {
@@ -201,14 +201,14 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-  const debouncedTranslate = 
-  //eslint-disable-next-line react-hooks/exhaustive-deps
-  useCallback(
-    debounce(() => {
-      handleTranslate();
-    }, 1500),
-    [handleTranslate]
-  );
+  const debouncedTranslate =
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    useCallback(
+      debounce(() => {
+        handleTranslate();
+      }, 1500),
+      [handleTranslate]
+    );
 
   useEffect(() => {
     if (inputCode.trim() !== '' && !loading && !hasTranslated) {
@@ -349,19 +349,14 @@ export default function Home() {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasTranslated]);
 
-  useEffect(() => {
-    console.log('inputCode changed to:', inputCode);
-  }, [inputCode]);
-
   return (
     <div style={{ background: bodyBg }}>
       <div
         style={{ background: navBg }}
-        className={`fixed top-0 z-50 bg-black ${
-          isDark
+        className={`fixed top-0 z-50 bg-black ${isDark
             ? ' w-full  py-4 text-white transition-all duration-300'
             : 'w-full  py-4  transition-all duration-300'
-        }`}
+          }`}
       >
         <Nav isDark={isDark} toggleDarkMode={toggleDarkMode} />
       </div>
@@ -384,22 +379,19 @@ export default function Home() {
         </Head>
 
         <div
-          className={`flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 pt-4 sm:px-10 md:pt-16 ${
-            historyExpand ? '' : 'items-center'
-          }`}
+          className={`flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 pt-4 sm:px-10 md:pt-16 ${historyExpand ? '' : 'items-center'
+            }`}
         >
           <div
-            className={`flex flex-col ${
-              historyExpand ? 'md:items-start' : ''
-            }justify-center mt-16 md:mt-16 lg:mt-16`}
+            className={`flex flex-col ${historyExpand ? 'md:items-start' : ''
+              }justify-center mt-16 md:mt-16 lg:mt-16`}
           >
             <div className="text-4xl font-bold mt-20 sm:mt-0">Code Translator</div>
           </div>
 
           <div
-            className={`mt-2 flex ${
-              historyExpand ? 'itmes-start lg:items-center' : 'items-center'
-            }justify-center  space-x-2`}
+            className={`mt-2 flex ${historyExpand ? 'itmes-start lg:items-center' : 'items-center'
+              }justify-center  space-x-2`}
           >
             <ModelSelect
               model={model}
@@ -414,16 +406,15 @@ export default function Home() {
             {inputCode.trim() !== '' && loading
               ? 'Translating...'
               : outputCode.trim() !== '' && hasTranslated
-              ? 'Your code has been translated!'
-              : 'Enter some code in Input'}
+                ? 'Your code has been translated!'
+                : 'Enter some code in Input'}
           </div>
 
           <div
-            className={`mt-6 flex w-full max-w-[1200px] flex-col justify-center sm:space-x-4 lg:flex-row ${
-              historyExpand
+            className={`mt-6 flex w-full max-w-[1200px] flex-col justify-center sm:space-x-4 lg:flex-row ${historyExpand
                 ? 'items-center md:flex-col md:items-start lg:w-2/3'
                 : 'md:flex-row'
-            }`}
+              }`}
           >
             <div className="flex flex-col w-full space-y-2 max-h-200 sm:w-2/4">
               <div className="flex space-x-4">
@@ -477,18 +468,15 @@ export default function Home() {
               <IoMdSwap
                 title="Swap languages (Cmd + Shift + S)"
                 onClick={handleSwap}
-                className={`${
-                  historyExpand ? 'lg:mt-20' : ' mt-0 md:mt-20 lg:mt-20'
-                } w-12 cursor-pointer items-center text-3xl hover:opacity-80 ${
-                  isDark ? 'text-white-700' : 'text-black'
-                }`}
+                className={`${historyExpand ? 'lg:mt-20' : ' mt-0 md:mt-20 lg:mt-20'
+                  } w-12 cursor-pointer items-center text-3xl hover:opacity-80 ${isDark ? 'text-white-700' : 'text-black'
+                  }`}
               />
             </div>
             <div className="flex flex-col justify-center w-full h-full space-y-2 sm:mt-0 sm:w-2/4">
               <div
-                className={`text-center ${
-                  historyExpand ? 'lg:mt-10' : 'mt-0 md:mt-10 lg:mt-10'
-                } text-xl font-bold`}
+                className={`text-center ${historyExpand ? 'lg:mt-10' : 'mt-0 md:mt-10 lg:mt-10'
+                  } text-xl font-bold`}
               >
                 Output
               </div>
@@ -498,7 +486,7 @@ export default function Home() {
                 onChange={(value) => {
                   setOutputLanguage(value);
                   setOutputCode('');
-                  setHasTranslated(false); 
+                  setHasTranslated(false);
                 }}
                 isDark={isDark}
               />
@@ -515,7 +503,7 @@ export default function Home() {
                   code={outputCode}
                   isDark={isDark}
                   editable={false}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
               )}
               <div className="">
@@ -527,7 +515,7 @@ export default function Home() {
       </div>
       <Footer isDark={isDark} />
       <ToastContainer autoClose={2000} style={{ top: '5rem' }} />
-      <RestrictedModelModal 
+      <RestrictedModelModal
         isOpen={showLimitModal}
         onClose={() => setShowLimitModal(false)}
       />
