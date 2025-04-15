@@ -10,6 +10,7 @@ interface RequestBody {
   messages: { role: string; content: string }[];
   temperature?: number; // Add temperature as an optional property
   stream?: boolean; // Add stream as an optional property
+  reasoning_effort?: "low" | "high"; // Only for some supported model like grok-3-mini-beta and grok-3-mini-fast-beta
 }
 
 const createPrompt = (
@@ -74,13 +75,18 @@ export const OpenAIStream = async (
     messages,
   };
 
-  if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== 'deepseek-chat' && model !== 'o3-mini') {
+  if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== "grok-3-mini-beta" && model !== 'deepseek-chat' && model !== 'o3-mini') {
     body['temperature'] = 0;
     body['stream'] = true;
   }
 
-  const apiUrl = model === 'grok-2-latest' ? 'https://api.x.ai/v1/chat/completions' : model === 'deepseek-chat' ? 'https://api.deepseek.com/chat/completions' : 'https://api.openai.com/v1/chat/completions';
-  const apiKey = model === 'grok-2-latest' ? process.env.X_AI_API_KEY : model === 'deepseek-chat' ? process.env.DEEPSEEK_API_KEY : key || process.env.OPENAI_API_KEY;
+  if (model === 'grok-3-mini-beta') {
+    body['reasoning_effort'] = 'high';
+    body['temperature'] = 0.7;
+  }
+
+  const apiUrl = model === 'grok-2-latest' || 'grok-3-mini-beta' ? 'https://api.x.ai/v1/chat/completions' : model === 'deepseek-chat' ? 'https://api.deepseek.com/chat/completions' : 'https://api.openai.com/v1/chat/completions';
+  const apiKey = model === 'grok-2-latest' || 'grok-3-mini-beta' ? process.env.X_AI_API_KEY : model === 'deepseek-chat' ? process.env.DEEPSEEK_API_KEY : key || process.env.OPENAI_API_KEY;
 
   const res = await fetch(apiUrl, {
     headers: {
@@ -98,7 +104,7 @@ export const OpenAIStream = async (
     const statusText = res.statusText;
     const result = await res.body?.getReader().read();
     const errorMessage = decoder.decode(result?.value) || statusText;
-    if (model === 'grok-2-latest') {
+    if (model === 'grok-2-latest' || 'grok-3-mini-beta') {
       throw new Error(`xAI API returned an error: ${errorMessage}`);
     } else if (model === 'deepseek-chat') {
       throw new Error(`DeepSeek API returned an error: ${errorMessage}`);
@@ -106,7 +112,7 @@ export const OpenAIStream = async (
       throw new Error(`OpenAI API returned an error: ${errorMessage}`);
     }
   }
-  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'deepseek-chat' || model === 'o3-mini') {
+  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'deepseek-chat' || model === 'o3-mini') {
     const result = await res.json();
     const text = result.choices[0].message.content;
     const queue = encoder.encode(text);
