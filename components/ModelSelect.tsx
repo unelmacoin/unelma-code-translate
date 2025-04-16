@@ -94,6 +94,8 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
         toast(
           `${model} is unavailable. Switched to ${firstEnabledModel.label}.`,
         );
+      } else {
+       toast.error('No models are currently available. Please try again later.');
       }
     }
   }, [enabledModels, loading, model, onChange]);
