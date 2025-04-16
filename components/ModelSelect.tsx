@@ -1,5 +1,5 @@
 import { OpenAIModel, xAI, OpenAI } from '@/types/types';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useMemo } from 'react';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { toast } from 'react-hot-toast';
@@ -111,10 +111,9 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     );
   }
 
-  const availableModels = modelOptions.filter((option) => {
-    const isEnabled = isModelEnabled(option.value);
-    return isEnabled;
-  });
+  const availableModels = useMemo(() => {
+    return modelOptions.filter((option) => isModelEnabled(option.value));
+  }, [enabledModels, modelOptions]); 
 
   return (
     <select
