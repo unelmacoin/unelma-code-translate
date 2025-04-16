@@ -102,6 +102,10 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
 
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
+  
+  const availableModels = useMemo(() => {
+    return modelOptions.filter((option) => isModelEnabled(option.value));
+  }, [enabledModels, modelOptions]);
 
   if (loading) {
     return (
@@ -110,10 +114,6 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
       </div>
     );
   }
-
-  const availableModels = useMemo(() => {
-    return modelOptions.filter((option) => isModelEnabled(option.value));
-  }, [enabledModels, modelOptions]); 
 
   return (
     <select
