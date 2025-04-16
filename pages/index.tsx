@@ -390,7 +390,7 @@ export default function Home() {
           </div>
 
           <div
-            className={`mt-2 flex ${historyExpand ? 'itmes-start lg:items-center' : 'items-center'
+            className={`mt-2 flex ${historyExpand ? 'items-start lg:items-center' : 'items-center'
               }justify-center  space-x-2`}
           >
             <ModelSelect
