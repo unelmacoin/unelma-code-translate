@@ -92,7 +92,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
       if (firstEnabledModel) {
         onChange(firstEnabledModel.value as OpenAIModel | xAI | OpenAI);
         toast(
-          `"${model}" is unavailable. Switched to ${firstEnabledModel.label}.`,
+          `${model} is unavailable. Switched to ${firstEnabledModel.label}.`,
         );
       }
     }
