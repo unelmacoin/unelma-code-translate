@@ -1,5 +1,8 @@
 import { OpenAIModel, xAI, OpenAI } from '@/types/types';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '../config/firebase';
+import { toast } from 'react-hot-toast';
 
 interface Props {
   model: OpenAIModel | xAI | OpenAI;
@@ -8,8 +11,108 @@ interface Props {
 }
 
 export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
+  const [enabledModels, setEnabledModels] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [loading, setLoading] = useState(true);
+
+  const modelOptions = [
+    { value: 'gpt-3.5-turbo', label: 'GPT-3.5' },
+    { value: 'gpt-4', label: 'GPT-4' },
+    { value: 'gpt-4-turbo', label: 'GPT-4-Turbo' },
+    { value: 'gpt-4o', label: 'GPT-4o' },
+    { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
+    { value: 'o1-preview', label: 'GPT-o1-Preview' },
+    { value: 'gpt-4.5-preview', label: 'GPT-4.5' },
+    { value: 'o1-mini', label: 'GPT-o1-Mini' },
+    { value: 'o3-mini', label: 'GPT-o3-mini' },
+    { value: 'grok-2-latest', label: 'Grok-2-Latest' },
+    { value: 'grok-3-mini-beta', label: 'Grok-3-Mini-Beta' },
+    { value: 'deepseek-chat', label: 'DeepSeek' },
+  ];
+
+  useEffect(() => {
+    const docRef = doc(db, 'config', 'modelAvailability');
+
+    // Initial fetch
+    getDoc(docRef)
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const rawData = docSnap.data() as Record<string, boolean>;
+          const normalizedData = Object.fromEntries(
+            Object.entries(rawData).map(([key, value]) => [
+              key.trim().toLowerCase(),
+              value,
+            ]),
+          );
+          setEnabledModels(normalizedData);
+        } else {
+          console.error('No model availability data found');
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching model availability:', error);
+        setLoading(false);
+      });
+
+    // Real-time listener
+    const unsubscribe = onSnapshot(
+      docRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const rawData = docSnap.data() as Record<string, boolean>;
+          const normalizedData = Object.fromEntries(
+            Object.entries(rawData).map(([key, value]) => [
+              key.trim().toLowerCase(),
+              value,
+            ]),
+          );
+          setEnabledModels(normalizedData);
+        }
+      },
+      (error) => {
+        console.error('Error in model availability listener:', error);
+      },
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  const isModelEnabled = (modelName: string): boolean => {
+    const enabled = enabledModels[modelName.toLowerCase()]; // Ensure case-insensitive matching
+    return enabled === true; // Strictly check for boolean true
+  };
+
+  useEffect(() => {
+    if (!loading && !isModelEnabled(model)) {
+      const firstEnabledModel = modelOptions.find((option) =>
+        isModelEnabled(option.value),
+      );
+      if (firstEnabledModel) {
+        onChange(firstEnabledModel.value as OpenAIModel | xAI | OpenAI);
+        toast(
+          `"${model}" is unavailable. Switched to ${firstEnabledModel.label}.`,
+        );
+      }
+    }
+  }, [enabledModels, loading, model, onChange]);
+
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
+
+  if (loading) {
+    return (
+      <div className={`${bg} ${textColor} h-[40px] w-fit rounded-md px-4 py-2`}>
+        Loading models...
+      </div>
+    );
+  }
+
+  const availableModels = modelOptions.filter((option) => {
+    const isEnabled = isModelEnabled(option.value);
+    return isEnabled;
+  });
 
   return (
     <select
@@ -17,18 +120,11 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
       value={model}
       onChange={(e) => onChange(e.target.value as OpenAIModel | xAI | OpenAI)}
     >
-      <option value="gpt-3.5-turbo">GPT-3.5</option>
-      <option value="gpt-4">GPT-4</option>
-      <option value="gpt-4-turbo">GPT-4-Turbo</option>
-      <option value="gpt-4o">GPT-4o</option>
-      <option value="gpt-4o-mini">GPT-4o Mini</option>
-      <option value="o1-preview">GPT-o1-Preview</option>
-      <option value="gpt-4.5-preview">GPT-4.5</option>
-      <option value="o1-mini">GPT-o1-Mini</option>
-      <option value="o3-mini">GPT-o3-mini</option>
-      <option value="grok-2-latest">Grok-2-Latest</option>
-      <option value="grok-3-mini-beta">Grok-3-Mini-Beta</option>
-      <option value="deepseek-chat">DeepSeek</option>
+      {availableModels.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
     </select>
   );
 };
