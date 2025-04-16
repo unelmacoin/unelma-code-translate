@@ -22,6 +22,7 @@ const modelOptions = [
 const ModelToggle: React.FC<{ isDark: boolean }> = ({ isDark }) => {
   const [models, setModels] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
+  const [togglingModel, setTogglingModel] = useState<string | null>(null); // For toggle actions
 
   useEffect(() => {
     const fetchModelAvailability = async () => {
@@ -47,11 +48,10 @@ const ModelToggle: React.FC<{ isDark: boolean }> = ({ isDark }) => {
 
   const toggleModel = async (modelName: string) => {
     try {
-      setLoading(true);
+      setTogglingModel(modelName); // Set the model being toggled
 
       // Get current user's token
       const idToken = await auth.currentUser?.getIdToken();
-
       if (!idToken) {
         toast.error('Authentication required');
         return;
@@ -92,7 +92,7 @@ const ModelToggle: React.FC<{ isDark: boolean }> = ({ isDark }) => {
           : 'Failed to update model status',
       );
     } finally {
-      setLoading(false);
+      setTogglingModel(null); // Reset the toggling state
     }
   };
 
@@ -131,9 +131,13 @@ const ModelToggle: React.FC<{ isDark: boolean }> = ({ isDark }) => {
             </span>
             <button
               onClick={() => toggleModel(modelName)}
-              disabled={loading}
+              disabled={togglingModel === modelName} // Disable only the button being toggled
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                 isEnabled ? 'bg-green-500' : 'bg-gray-400'
+              } ${
+                togglingModel === modelName
+                  ? 'cursor-not-allowed opacity-50'
+                  : ''
               }`}
             >
               <span
