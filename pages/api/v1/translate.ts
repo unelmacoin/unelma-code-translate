@@ -129,24 +129,59 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 Translate the following ${from_lang} code to ${to_lang} code. 
 Only respond with the translated code, no explanations or markdown formatting.\n\n${source_code}`;
 
-      // Call the OpenAI API
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4-1106-preview', // Using GPT-4.1
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are a helpful assistant that translates code between programming languages.' 
-          },
-          { 
-            role: 'user', 
-            content: prompt 
-          },
-        ],
-        temperature: 0.1, // Lower temperature for more deterministic output
-        max_tokens: 2000,
-      });
+      // Randomly select between gpt-4.1-nano and grok-3
+      const models = ['gpt-4.1-nano', 'grok-3'];
+      const selectedModel = models[Math.floor(Math.random() * models.length)];
+      
+      // Prepare the API client based on the selected model
+      const useOpenAI = selectedModel.startsWith('gpt');
+      const apiKey = useOpenAI ? process.env.OPENAI_API_KEY : process.env.XAI_API_KEY;
+      
+      if (!apiKey) {
+        return res.status(500).json({
+          error: `API key not configured for ${useOpenAI ? 'OpenAI' : 'xAI'}`
+        });
+      }
 
-      const translatedCode = completion.choices[0].message.content?.trim() || '';
+      // Call the appropriate API
+      const completion = await (useOpenAI 
+        ? openai.chat.completions.create({
+            model: selectedModel,
+            messages: [
+              { 
+                role: 'system', 
+                content: 'You are a helpful assistant that translates code between programming languages.' 
+              },
+              { 
+                role: 'user', 
+                content: prompt 
+              },
+            ],
+            temperature: 0.1, // Lower temperature for more deterministic output
+            max_tokens: 2000,
+          })
+        : fetch('https://api.x.ai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: selectedModel,
+              messages: [
+                { role: 'system', content: 'You are a helpful assistant that translates code between programming languages.' },
+                { role: 'user', content: prompt }
+              ],
+              temperature: 0.1,
+              max_tokens: 2000
+            })
+          }).then(res => res.json())
+      );
+      
+      // Handle xAI response format if needed
+      const translatedCode = useOpenAI 
+        ? completion.choices[0]?.message?.content?.trim() || ''
+        : completion.choices?.[0]?.message?.content?.trim() || '';
 
       // Return the translated code
       return res.status(200).json({
