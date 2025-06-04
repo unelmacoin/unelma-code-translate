@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Supported language pairs
+// Supported language and framework pairs
 const SUPPORTED_LANGUAGES = [
   // Python
   { from: 'python', to: 'javascript' },
@@ -33,6 +33,14 @@ const SUPPORTED_LANGUAGES = [
   { from: 'c++', to: 'javascript' },
   { from: 'javascript', to: 'c#' },
   { from: 'c#', to: 'javascript' },
+  
+  // PHP translations
+  { from: 'php', to: 'javascript' },
+  { from: 'javascript', to: 'php' },
+  { from: 'php', to: 'typescript' },
+  { from: 'typescript', to: 'php' },
+  { from: 'php', to: 'python' },
+  { from: 'python', to: 'php' },
   
   // Java
   { from: 'java', to: 'c++' },
@@ -61,6 +69,20 @@ const SUPPORTED_LANGUAGES = [
   { from: 'scss', to: 'css' },
   { from: 'typescript', to: 'javascript' },
   { from: 'javascript', to: 'typescript' },
+  
+  // Framework translations
+  { from: 'flask', to: 'express' },
+  { from: 'express', to: 'flask' },
+  { from: 'django', to: 'spring' },
+  { from: 'spring', to: 'django' },
+  { from: 'vue', to: 'react' },
+  { from: 'react', to: 'vue' },
+  { from: 'jsx', to: 'tsx' },
+  { from: 'tsx', to: 'jsx' },
+  { from: 'vue', to: 'svelte' },
+  { from: 'svelte', to: 'vue' },
+  { from: 'angular', to: 'react' },
+  { from: 'react', to: 'angular' },
   
   // Scripting languages
   { from: 'ruby', to: 'python' },
@@ -95,6 +117,50 @@ const SUPPORTED_LANGUAGES = [
   { from: 'dart', to: 'typescript' }
 ];
 
+// Framework-specific translations mapping
+const FRAMEWORK_MAPPINGS: Record<string, string> = {
+  // Backend frameworks
+  'flask': 'python',
+  'django': 'python',
+  'express': 'javascript',
+  'spring': 'java',
+  'laravel': 'php',
+  'rails': 'ruby',
+  'aspnet': 'c#',
+  'gin': 'go',
+  'actix': 'rust',
+  'phoenix': 'elixir',
+  
+  // Frontend frameworks
+  'react': 'javascript',
+  'vuejs': 'javascript',
+  'angular': 'typescript',
+  'svelte': 'javascript',
+  'next': 'javascript',
+  'nuxt': 'javascript',
+  'gatsby': 'javascript',
+  'remix': 'javascript',
+  'sveltekit': 'javascript',
+  'solid': 'javascript',
+  
+  // Mobile frameworks
+  'react-native': 'javascript',
+  'flutter': 'dart',
+  'xamarin': 'c#',
+  'ionic': 'typescript',
+  'native': 'javascript',
+  
+  // File extensions
+  'jsx': 'javascript',
+  'tsx': 'typescript',
+  'vue': 'javascript'
+};
+
+// Helper function to get base language from framework
+function getBaseLanguage(lang: string): string {
+  return FRAMEWORK_MAPPINGS[lang.toLowerCase()] || lang;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     // Handle GET request - return supported languages
@@ -124,10 +190,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
 
+      // Get base languages for framework-specific translations
+      const fromBase = getBaseLanguage(from_lang);
+      const toBase = getBaseLanguage(to_lang);
+      
       // Create the prompt for the model
-      const prompt = `You are an expert programmer in all programming languages. 
-Translate the following ${from_lang} code to ${to_lang} code. 
-Only respond with the translated code, no explanations or markdown formatting.\n\n${source_code}`;
+      let prompt = `You are an expert programmer in all programming languages. `;
+      
+      // Add framework-specific instructions if applicable
+      if (from_lang !== fromBase || to_lang !== toBase) {
+        prompt += `Convert the following code from ${from_lang} (${fromBase}) to ${to_lang} (${toBase}). `;
+        prompt += `Pay attention to the framework-specific patterns and best practices. `;
+      } else {
+        prompt += `Translate the following ${from_lang} code to ${to_lang} code. `;
+      }
+      
+      prompt += `Only respond with the translated code, no explanations or markdown formatting.\n\n${source_code}`;
 
       // Randomly select between gpt-4.1-nano and grok-3
       const models = ['gpt-4.1-nano', 'grok-3'];
