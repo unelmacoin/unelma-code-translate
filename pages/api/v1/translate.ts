@@ -161,6 +161,94 @@ function getBaseLanguage(lang: string): string {
   return FRAMEWORK_MAPPINGS[lang.toLowerCase()] || lang;
 }
 
+/**
+ * @openapi
+ * /api/v1/translate:
+ *   get:
+ *     summary: Get list of supported languages
+ *     description: Returns an array of all supported programming languages for translation
+ *     tags:
+ *       - Translation
+ *     responses:
+ *       200:
+ *         description: List of supported languages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 languages:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["python", "javascript", "typescript", "java"]
+ * 
+ *   post:
+ *     summary: Translate code between programming languages
+ *     description: Translate source code from one programming language to another
+ *     tags:
+ *       - Translation
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - source_code
+ *               - from_lang
+ *               - to_lang
+ *             properties:
+ *               source_code:
+ *                 type: string
+ *                 description: The source code to translate
+ *                 example: "def hello():\n    print('Hello, World!')"
+ *               from_lang:
+ *                 type: string
+ *                 description: Source programming language
+ *                 example: "python"
+ *               to_lang:
+ *                 type: string
+ *                 description: Target programming language
+ *                 example: "javascript"
+ *     responses:
+ *       200:
+ *         description: Successful translation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 source_code:
+ *                   type: string
+ *                   description: Original source code
+ *                 from_lang:
+ *                   type: string
+ *                   description: Source language
+ *                 to_lang:
+ *                   type: string
+ *                   description: Target language
+ *                 translated_code:
+ *                   type: string
+ *                   description: Translated code
+ *       400:
+ *         description: Bad request (missing or invalid parameters)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Method PUT Not Allowed
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     // Handle GET request - return supported languages
