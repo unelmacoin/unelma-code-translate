@@ -13,17 +13,32 @@ Try it online at [translate.u16p.com](https://translate.u16p.com) or dive into t
 
 ## API Documentation
 
-The application includes a REST API that you can use to integrate code translation into your own applications.
+Unelma Code Translate provides a comprehensive REST API for programmatic access to code translation capabilities. The API is versioned and follows RESTful principles.
 
-### Base URL
-All API endpoints are prefixed with `/api/v1`.
+### Base URLs
+- Production: `https://translate.u16p.com`
+- Development: `http://localhost:3000` (when running locally)
 
 ### Authentication
-No authentication is required for the public API endpoints.
 
-### Endpoints
+Some endpoints require authentication using an API key:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Interactive Documentation
+
+Explore the API interactively using our Swagger UI:
+- [Production API Docs](https://translate.u16p.com/api-docs)
+- [Local Development](http://localhost:3000/api-docs)
+
+### API Endpoints
 
 #### Health Check
+
+Check if the API is running.
+
 ```
 GET /api/v1/health
 ```
@@ -32,12 +47,14 @@ GET /api/v1/health
 ```json
 {
   "status": "ok",
-  "message": "Translation API is running",
-  "timestamp": "2025-05-29T09:00:00.000Z"
+  "timestamp": "2025-06-05T07:45:00.000Z"
 }
 ```
 
-#### List Supported Languages
+#### List Supported Languages (v1)
+
+Get a list of all supported language pairs for translation.
+
 ```
 GET /api/v1/translate
 ```
@@ -46,19 +63,18 @@ GET /api/v1/translate
 ```json
 {
   "languages": [
-    { "from": "python", "to": "javascript" },
-    { "from": "javascript", "to": "python" },
-    { "from": "python", "to": "java" },
-    { "from": "java", "to": "python" },
-    { "from": "javascript", "to": "java" },
-    { "from": "java", "to": "javascript" },
-    { "from": "cobol", "to": "java" },
-    { "from": "java", "to": "cobol" }
+    "python",
+    "javascript",
+    "typescript",
+    "java"
   ]
 }
 ```
 
-#### Translate Code
+#### Translate Code (v1)
+
+Translate code between supported programming languages.
+
 ```
 POST /api/v1/translate
 ```
@@ -82,7 +98,26 @@ POST /api/v1/translate
 }
 ```
 
-### Error Responses
+#### Legacy Translate Endpoint
+
+This is the legacy endpoint for backward compatibility.
+
+```
+POST /api/translate
+```
+
+**Request Body:**
+```json
+{
+  "inputLanguage": "python",
+  "outputLanguage": "javascript",
+  "inputCode": "def hello():\n    print('Hello, World!')",
+  "model": "gpt-4",
+  "apiKey": "your_openai_api_key_here"
+}
+```
+
+### Error Handling
 
 #### 400 Bad Request
 ```json
@@ -91,30 +126,39 @@ POST /api/v1/translate
 }
 ```
 
-#### 400 Bad Request (Unsupported Language Pair)
+#### 401 Unauthorized
 ```json
 {
-  "error": "Translation from python to ruby is not supported",
-  "supported_pairs": [
-    { "from": "python", "to": "javascript" },
-    { "from": "javascript", "to": "python" },
-    { "from": "python", "to": "java" },
-    { "from": "java", "to": "python" },
-    { "from": "javascript", "to": "java" },
-    { "from": "java", "to": "javascript" },
-    { "from": "cobol", "to": "java" },
-    { "from": "java", "to": "cobol" }
-  ]
+  "error": "Invalid or missing API key"
+}
+```
+
+#### 404 Not Found
+```json
+{
+  "error": "Endpoint not found"
 }
 ```
 
 #### 500 Internal Server Error
 ```json
 {
-  "error": "An error occurred while translating the code",
-  "details": "Error message from the server"
+  "error": "An error occurred while processing your request"
 }
 ```
+
+### Rate Limiting
+
+- Public API: 60 requests per minute per IP address
+- Authenticated API: 1000 requests per minute per API key
+
+### Webhooks
+
+Set up webhooks to receive notifications about translation events. Contact support for more information.
+
+### Support
+
+For API support, please contact [info@unelmaplatforms.com](mailto:info@unelmaplatforms.com).
 
 ## Running the API Locally
 
