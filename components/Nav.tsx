@@ -7,12 +7,14 @@ interface NavProps {
   isDark: boolean;
   toggleDarkMode: () => void; // Changed this type
   showAuthButtons?: boolean;
+  offsetTop?: number;
 }
 
 const Nav: React.FC<NavProps> = ({
   isDark,
   toggleDarkMode,
   showAuthButtons = true,
+  offsetTop,
 }) => {
   const { user, signOut } = useAuth();
 
@@ -30,7 +32,8 @@ const Nav: React.FC<NavProps> = ({
 
   return (
     <nav
-      className={`fixed left-0 right-0 top-0 z-50 h-24 ${
+      style={{ top: `${offsetTop ?? 0}px` }}
+      className={`fixed left-0 right-0 z-50 h-24 ${
         isDark ? 'bg-[#333333] text-white' : 'bg-[#E8EBF5] text-black'
       } transition-all duration-300`}
     >
