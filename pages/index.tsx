@@ -358,7 +358,7 @@ export default function Home() {
 
   useEffect(() => {
     function updateHeights() {
-    // Measure banner and nav heights after DOM paint for accurate layout
+      // Measure banner and nav heights after DOM paint for accurate layout
       requestAnimationFrame(() => {
         setBannerHeight(bannerRef.current?.offsetHeight || 0);
         setNavHeight(navRef.current?.offsetHeight || 0);
