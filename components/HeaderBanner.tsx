@@ -11,16 +11,27 @@ const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
     const [checkedStorage, setCheckedStorage] = useState(false);
 
     useLayoutEffect(() => {
-      const hidden = sessionStorage.getItem('bannerDismissed');
-      const isHidden = hidden === 'true';
-      setDismissed(isHidden);
-      onVisibilityChange?.(!isHidden);
-      setCheckedStorage(true);
-    }, []);
+      try {
+        const hidden = sessionStorage.getItem('bannerDismissed');
+        const isHidden = hidden === 'true';
+        setDismissed(isHidden);
+        onVisibilityChange?.(!isHidden);
+      } catch (error) {
+        // Fallback when sessionStorage is not available
+        console.warn('SessionStorage not available:', error);
+        onVisibilityChange?.(true);
+      } finally {
+        setCheckedStorage(true);
+      }
+    }, [onVisibilityChange]);
 
     const handleClose = () => {
       setDismissed(true);
-      sessionStorage.setItem('bannerDismissed', 'true');
+      try {
+        sessionStorage.setItem('bannerDismissed', 'true');
+      } catch (error) {
+        console.warn('Failed to save banner dismiss state:', error);
+      }
       onVisibilityChange?.(false);
     };
 
@@ -46,7 +57,7 @@ const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
         </div>
         <div className="flex items-center gap-4">
           <a
-            href=""
+            href="#"
             className={`
               rounded px-4 py-2 font-semibold transition hover:opacity-90
               ${isDark ? 'bg-white text-[#343232]' : 'bg-[#000000] text-white'}
@@ -75,7 +86,7 @@ const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 HeaderBanner.displayName = 'HeaderBanner';
