@@ -38,7 +38,7 @@ const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
           items-center
           justify-between gap-2 px-10 py-4 text-base
           transition-all duration-300
-          ${isDark ? 'bg-[#343232] text-white' : 'bg-[#e0e0e8] text-black'}
+          ${isDark ? 'bg-[#495058] text-white' : 'bg-[#ffffff] text-black'}
         `}
       >
         <div className="flex-1 font-medium">
@@ -46,10 +46,10 @@ const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
         </div>
         <div className="flex items-center gap-4">
           <a
-            href="/features"
+            href=""
             className={`
-              rounded px-4 py-2 font-semibold transition hover:underline 
-              ${isDark ? 'bg-white text-[#343232]' : 'bg-[#343232] text-white'}
+              rounded px-4 py-2 font-semibold transition hover:opacity-90
+              ${isDark ? 'bg-white text-[#343232]' : 'bg-[#000000] text-white'}
             `}
           >
             Learn More
@@ -57,7 +57,7 @@ const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
           <button
             onClick={handleClose}
             aria-label="Close banner"
-            className="p-1 transition hover:opacity-70"
+            className="p-1 transition hover:opacity-90"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

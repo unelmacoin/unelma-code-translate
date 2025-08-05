@@ -72,10 +72,11 @@ export default function Home() {
   const translateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { showLimitModal, setShowLimitModal, checkAndIncrementLimit } = useTranslationLimit(model);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
-  const [checkedBannerStatus, setCheckedBannerStatus] = useState(false);
-  const [bannerHeight, setBannerHeight] = useState(0);
+  const [toastTop, setToastTop] = useState('9.5rem');
   const bannerRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const [bannerHeight, setBannerHeight] = useState(0);
+  const [navHeight, setNavHeight] = useState(0);
 
   useEffect(() => {
     toast.info('Enter or upload some code in Input');
@@ -356,23 +357,30 @@ export default function Home() {
   }, [hasTranslated]);
 
   useEffect(() => {
-    if (!checkedBannerStatus) return;
-    const banner = bannerRef.current;
-    const nav = navRef.current;
-    const bannerH = isBannerVisible && banner ? banner.offsetHeight : 0;
-    const navH = nav?.offsetHeight || 0;
-    setBannerHeight(bannerH + navH);
-  }, [isBannerVisible, checkedBannerStatus]);
+    function updateHeights() {
+    // Measure banner and nav heights after DOM paint for accurate layout
+      requestAnimationFrame(() => {
+        setBannerHeight(bannerRef.current?.offsetHeight || 0);
+        setNavHeight(navRef.current?.offsetHeight || 0);
+      });
+    }
+    updateHeights();
+    window.addEventListener('resize', updateHeights);
+    return () => window.removeEventListener('resize', updateHeights);
+  }, [isBannerVisible]);
+
+  useEffect(() => {
+    setToastTop(isBannerVisible ? '9.5rem' : '5rem');
+  }, [isBannerVisible]);
 
   return (
-    <div style={{ background: bodyBg, paddingTop: checkedBannerStatus ? bannerHeight : 64 }}>
+    <div style={{ background: bodyBg }}>
       <HeaderBanner
         isDark={isDark}
-        ref={bannerRef}
-        onVisibilityChange={(visible: boolean) => {
-          setIsBannerVisible(visible);
-          setCheckedBannerStatus(true);
-        }}
+  ref={bannerRef}
+  onVisibilityChange={(visible: boolean) => {
+    setIsBannerVisible(visible);
+  }}
       />
       <div
         ref={navRef}
@@ -381,10 +389,11 @@ export default function Home() {
           isDark ? ' w-full  py-4 text-white transition-all duration-300' : 'w-full  py-4  transition-all duration-300'
         }`}
       >
-        <Nav isDark={isDark} toggleDarkMode={toggleDarkMode} offsetTop={isBannerVisible ? 64 : 0} />
+        <Nav isDark={isDark} toggleDarkMode={toggleDarkMode} offsetTop={bannerHeight} />
       </div>
 
       <div
+      style={{ paddingTop: bannerHeight }}
         className={
           isDark
             ? ' text-neutral-200 transition-all duration-300'
@@ -537,7 +546,7 @@ export default function Home() {
         </div>
       </div>
       <Footer isDark={isDark} />
-      <ToastContainer autoClose={2000} style={{ marginTop: isBannerVisible ? 128 : 64 }} />
+      <ToastContainer autoClose={2000} style={{ top: toastTop }} />
       <RestrictedModelModal
         isOpen={showLimitModal}
         onClose={() => setShowLimitModal(false)}
