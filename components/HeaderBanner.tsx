@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useEffect, useState } from 'react';
 
 interface HeaderBannerProps {
   isDark: boolean;
@@ -7,35 +7,37 @@ interface HeaderBannerProps {
 
 const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
   ({ isDark, onVisibilityChange }, ref) => {
-    const [dismissed, setDismissed] = useState(false);
-    const [checkedStorage, setCheckedStorage] = useState(false);
+    const [checked, setChecked] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     useLayoutEffect(() => {
+      let dismissed = false;
       try {
-        const hidden = sessionStorage.getItem('bannerDismissed');
-        const isHidden = hidden === 'true';
-        setDismissed(isHidden);
-        onVisibilityChange?.(!isHidden);
-      } catch (error) {
-        // Fallback when sessionStorage is not available
-        console.warn('SessionStorage not available:', error);
-        onVisibilityChange?.(true);
-      } finally {
-        setCheckedStorage(true);
-      }
-    }, [onVisibilityChange]);
+        dismissed = sessionStorage.getItem('bannerDismissed') === 'true';
+      } catch {}
+      setVisible(!dismissed);
+      setChecked(true);
+      onVisibilityChange?.(!dismissed);
+    }, []);
+
+    useEffect(() => {
+      if (!checked || !visible) return;
+      const t = setTimeout(() => {
+        setVisible(false);
+        onVisibilityChange?.(false);
+      }, 60_000);
+      return () => clearTimeout(t);
+    }, [checked, visible, onVisibilityChange]);
 
     const handleClose = () => {
-      setDismissed(true);
+      setVisible(false);
       try {
         sessionStorage.setItem('bannerDismissed', 'true');
-      } catch (error) {
-        console.warn('Failed to save banner dismiss state:', error);
-      }
+      } catch {}
       onVisibilityChange?.(false);
     };
 
-    if (!checkedStorage || dismissed) return null;
+    if (!checked || !visible) return null;
 
     return (
       <div
@@ -44,9 +46,7 @@ const HeaderBanner = React.forwardRef<HTMLDivElement, HeaderBannerProps>(
         aria-label="Promotional banner"
         className={`
           fixed left-0 right-0 top-0
-          z-[60] flex
-          w-full flex-wrap
-          items-center
+          z-[60] flex w-full flex-wrap items-center
           justify-between gap-2 px-10 py-4 text-base
           transition-all duration-300
           ${isDark ? 'bg-[#495058] text-white' : 'bg-[#ffffff] text-black'}
