@@ -20,6 +20,7 @@ import SweetAlert from '@/components/SweetAlert';
 import { useTranslationLimit } from '../hooks/useTranslationLimit';
 import RestrictedModelModal from '../components/RestrictedModelModal';
 import { useTheme } from '../contexts/ThemeContext';
+import HeaderBanner from '@/components/HeaderBanner';
 require('dotenv').config();
 
 type AnyFunction = (...args: any[]) => any;
@@ -70,6 +71,12 @@ export default function Home() {
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
   const translateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { showLimitModal, setShowLimitModal, checkAndIncrementLimit } = useTranslationLimit(model);
+  const [isBannerVisible, setIsBannerVisible] = useState(true);
+  const [toastTop, setToastTop] = useState('9.5rem');
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const [bannerHeight, setBannerHeight] = useState(0);
+  const [navHeight, setNavHeight] = useState(0);
 
   useEffect(() => {
     toast.info('Enter or upload some code in Input');
@@ -349,19 +356,44 @@ export default function Home() {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasTranslated]);
 
+  useEffect(() => {
+    function updateHeights() {
+      // Measure banner and nav heights after DOM paint for accurate layout
+      requestAnimationFrame(() => {
+        setBannerHeight(bannerRef.current?.offsetHeight || 0);
+        setNavHeight(navRef.current?.offsetHeight || 0);
+      });
+    }
+    updateHeights();
+    window.addEventListener('resize', updateHeights);
+    return () => window.removeEventListener('resize', updateHeights);
+  }, [isBannerVisible]);
+
+  useEffect(() => {
+    setToastTop(isBannerVisible ? '9.5rem' : '5rem');
+  }, [isBannerVisible]);
+
   return (
     <div style={{ background: bodyBg }}>
+      <HeaderBanner
+        isDark={isDark}
+  ref={bannerRef}
+  onVisibilityChange={(visible: boolean) => {
+    setIsBannerVisible(visible);
+  }}
+      />
       <div
+        ref={navRef}
         style={{ background: navBg }}
-        className={`fixed top-0 z-50 bg-black ${isDark
-            ? ' w-full  py-4 text-white transition-all duration-300'
-            : 'w-full  py-4  transition-all duration-300'
-          }`}
+        className={`fixed top-0 z-50 bg-black ${
+          isDark ? ' w-full  py-4 text-white transition-all duration-300' : 'w-full  py-4  transition-all duration-300'
+        }`}
       >
-        <Nav isDark={isDark} toggleDarkMode={toggleDarkMode} />
+        <Nav isDark={isDark} toggleDarkMode={toggleDarkMode} offsetTop={bannerHeight} />
       </div>
 
       <div
+      style={{ paddingTop: bannerHeight }}
         className={
           isDark
             ? ' text-neutral-200 transition-all duration-300'
@@ -514,7 +546,7 @@ export default function Home() {
         </div>
       </div>
       <Footer isDark={isDark} />
-      <ToastContainer autoClose={2000} style={{ top: '5rem' }} />
+      <ToastContainer autoClose={2000} style={{ top: toastTop }} />
       <RestrictedModelModal
         isOpen={showLimitModal}
         onClose={() => setShowLimitModal(false)}
