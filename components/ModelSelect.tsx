@@ -26,6 +26,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     { value: 'gpt-4.5-preview', label: 'GPT-4.5' },
     { value: 'o1-mini', label: 'GPT-o1-Mini' },
     { value: 'o3-mini', label: 'GPT-o3-mini' },
+    { value: 'gpt-5', label: 'GPT-5' },
     { value: 'grok-2-latest', label: 'Grok-2-Latest' },
     { value: 'grok-3-mini-beta', label: 'Grok-3-Mini-Beta' },
     { value: 'deepseek-chat', label: 'DeepSeek' },
