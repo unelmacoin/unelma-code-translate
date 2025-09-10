@@ -9,9 +9,9 @@ import {
 interface RequestBody {
   model: string;
   messages: { role: string; content: string }[];
-  temperature?: number; // Add temperature as an optional property
-  stream?: boolean; // Add stream as an optional property
-  reasoning_effort?: "low" | "high"; // Only for some supported model like grok-3-mini-beta and grok-3-mini-fast-beta
+  temperature?: number;
+  stream?: boolean;
+  reasoning_effort?: "low" | "high";
 }
 
 const createPrompt = (
@@ -93,6 +93,8 @@ export const OpenAIStream = async (
         return 'https://api.x.ai/v1/chat/completions';
       case 'deepseek-chat':
         return 'https://api.deepseek.com/chat/completions';
+      case 'gpt-5':
+        return 'https://api.openai.com/v1/responses';
       default:
         return 'https://api.openai.com/v1/chat/completions';
     }
@@ -110,13 +112,18 @@ export const OpenAIStream = async (
     }
   })();
 
+  const requestBody: any = model === 'gpt-5'
+    ? { model, input: prompt, stream: false }
+    : body;
+
   const res = await fetch(apiUrl, {
     headers: {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       Authorization: `Bearer ${apiKey}`,
     },
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify(requestBody),
   });
 
   const encoder = new TextEncoder();
@@ -134,6 +141,57 @@ export const OpenAIStream = async (
       throw new Error(`OpenAI API returned an error: ${errorMessage}`);
     }
   }
+
+  if (model === 'gpt-5') {
+    const result = await res.json();
+
+    const collectFromOutput = (output: any): string => {
+      if (!Array.isArray(output)) return '';
+      const parts: string[] = [];
+      for (const item of output) {
+        if (typeof item?.text === 'string') parts.push(item.text);
+        if (Array.isArray(item?.content)) {
+          for (const c of item.content) {
+            if (typeof c?.text === 'string') parts.push(c.text);
+          }
+        }
+      }
+      return parts.join('');
+    };
+
+    const collectFromMessage = (msg: any): string => {
+      if (!msg) return '';
+      if (typeof msg === 'string') return msg;
+      if (Array.isArray(msg)) {
+        return msg.map((m) => (typeof m?.text === 'string' ? m.text : '')).join('');
+      }
+      if (Array.isArray(msg?.content)) {
+        return msg.content.map((m: any) => (typeof m?.text === 'string' ? m.text : '')).join('');
+      }
+      return msg?.content || '';
+    };
+
+    const text =
+      result?.output_text
+      || collectFromOutput(result?.output)
+      || collectFromMessage(result?.message)
+      || result?.content?.[0]?.text
+      || result?.choices?.[0]?.message?.content
+      || '';
+
+    if (!text || String(text).trim() === '') {
+      throw new Error('GPT-5 returned empty output');
+    }
+
+    const queue = encoder.encode(text);
+    return new ReadableStream({
+      start(controller) {
+        controller.enqueue(queue);
+        controller.close();
+      },
+    });
+  }
+
   if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'deepseek-chat' || model === 'o3-mini') {
     const result = await res.json();
     const text = result.choices[0].message.content;
