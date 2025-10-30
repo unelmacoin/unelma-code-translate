@@ -82,7 +82,7 @@ export const OpenAIStream = async (
   }
 
   if (model === 'grok-3-mini-beta' || model === 'grok-3-latest') {
-    body['reasoning_effort'] = 'high';
+    // xAI grok-3 variants do not support `reasoning_effort`
     body['temperature'] = 0.7;
   }
 
