@@ -64,7 +64,7 @@ export const OpenAIStream = async (
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
   const messages =
-    model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest'
+    model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'grok-3-latest'
       ? [{ role: 'user', content: prompt }]
       : [
         { role: 'system', content: prompt },
@@ -76,13 +76,13 @@ export const OpenAIStream = async (
     messages,
   };
 
-  if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== "grok-3-mini-beta" && model !== 'deepseek-chat' && model !== 'o3-mini') {
+  if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== "grok-3-mini-beta" && model !== 'grok-3-latest' && model !== 'deepseek-chat' && model !== 'o3-mini') {
     body['temperature'] = 0;
     body['stream'] = true;
   }
 
-  if (model === 'grok-3-mini-beta') {
-    body['reasoning_effort'] = 'high';
+  if (model === 'grok-3-mini-beta' || model === 'grok-3-latest') {
+    // xAI grok-3 variants do not support `reasoning_effort`
     body['temperature'] = 0.7;
   }
 
@@ -90,6 +90,7 @@ export const OpenAIStream = async (
     switch (model) {
       case 'grok-2-latest':
       case 'grok-3-mini-beta':
+      case 'grok-3-latest':
         return 'https://api.x.ai/v1/chat/completions';
       case 'deepseek-chat':
         return 'https://api.deepseek.com/chat/completions';
@@ -104,6 +105,7 @@ export const OpenAIStream = async (
     switch (model) {
       case 'grok-2-latest':
       case 'grok-3-mini-beta':
+      case 'grok-3-latest':
         return process.env.X_AI_API_KEY;
       case 'deepseek-chat':
         return process.env.DEEPSEEK_API_KEY;
@@ -133,7 +135,7 @@ export const OpenAIStream = async (
     const statusText = res.statusText;
     const result = await res.body?.getReader().read();
     const errorMessage = decoder.decode(result?.value) || statusText;
-    if (model === 'grok-2-latest' || model === 'grok-3-mini-beta') {
+    if (model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'grok-3-latest') {
       throw new Error(`xAI API returned an error: ${errorMessage}`);
     } else if (model === 'deepseek-chat') {
       throw new Error(`DeepSeek API returned an error: ${errorMessage}`);
@@ -192,7 +194,7 @@ export const OpenAIStream = async (
     });
   }
 
-  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'deepseek-chat' || model === 'o3-mini') {
+  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'grok-3-latest' || model === 'deepseek-chat' || model === 'o3-mini') {
     const result = await res.json();
     const text = result.choices[0].message.content;
     const queue = encoder.encode(text);

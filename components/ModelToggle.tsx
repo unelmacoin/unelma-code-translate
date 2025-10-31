@@ -16,6 +16,7 @@ const modelOptions = [
   { value: 'o3-mini', label: 'GPT-o3-mini' },
   { value: 'grok-2-latest', label: 'Grok-2-Latest' },
   { value: 'grok-3-mini-beta', label: 'Grok-3-Mini-Beta' },
+  { value: 'grok-3-latest', label: 'Grok-3-Latest' },
   { value: 'deepseek-chat', label: 'DeepSeek' },
 ];
 
