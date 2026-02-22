@@ -32,6 +32,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     { value: 'grok-3-latest', label: 'Grok-3-Latest' },
     { value: 'grok-4-fast-non-reasoning-latest', label: 'Grok-4-Latest' },
     { value: 'deepseek-chat', label: 'DeepSeek' },
+    { value: 'claude-opus-4-6', label: 'Claude Opus 4.6' },
   ];
 
   useEffect(() => {
@@ -98,14 +99,16 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
           `${model} is unavailable. Switched to ${firstEnabledModel.label}.`,
         );
       } else {
-       toast.error('No models are currently available. Please try again later.');
+        toast.error(
+          'No models are currently available. Please try again later.',
+        );
       }
     }
   }, [enabledModels, loading, model, onChange]);
 
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
-  
+
   const availableModels = useMemo(() => {
     return modelOptions.filter((option) => isModelEnabled(option.value));
   }, [enabledModels, modelOptions]);
