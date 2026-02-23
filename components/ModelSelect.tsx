@@ -5,8 +5,8 @@ import { db } from '../config/firebase';
 import { toast } from 'react-hot-toast';
 
 interface Props {
-  model: OpenAIModel | xAI | OpenAI;
-  onChange: (model: OpenAIModel | xAI | OpenAI) => void;
+  model: OpenAIModel | xAI | OpenAI | Claude;
+  onChange: (model: OpenAIModel | xAI | OpenAI | Claude) => void;
   isDark: boolean;
 }
 
@@ -94,7 +94,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
         isModelEnabled(option.value),
       );
       if (firstEnabledModel) {
-        onChange(firstEnabledModel.value as OpenAIModel | xAI | OpenAI);
+        onChange(firstEnabledModel.value as OpenAIModel | xAI | OpenAI | Claude);
         toast(
           `${model} is unavailable. Switched to ${firstEnabledModel.label}.`,
         );
@@ -125,7 +125,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     <select
       className={`${bg} ${textColor} h-[40px] w-fit rounded-md px-4 py-2`}
       value={model}
-      onChange={(e) => onChange(e.target.value as OpenAIModel | xAI | OpenAI)}
+      onChange={(e) => onChange(e.target.value as OpenAIModel | xAI | OpenAI | Claude)}
     >
       {availableModels.map((option) => (
         <option key={option.value} value={option.value}>
