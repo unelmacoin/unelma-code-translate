@@ -19,7 +19,7 @@ const modelOptions = [
   { value: 'grok-3-latest', label: 'Grok-3-Latest' },
   { value: 'grok-4-fast-non-reasoning-latest', label: 'Grok-4-Latest' },
   { value: 'deepseek-chat', label: 'DeepSeek' },
-  { value: 'claude-opus-4-6', label: 'Claude Opus 4.6' },
+  { value: 'claude-opus-4-6', label: 'Claude-Opus-4-6' },
 ];
 
 const ModelToggle: React.FC<{ isDark: boolean }> = ({ isDark }) => {

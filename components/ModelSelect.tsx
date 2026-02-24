@@ -32,7 +32,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     { value: 'grok-3-latest', label: 'Grok-3-Latest' },
     { value: 'grok-4-fast-non-reasoning-latest', label: 'Grok-4-Latest' },
     { value: 'deepseek-chat', label: 'DeepSeek' },
-    { value: 'claude-opus-4-6', label: 'Claude Opus 4.6' },
+    { value: 'claude-opus-4-6', label: 'Claude-Opus-4-6' },
   ];
 
   useEffect(() => {
@@ -94,23 +94,26 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
         isModelEnabled(option.value),
       );
       if (firstEnabledModel) {
-        onChange(firstEnabledModel.value as OpenAIModel | xAI | OpenAI | ClaudeModel);
+        onChange(
+          firstEnabledModel.value as OpenAIModel | xAI | OpenAI | ClaudeModel,
+        );
         toast(
           `${model} is unavailable. Switched to ${firstEnabledModel.label}.`,
         );
       } else {
-       toast.error('No models are currently available. Please try again later.');
+        toast.error(
+          'No models are currently available. Please try again later.',
+        );
       }
     }
   }, [enabledModels, loading, model, onChange]);
 
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
-  
+
   const availableModels = useMemo(() => {
     return modelOptions.filter((option) => isModelEnabled(option.value));
-  }, [enabledModels, modelOptions]); // With this line it only displays some of the options 
-
+  }, [enabledModels, modelOptions]);
 
   if (loading) {
     return (
@@ -124,7 +127,9 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     <select
       className={`${bg} ${textColor} h-[40px] w-fit rounded-md px-4 py-2`}
       value={model}
-      onChange={(e) => onChange(e.target.value as OpenAIModel | xAI | OpenAI | ClaudeModel)}
+      onChange={(e) =>
+        onChange(e.target.value as OpenAIModel | xAI | OpenAI | ClaudeModel)
+      }
     >
       {availableModels.map((option) => (
         <option key={option.value} value={option.value}>
