@@ -124,7 +124,7 @@ const ModelToggle: React.FC<{ isDark: boolean }> = ({ isDark }) => {
           <div
             key={modelName}
             className={`flex items-center justify-between rounded-lg p-4 ${
-              isDark ? 'bg-gray-700' : 'bg-white' 
+              isDark ? 'bg-gray-700' : 'bg-white'
             }`}
           >
             <span

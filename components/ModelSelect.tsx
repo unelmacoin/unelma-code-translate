@@ -1,12 +1,12 @@
-import { OpenAIModel, xAI, OpenAI } from '@/types/types';
+import { OpenAIModel, xAI, OpenAI, ClaudeModel } from '@/types/types';
 import { FC, useEffect, useState, useMemo } from 'react';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { toast } from 'react-hot-toast';
 
 interface Props {
-  model: OpenAIModel | xAI | OpenAI | Claude;
-  onChange: (model: OpenAIModel | xAI | OpenAI | Claude) => void;
+  model: OpenAIModel | xAI | OpenAI | ClaudeModel;
+  onChange: (model: OpenAIModel | xAI | OpenAI | ClaudeModel) => void;
   isDark: boolean;
 }
 
@@ -94,24 +94,23 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
         isModelEnabled(option.value),
       );
       if (firstEnabledModel) {
-        onChange(firstEnabledModel.value as OpenAIModel | xAI | OpenAI | Claude);
+        onChange(firstEnabledModel.value as OpenAIModel | xAI | OpenAI | ClaudeModel);
         toast(
           `${model} is unavailable. Switched to ${firstEnabledModel.label}.`,
         );
       } else {
-        toast.error(
-          'No models are currently available. Please try again later.',
-        );
+       toast.error('No models are currently available. Please try again later.');
       }
     }
   }, [enabledModels, loading, model, onChange]);
 
   const bg = isDark ? 'bg-[#1A1B26]' : 'bg-[#fff]';
   const textColor = isDark ? 'text-neutral-200 ' : 'text-black';
-
+  
   const availableModels = useMemo(() => {
     return modelOptions.filter((option) => isModelEnabled(option.value));
-  }, [enabledModels, modelOptions]);
+  }, [enabledModels, modelOptions]); // With this line it only displays some of the options 
+
 
   if (loading) {
     return (
@@ -125,7 +124,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     <select
       className={`${bg} ${textColor} h-[40px] w-fit rounded-md px-4 py-2`}
       value={model}
-      onChange={(e) => onChange(e.target.value as OpenAIModel | xAI | OpenAI | Claude)}
+      onChange={(e) => onChange(e.target.value as OpenAIModel | xAI | OpenAI | ClaudeModel)}
     >
       {availableModels.map((option) => (
         <option key={option.value} value={option.value}>
