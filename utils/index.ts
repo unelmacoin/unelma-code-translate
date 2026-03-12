@@ -1,4 +1,4 @@
-import { OpenAI, xAI, OpenAIModel } from '@/types/types';
+import { OpenAI, xAI, OpenAIModel, ClaudeModel } from '@/types/types';
 import endent from 'endent';
 import {
   createParser,
@@ -11,13 +11,13 @@ interface RequestBody {
   messages: { role: string; content: string }[];
   temperature?: number;
   stream?: boolean;
-  reasoning_effort?: "low" | "high";
+  reasoning_effort?: 'low' | 'high';
 }
 
 const createPrompt = (
   inputLanguage: string,
   outputLanguage: string,
-  inputCode: string
+  inputCode: string,
 ) => {
   if (inputLanguage === 'Natural Language') {
     return endent`
@@ -55,7 +55,7 @@ export const OpenAIStream = async (
   outputLanguage: string,
   inputCode: string,
   model: string,
-  key: string
+  key: string,
 ) => {
   if (inputCode.trim() === '') {
     return null;
@@ -64,24 +64,42 @@ export const OpenAIStream = async (
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
   const messages =
-    model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'grok-3-latest' || model === 'grok-4-fast-non-reasoning-latest'
+    model === 'o1-preview' ||
+    model === 'o1-mini' ||
+    model === 'grok-2-latest' ||
+    model === 'grok-3-mini-beta' ||
+    model === 'grok-3-latest' ||
+    model === 'grok-4-fast-non-reasoning-latest'
       ? [{ role: 'user', content: prompt }]
       : [
-        { role: 'system', content: prompt },
-        { role: 'user', content: inputCode },
-      ];
+          { role: 'system', content: prompt },
+          { role: 'user', content: inputCode },
+        ];
 
   const body: RequestBody = {
     model,
     messages,
   };
 
-  if (model !== 'o1-preview' && model !== 'o1-mini' && model !== 'grok-2-latest' && model !== "grok-3-mini-beta" && model !== 'grok-3-latest' && model !== 'grok-4-fast-non-reasoning-latest' && model !== 'deepseek-chat' && model !== 'o3-mini') {
+  if (
+    model !== 'o1-preview' &&
+    model !== 'o1-mini' &&
+    model !== 'grok-2-latest' &&
+    model !== 'grok-3-mini-beta' &&
+    model !== 'grok-3-latest' &&
+    model !== 'grok-4-fast-non-reasoning-latest' &&
+    model !== 'deepseek-chat' &&
+    model !== 'o3-mini'
+  ) {
     body['temperature'] = 0;
     body['stream'] = true;
   }
 
-  if (model === 'grok-3-mini-beta' || model === 'grok-3-latest' || model === 'grok-4-fast-non-reasoning-latest') {
+  if (
+    model === 'grok-3-mini-beta' ||
+    model === 'grok-3-latest' ||
+    model === 'grok-4-fast-non-reasoning-latest'
+  ) {
     // xAI grok-3 and grok-4 variants do not support `reasoning_effort`
     body['temperature'] = 0.7;
   }
@@ -95,6 +113,11 @@ export const OpenAIStream = async (
         return 'https://api.x.ai/v1/chat/completions';
       case 'deepseek-chat':
         return 'https://api.deepseek.com/chat/completions';
+      case 'claude-1':
+      case 'claude-2':
+        return 'https://api.anthropic.com/v1/complete';
+      case 'claude-opus-4-6':
+        return 'https://api.anthropic.com/v1/messages';
       case 'gpt-5':
         return 'https://api.openai.com/v1/responses';
       default:
@@ -111,33 +134,71 @@ export const OpenAIStream = async (
         return process.env.X_AI_API_KEY;
       case 'deepseek-chat':
         return process.env.DEEPSEEK_API_KEY;
+      case 'claude-opus-4-6':
+        return process.env.ANTHROPIC_API_KEY;
+
       default:
         return key || process.env.OPENAI_API_KEY;
     }
   })();
 
-  const requestBody: any = model === 'gpt-5'
-    ? { model, input: prompt, stream: false }
-    : body;
+  const requestBody: any =
+    model === 'gpt-5' ? { model, input: prompt, stream: false } : body;
+
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  if (model === 'claude-opus-4-6') {
+    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY || '',
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+
+    if (!claudeRes.ok) {
+      const err = await claudeRes.text();
+      throw new Error(`Anthropic API error: ${err}`);
+    }
+
+    const claudeData = await claudeRes.json();
+    const text = claudeData?.content?.[0]?.text || '';
+    const queue = encoder.encode(text);
+    return new ReadableStream({
+      start(controller) {
+        controller.enqueue(queue);
+        controller.close();
+      },
+    });
+  }
 
   const res = await fetch(apiUrl, {
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
       Authorization: `Bearer ${apiKey}`,
     },
     method: 'POST',
     body: JSON.stringify(requestBody),
   });
 
-  const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
-
   if (res.status !== 200) {
     const statusText = res.statusText;
     const result = await res.body?.getReader().read();
     const errorMessage = decoder.decode(result?.value) || statusText;
-    if (model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'grok-3-latest' || model === 'grok-4-fast-non-reasoning-latest') {
+    if (
+      model === 'grok-2-latest' ||
+      model === 'grok-3-mini-beta' ||
+      model === 'grok-3-latest' ||
+      model === 'grok-4-fast-non-reasoning-latest'
+    ) {
       throw new Error(`xAI API returned an error: ${errorMessage}`);
     } else if (model === 'deepseek-chat') {
       throw new Error(`DeepSeek API returned an error: ${errorMessage}`);
@@ -167,21 +228,25 @@ export const OpenAIStream = async (
       if (!msg) return '';
       if (typeof msg === 'string') return msg;
       if (Array.isArray(msg)) {
-        return msg.map((m) => (typeof m?.text === 'string' ? m.text : '')).join('');
+        return msg
+          .map((m) => (typeof m?.text === 'string' ? m.text : ''))
+          .join('');
       }
       if (Array.isArray(msg?.content)) {
-        return msg.content.map((m: any) => (typeof m?.text === 'string' ? m.text : '')).join('');
+        return msg.content
+          .map((m: any) => (typeof m?.text === 'string' ? m.text : ''))
+          .join('');
       }
       return msg?.content || '';
     };
 
     const text =
-      result?.output_text
-      || collectFromOutput(result?.output)
-      || collectFromMessage(result?.message)
-      || result?.content?.[0]?.text
-      || result?.choices?.[0]?.message?.content
-      || '';
+      result?.output_text ||
+      collectFromOutput(result?.output) ||
+      collectFromMessage(result?.message) ||
+      result?.content?.[0]?.text ||
+      result?.choices?.[0]?.message?.content ||
+      '';
 
     if (!text || String(text).trim() === '') {
       throw new Error('GPT-5 returned empty output');
@@ -196,7 +261,16 @@ export const OpenAIStream = async (
     });
   }
 
-  if (model === 'o1-preview' || model === 'o1-mini' || model === 'grok-2-latest' || model === 'grok-3-mini-beta' || model === 'grok-3-latest' || model === 'grok-4-fast-non-reasoning-latest' || model === 'deepseek-chat' || model === 'o3-mini') {
+  if (
+    model === 'o1-preview' ||
+    model === 'o1-mini' ||
+    model === 'grok-2-latest' ||
+    model === 'grok-3-mini-beta' ||
+    model === 'grok-3-latest' ||
+    model === 'grok-4-fast-non-reasoning-latest' ||
+    model === 'deepseek-chat' ||
+    model === 'o3-mini'
+  ) {
     const result = await res.json();
     const text = result.choices[0].message.content;
     const queue = encoder.encode(text);
