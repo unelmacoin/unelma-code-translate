@@ -147,11 +147,11 @@ export const OpenAIStream = async (
   const decoder = new TextDecoder();
 
   if (model === 'claude-opus-4-6') {
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+    const claudeRes = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY || '',
+        'x-api-key': apiKey || '',
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
@@ -167,11 +167,16 @@ export const OpenAIStream = async (
       throw new Error(`Anthropic API error: ${err}`);
     }
 
-    const stream = new ReadableStream({
-      async start(controller) {
+     if (!claudeRes.body) {
+     throw new Error('Anthropic API returned empty response body');
+   }
+
+const stream = new ReadableStream({
+       async start(controller) {
         const reader = claudeRes.body!.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
+         const decoder = new TextDecoder();
+         let buffer = '';
+
 
         while (true) {
           const { value, done } = await reader.read();
@@ -195,16 +200,19 @@ export const OpenAIStream = async (
                 const chunk = new TextEncoder().encode(parsed.delta.text);
                 controller.enqueue(chunk);
               }
-            } catch (e) {}
-          }
-        }
+             } catch (e) {
+           
+              console.warn('Failed to parse Claude SSE chunk:', jsonStr, e);
+            }
+           }
+         }
 
-        controller.close();
-      },
-    });
+         controller.close();
+       },
+     });
 
-    return stream;
-  }
+     return stream;
+   }
 
   const res = await fetch(apiUrl, {
     headers: {
