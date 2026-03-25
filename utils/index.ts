@@ -157,6 +157,7 @@ export const OpenAIStream = async (
       body: JSON.stringify({
         model,
         max_tokens: 4096,
+        stream: true,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
@@ -166,15 +167,43 @@ export const OpenAIStream = async (
       throw new Error(`Anthropic API error: ${err}`);
     }
 
-    const claudeData = await claudeRes.json();
-    const text = claudeData?.content?.[0]?.text || '';
-    const queue = encoder.encode(text);
-    return new ReadableStream({
-      start(controller) {
-        controller.enqueue(queue);
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = claudeRes.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(jsonStr);
+              if (
+                parsed.type === 'content_block_delta' &&
+                parsed.delta?.type === 'text_delta'
+              ) {
+                const chunk = new TextEncoder().encode(parsed.delta.text);
+                controller.enqueue(chunk);
+              }
+            } catch (e) {}
+          }
+        }
+
         controller.close();
       },
     });
+
+    return stream;
   }
 
   const res = await fetch(apiUrl, {
