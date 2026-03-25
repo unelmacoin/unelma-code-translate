@@ -2,7 +2,7 @@ import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
-import { OpenAIModel, xAI, OpenAI, TranslateBody } from '@/types/types';
+import { Model, TranslateBody } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Nav from '@/components/Nav';
@@ -30,11 +30,17 @@ interface DebouncedFunction<T extends AnyFunction> {
   cancel: () => void;
 }
 
-function debounce<T extends AnyFunction>(fn: T, delay: number): DebouncedFunction<T> {
+function debounce<T extends AnyFunction>(
+  fn: T,
+  delay: number,
+): DebouncedFunction<T> {
   let timeoutId: NodeJS.Timeout | null = null;
 
   // Define the debounced function
-  function debouncedFunction(this: ThisParameterType<T>, ...args: Parameters<T>): ReturnType<T> {
+  function debouncedFunction(
+    this: ThisParameterType<T>,
+    ...args: Parameters<T>
+  ): ReturnType<T> {
     const later = () => {
       timeoutId = null;
       return fn.apply(this, args);
@@ -45,14 +51,17 @@ function debounce<T extends AnyFunction>(fn: T, delay: number): DebouncedFunctio
   }
 
   // Add cancel method to the debounced function
-  const debouncedWithCancel: DebouncedFunction<T> = Object.assign(debouncedFunction, {
-    cancel: function () {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-    }
-  });
+  const debouncedWithCancel: DebouncedFunction<T> = Object.assign(
+    debouncedFunction,
+    {
+      cancel: function () {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+      },
+    },
+  );
 
   return debouncedWithCancel;
 }
@@ -63,14 +72,15 @@ export default function Home() {
   const [outputLanguage, setOutputLanguage] = useState<string>('');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
-  const [model, setModel] = useState<OpenAIModel | xAI | OpenAI>('gpt-3.5-turbo');
+  const [model, setModel] = useState<Model>('gpt-3.5-turbo');
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
   const [history, setHistory] = useState<Set<string>>(new Set());
   const [historyExpand, setHistoryExpand] = useState<boolean>(false);
   const translateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { showLimitModal, setShowLimitModal, checkAndIncrementLimit } = useTranslationLimit(model);
+  const { showLimitModal, setShowLimitModal, checkAndIncrementLimit } =
+    useTranslationLimit(model);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [toastTop, setToastTop] = useState('9.5rem');
   const bannerRef = useRef<HTMLDivElement>(null);
@@ -171,17 +181,19 @@ export default function Home() {
 
       const updatedHistory = new Set([
         ...history,
-        JSON.stringify({ inputCode, inputLanguage, outputLanguage, model })
+        JSON.stringify({ inputCode, inputLanguage, outputLanguage, model }),
       ]);
       const mergedHistory = new Set([
         ...updatedHistory,
-        ...JSON.parse(localStorage.getItem('userHistory') || '[]').map((item: string) => {
-          try {
-            return JSON.stringify(JSON.parse(item));
-          } catch {
-            return item;
-          }
-        }),
+        ...JSON.parse(localStorage.getItem('userHistory') || '[]').map(
+          (item: string) => {
+            try {
+              return JSON.stringify(JSON.parse(item));
+            } catch {
+              return item;
+            }
+          },
+        ),
       ]);
       setHistory(mergedHistory);
       localStorage.setItem('userHistory', JSON.stringify([...mergedHistory]));
@@ -198,7 +210,6 @@ export default function Home() {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputLanguage, outputLanguage, inputCode, model, apiKey, history]);
 
-
   const copyToClipboard = (text: string) => {
     const el = document.createElement('textarea');
     el.value = text;
@@ -214,7 +225,7 @@ export default function Home() {
       debounce(() => {
         handleTranslate();
       }, 1500),
-      [handleTranslate]
+      [handleTranslate],
     );
 
   useEffect(() => {
@@ -310,7 +321,8 @@ export default function Home() {
   };
 
   const handleHistorySelect = useCallback((value: string) => {
-    const { inputCode, inputLanguage, outputLanguage, model } = JSON.parse(value);
+    const { inputCode, inputLanguage, outputLanguage, model } =
+      JSON.parse(value);
     setInputCode(inputCode);
     setInputLanguage(inputLanguage);
     setOutputLanguage(outputLanguage);
@@ -377,23 +389,29 @@ export default function Home() {
     <div style={{ background: bodyBg }}>
       <HeaderBanner
         isDark={isDark}
-  ref={bannerRef}
-  onVisibilityChange={(visible: boolean) => {
-    setIsBannerVisible(visible);
-  }}
+        ref={bannerRef}
+        onVisibilityChange={(visible: boolean) => {
+          setIsBannerVisible(visible);
+        }}
       />
       <div
         ref={navRef}
         style={{ background: navBg }}
         className={`fixed top-0 z-50 bg-black ${
-          isDark ? ' w-full  py-4 text-white transition-all duration-300' : 'w-full  py-4  transition-all duration-300'
+          isDark
+            ? ' w-full  py-4 text-white transition-all duration-300'
+            : 'w-full  py-4  transition-all duration-300'
         }`}
       >
-        <Nav isDark={isDark} toggleDarkMode={toggleDarkMode} offsetTop={bannerHeight} />
+        <Nav
+          isDark={isDark}
+          toggleDarkMode={toggleDarkMode}
+          offsetTop={bannerHeight}
+        />
       </div>
 
       <div
-      style={{ paddingTop: bannerHeight }}
+        style={{ paddingTop: bannerHeight }}
         className={
           isDark
             ? ' text-neutral-200 transition-all duration-300'
@@ -411,25 +429,30 @@ export default function Home() {
         </Head>
 
         <div
-          className={`flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 pt-4 sm:px-10 md:pt-16 ${historyExpand ? '' : 'items-center'
-            }`}
+          className={`flex h-full min-h-fit flex-col flex-wrap px-4 pb-20 pt-4 sm:px-10 md:pt-16 ${
+            historyExpand ? '' : 'items-center'
+          }`}
         >
           <div
-            className={`flex flex-col ${historyExpand ? 'md:items-start' : ''
-              }justify-center mt-16 md:mt-16 lg:mt-16`}
+            className={`flex flex-col ${
+              historyExpand ? 'md:items-start' : ''
+            }justify-center mt-16 md:mt-16 lg:mt-16`}
           >
-            <div className="text-4xl font-bold mt-20 sm:mt-0">Code Translator</div>
+            <div className="mt-20 text-4xl font-bold sm:mt-0">
+              Code Translator
+            </div>
           </div>
 
           <div
-            className={`mt-2 flex ${historyExpand ? 'items-start lg:items-center' : 'items-center'
-              }justify-center  space-x-2`}
+            className={`mt-2 flex ${
+              historyExpand ? 'items-start lg:items-center' : 'items-center'
+            }justify-center  space-x-2`}
           >
             <ModelSelect
               model={model}
               isDark={isDark}
               onChange={(value) => {
-                setModel(value as OpenAIModel | xAI | OpenAI);
+                setModel(value as Model);
                 setHasTranslated(false); // Reset translation state when changing model
               }}
             />
@@ -438,17 +461,18 @@ export default function Home() {
             {inputCode.trim() !== '' && loading
               ? 'Translating...'
               : outputCode.trim() !== '' && hasTranslated
-                ? 'Your code has been translated!'
-                : 'Enter some code in Input'}
+              ? 'Your code has been translated!'
+              : 'Enter some code in Input'}
           </div>
 
           <div
-            className={`mt-6 flex w-full max-w-[1200px] flex-col justify-center sm:space-x-4 lg:flex-row ${historyExpand
+            className={`mt-6 flex w-full max-w-[1200px] flex-col justify-center sm:space-x-4 lg:flex-row ${
+              historyExpand
                 ? 'items-center md:flex-col md:items-start lg:w-2/3'
                 : 'md:flex-row'
-              }`}
+            }`}
           >
-            <div className="flex flex-col w-full space-y-2 max-h-200 sm:w-2/4">
+            <div className="max-h-200 flex w-full flex-col space-y-2 sm:w-2/4">
               <div className="flex space-x-4">
                 <UploadImagesAndFiles onUpload={handleUpload} />
                 <HistoryButton
@@ -457,14 +481,17 @@ export default function Home() {
                   isDark={isDark}
                 />
               </div>
-              <div className="text-xl font-bold text-center">Input</div>
+              <div className="text-center text-xl font-bold">Input</div>
 
               <LanguageSelect
                 language={inputLanguage}
                 onChange={(value) => {
                   setInputLanguage(value);
                   setHasTranslated(false);
-                  if (value !== 'Natural Language' && inputLanguage === 'Natural Language') {
+                  if (
+                    value !== 'Natural Language' &&
+                    inputLanguage === 'Natural Language'
+                  ) {
                     setInputCode('');
                   }
                   setOutputCode('');
@@ -500,15 +527,18 @@ export default function Home() {
               <IoMdSwap
                 title="Swap languages (Cmd + Shift + S)"
                 onClick={handleSwap}
-                className={`${historyExpand ? 'lg:mt-20' : ' mt-0 md:mt-20 lg:mt-20'
-                  } w-12 cursor-pointer items-center text-3xl hover:opacity-80 ${isDark ? 'text-white-700' : 'text-black'
-                  }`}
+                className={`${
+                  historyExpand ? 'lg:mt-20' : ' mt-0 md:mt-20 lg:mt-20'
+                } w-12 cursor-pointer items-center text-3xl hover:opacity-80 ${
+                  isDark ? 'text-white-700' : 'text-black'
+                }`}
               />
             </div>
-            <div className="flex flex-col justify-center w-full h-full space-y-2 sm:mt-0 sm:w-2/4">
+            <div className="flex h-full w-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
               <div
-                className={`text-center ${historyExpand ? 'lg:mt-10' : 'mt-0 md:mt-10 lg:mt-10'
-                  } text-xl font-bold`}
+                className={`text-center ${
+                  historyExpand ? 'lg:mt-10' : 'mt-0 md:mt-10 lg:mt-10'
+                } text-xl font-bold`}
               >
                 Output
               </div>
@@ -535,7 +565,7 @@ export default function Home() {
                   code={outputCode}
                   isDark={isDark}
                   editable={false}
-                  onChange={() => { }}
+                  onChange={() => {}}
                 />
               )}
               <div className="">
