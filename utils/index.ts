@@ -1,4 +1,4 @@
-import { OpenAI, xAI, OpenAIModel, ClaudeModel } from '@/types/types';
+import { Model } from '@/types/types';
 import endent from 'endent';
 import {
   createParser,
@@ -54,7 +54,7 @@ export const OpenAIStream = async (
   inputLanguage: string,
   outputLanguage: string,
   inputCode: string,
-  model: string,
+  model: Model,
   key: string,
 ) => {
   if (inputCode.trim() === '') {
@@ -113,9 +113,7 @@ export const OpenAIStream = async (
         return 'https://api.x.ai/v1/chat/completions';
       case 'deepseek-chat':
         return 'https://api.deepseek.com/chat/completions';
-      case 'claude-1':
-      case 'claude-2':
-        return 'https://api.anthropic.com/v1/complete';
+
       case 'claude-opus-4-6':
         return 'https://api.anthropic.com/v1/messages';
       case 'gpt-5':

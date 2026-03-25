@@ -7,10 +7,12 @@ export interface TranslateBody {
   inputLanguage: string;
   outputLanguage: string;
   inputCode: string;
-  model: OpenAIModel | xAI | OpenAI | ClaudeModel;
+  model: Model;
   apiKey: string;
 }
 
 export interface TranslateResponse {
   code: string;
 }
+
+export type Model = OpenAIModel | xAI | OpenAI | ClaudeModel;
