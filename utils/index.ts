@@ -129,9 +129,9 @@ export const OpenAIStream = async (
     ? {
       model,
       input: prompt,
-      reasoning: { effort: "low" },   
+      reasoning: { effort: model === 'gpt-5.4-pro' ? "high" : "low" },   
       text: {
-        verbosity: "low"              
+        verbosity: model === 'gpt-5.4-pro' ? "high" : "low"              
       },
       stream: false
     }

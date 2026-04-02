@@ -20,6 +20,8 @@ const modelOptions = [
   { value: 'grok-4-fast-non-reasoning-latest', label: 'Grok-4-Latest' },
   { value: 'deepseek-chat', label: 'DeepSeek' },
   { value: 'gpt-5.4', label: 'GPT-5.4' },
+  { value: 'gpt-5.4-mini', label: 'GPT-5.4 Mini' },
+  { value: 'gpt-5.4-pro', label: 'GPT-5.4 Pro' },
 ];
 
 const ModelToggle: React.FC<{ isDark: boolean }> = ({ isDark }) => {
