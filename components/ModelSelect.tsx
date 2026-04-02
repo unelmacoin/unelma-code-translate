@@ -32,6 +32,9 @@ export const ModelSelect: FC<Props> = ({ model, onChange, isDark }) => {
     { value: 'grok-3-latest', label: 'Grok-3-Latest' },
     { value: 'grok-4-fast-non-reasoning-latest', label: 'Grok-4-Latest' },
     { value: 'deepseek-chat', label: 'DeepSeek' },
+    { value: 'gpt-5.4', label: 'GPT-5.4' },
+    { value: 'gpt-5.4-mini', label: 'GPT-5.4 Mini (Fast & Cheap)' },
+    { value: 'gpt-5.4-pro', label: 'GPT-5.4 Pro (Best Quality)' },
   ];
 
   useEffect(() => {

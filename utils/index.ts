@@ -96,6 +96,9 @@ export const OpenAIStream = async (
       case 'deepseek-chat':
         return 'https://api.deepseek.com/chat/completions';
       case 'gpt-5':
+      case 'gpt-5.4':
+      case 'gpt-5.4-mini':
+      case 'gpt-5.4-pro':
         return 'https://api.openai.com/v1/responses';
       default:
         return 'https://api.openai.com/v1/chat/completions';
@@ -116,9 +119,23 @@ export const OpenAIStream = async (
     }
   })();
 
-  const requestBody: any = model === 'gpt-5'
-    ? { model, input: prompt, stream: false }
-    : body;
+  const isGPT5Family =
+  model === 'gpt-5' ||
+  model === 'gpt-5.4' ||
+  model === 'gpt-5.4-mini' ||
+  model === 'gpt-5.4-pro';
+
+  const requestBody: any = isGPT5Family
+    ? {
+      model,
+      input: prompt,
+      reasoning: { effort: model === 'gpt-5.4-pro' ? "high" : "low" },   
+      text: {
+        verbosity: model === 'gpt-5.4-pro' ? "high" : "low"              
+      },
+      stream: false
+    }
+  : body;
 
   const res = await fetch(apiUrl, {
     headers: {
@@ -146,7 +163,12 @@ export const OpenAIStream = async (
     }
   }
 
-  if (model === 'gpt-5') {
+  if (
+    model === 'gpt-5' ||
+    model === 'gpt-5.4' ||
+    model === 'gpt-5.4-mini' ||
+    model === 'gpt-5.4-pro'
+  ) {
     const result = await res.json();
 
     const collectFromOutput = (output: any): string => {
@@ -184,7 +206,7 @@ export const OpenAIStream = async (
       || '';
 
     if (!text || String(text).trim() === '') {
-      throw new Error('GPT-5 returned empty output');
+      throw new Error(`${model} returned empty output`);
     }
 
     const queue = encoder.encode(text);
